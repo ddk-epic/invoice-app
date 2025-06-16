@@ -1,16 +1,5 @@
 import { Button } from "@/components/ui/button";
-
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { FileText, User, LogOut, Settings, Bell } from "lucide-react";
-import { user } from "@/constants/constants";
+import { FileText } from "lucide-react";
 import {
   SignedOut,
   SignInButton,

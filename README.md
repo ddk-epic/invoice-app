@@ -4,16 +4,16 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 
 ## Features
 
-- [ ] dashboard showing latest
+- [x] dashboard showing latest
 - [ ] one-click add address cards
 - [ ] one-click add item (from inventory)
 - [ ] serve pdf in a link
 
 ## TO-DO
 
-- [ ] UI scaffolding
+- [x] UI scaffolding
+- [x] Auth (Clerk)
 - [ ] Deploy (Vercel)
 - [ ] Database (Single Store)
 - [ ] Database schemas
 - [ ] Connecting UI to db
-- [ ] Auth (Clerk)
