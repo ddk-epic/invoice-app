@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { FileChartColumn, Plus } from "lucide-react";
+import { FileChartColumn, Plus } from "lucide-react";
 import { recentInvoices, getStatusColor, user } from "@/constants/constants";
 
 export default function Dashboard() {
