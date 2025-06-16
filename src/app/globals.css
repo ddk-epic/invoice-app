@@ -132,3 +132,12 @@
 .purple-gradient {
   @apply bg-gradient-to-r from-purple-500 to-purple-600;
 }
+
+.cl-footer,
+.cl-internal-1hp5nqm {
+  @apply hidden;
+}
+
+.cl-avatarBox {
+  @apply w-9 h-9;
+}
