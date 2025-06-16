@@ -127,3 +127,7 @@
     @apply bg-background text-foreground;
   }
 }
+
+.purple-gradient {
+  @apply bg-gradient-to-r from-purple-500 to-purple-600;
+}

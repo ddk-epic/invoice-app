@@ -1,3 +1,8 @@
+export const user = {
+    name: "John Doe",
+    email: "john@example.com",
+  };
+
 // Invoice status
 export const getStatusColor = (status: string) => {
   switch (status) {
