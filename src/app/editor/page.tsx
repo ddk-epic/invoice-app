@@ -1,7 +1,14 @@
 import React from "react";
+import A4InvoiceEditor from "@/components/A4InvoiceEditor";
 
-function Editor() {
-  return <main className="wrapper top">Editor</main>;
+function InvoiceEditorPage() {
+  return (
+    <main className="min-h-screen top bg-gray-100 p-8">
+      <div className="max-w-4xl mt-4 mx-auto">
+        <A4InvoiceEditor />;
+      </div>
+    </main>
+  );
 }
 
-export default Editor;
+export default InvoiceEditorPage;

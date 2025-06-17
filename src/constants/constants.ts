@@ -1,7 +1,7 @@
 export const user = {
-    name: "John Doe",
-    email: "john@example.com",
-  };
+  name: "John Doe",
+  email: "john@example.com",
+};
 
 // Invoice status
 export const getStatusColor = (status: string) => {
@@ -55,5 +55,26 @@ export const recentInvoices = [
     amount: "$4,100.00",
     status: "draft",
     date: "2024-01-03",
+  },
+];
+
+export const sampleContacts = [
+  {
+    id: "1",
+    name: "Acme Corporation",
+    address: "123 Business St, Suite 100\nNew York, NY 10001",
+    email: "billing@acme.com",
+  },
+  {
+    id: "2",
+    name: "Tech Solutions Inc",
+    address: "456 Innovation Ave\nSan Francisco, CA 94105",
+    email: "accounts@techsolutions.com",
+  },
+  {
+    id: "3",
+    name: "Global Enterprises",
+    address: "789 Commerce Blvd\nChicago, IL 60601",
+    email: "finance@globalent.com",
   },
 ];

@@ -121,12 +121,12 @@
   }
 }
 
-.wrapper {
-  @apply max-w-6xl mx-auto px-4 sm:px-6 lg:px-8;
+main {
+  @apply pt-16;
 }
 
-.top {
-  @apply pt-16;
+.wrapper {
+  @apply max-w-6xl mx-auto px-4 sm:px-6 lg:px-8;
 }
 
 .purple-gradient {
@@ -140,4 +140,13 @@
 
 .cl-avatarBox {
   @apply w-9 h-9;
+}
+
+.cl-userButtonPopoverCard {
+  @apply w-[300px];
+}
+
+html body[data-scroll-locked] {
+  overflow: visible !important;
+  margin-right: 0 !important;
 }
