@@ -71,7 +71,7 @@ export default function InvoiceEditor() {
 
   return (
     <Card
-      className="wrapper min-h-[1086px] md:min-h-[1584px] bg-white shadow-lg"
+      className="wrapper min-w-2xl min-h-[1086px] md:min-h-[1584px] bg-white shadow-lg"
       //style={{ aspectRatio: "210/297", minHeight: "842px" }}
     >
       <div className="py-6 px-12 h-full flex flex-col">
@@ -154,37 +154,39 @@ export default function InvoiceEditor() {
             <table className="w-full border-y-2 border-current">
               <thead className="border-y-2 border-current">
                 <tr>
-                  <th className="text-left py-0.5 px-3 font-medium">
+                  <th className="text-left py-0.5 px-2 lg:px-3 font-medium">
                     Description
                   </th>
-                  <th className="text-right py-0.5 px-3 font-medium w-20">
+                  <th className="w-16 py-0.5 px-2 lg:px-3 text-right font-medium">
                     Qty
                   </th>
-                  <th className="text-right py-0.5 px-3 font-medium w-24">
+                  <th className="w-16 py-0.5 px-2 lg:px-3 text-right font-medium">
                     Rate
                   </th>
-                  <th className="text-right py-0.5 px-3 font-medium w-24">
+                  <th className="w-16 py-0.5 px-2 lg:px-3 text-right font-medium">
                     Amount
                   </th>
-                  <th className="w-12"></th>
+                  <th className="w-11"></th>
                 </tr>
               </thead>
               {items.length > 0 && (
                 <tbody>
                   {items.map((item) => (
                     <tr key={item.id} className="border-t">
-                      <td className="py-0.5 px-3">
+                      <td className="px-1 lg:px-2">
                         <Input
+                          id="description"
                           value={item.description}
                           onChange={(e) =>
                             updateItem(item.id, "description", e.target.value)
                           }
                           placeholder="Item description"
-                          className="border-0 p-0 h-auto focus-visible:ring-0"
+                          className="border-1 p-0 pl-1 h-auto focus-visible:ring-0"
                         />
                       </td>
-                      <td className="py-0.5 px-3">
+                      <td className="px-2 lg:px-3">
                         <Input
+                          id="quantity"
                           type="number"
                           value={item.quantity}
                           onChange={(e) =>
@@ -194,13 +196,14 @@ export default function InvoiceEditor() {
                               Number.parseFloat(e.target.value) || 0
                             )
                           }
-                          className="text-right border-0 p-0 h-auto focus-visible:ring-0"
+                          className="text-right border-1 p-0 h-auto focus-visible:ring-0"
                           min="0"
                           step="1"
                         />
                       </td>
-                      <td className="py-0.5 px-3">
+                      <td className="px-2 lg:px-3">
                         <Input
+                          id="rate"
                           type="number"
                           value={item.rate}
                           onChange={(e) =>
@@ -210,15 +213,15 @@ export default function InvoiceEditor() {
                               Number.parseFloat(e.target.value) || 0
                             )
                           }
-                          className="text-right border-0 p-0 h-auto focus-visible:ring-0"
+                          className="text-right border-1 p-0 h-auto focus-visible:ring-0"
                           min="0"
                           step="1"
                         />
                       </td>
-                      <td className="py-0.5 px-3 text-right font-medium">
+                      <td className="px-2 lg:px-3 text-right font-medium">
                         ${item.amount.toFixed(2)}
                       </td>
-                      <td className="py-0.5 px-3">
+                      <td className="pr-2 lg:pr-3">
                         <Button
                           variant="ghost"
                           size="sm"
@@ -243,8 +246,8 @@ export default function InvoiceEditor() {
 
           {/* Totals */}
 
-          <div className="flex justify-end mr-17">
-            <div className="w-55 border border-transparent">
+          <div className="flex justify-end mr-12 lg:mr-14">
+            <div className="w-47 border border-transparent">
               <div className="flex justify-between py-1">
                 <span>Subtotal:</span>
                 <span>${subtotal.toFixed(2)}</span>
