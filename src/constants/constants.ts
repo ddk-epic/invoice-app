@@ -58,6 +58,21 @@ export const recentInvoices = [
   },
 ];
 
+export const sampleSender = [
+  {
+    id: "1",
+    name: "Maxima",
+    address: "123 Business St.\nNew York, NY 10001",
+    email: "maxima@gmail.com",
+  },
+  {
+    id: "2",
+    name: "Home",
+    address: "Home address\nStuttgart, GER 101",
+    email: "home@gmail.com",
+  }
+]
+
 export const sampleContacts = [
   {
     id: "1",
