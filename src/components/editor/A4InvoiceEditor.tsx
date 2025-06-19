@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Plus, Trash2 } from "lucide-react";
+import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -9,6 +9,8 @@ import { Card } from "@/components/ui/card";
 import { sampleContacts, sampleSender } from "@/constants/constants";
 import { Contact, InvoiceItem } from "@/constants/types";
 import { SelectContact } from "./SelectGroup";
+import Total from "./Total";
+import Table from "./Table";
 
 export default function InvoiceEditor() {
   const [invoiceNumber, setInvoiceNumber] = useState("INV-001");
@@ -52,6 +54,7 @@ export default function InvoiceEditor() {
       })
     );
   };
+  
   const removeItem = (id: string) => {
     setItems(items.filter((item) => item.id !== id));
   };
@@ -76,10 +79,7 @@ export default function InvoiceEditor() {
   const total = subtotal + taxAmount;
 
   return (
-    <Card
-      className="wrapper min-w-2xl min-h-[1086px] md:min-h-[1584px] bg-white shadow-lg"
-      //style={{ aspectRatio: "210/297", minHeight: "842px" }}
-    >
+    <Card className="wrapper min-w-2xl min-h-[1086px] md:min-h-[1584px] bg-white shadow-lg">
       <div className="py-6 px-12 h-full flex flex-col">
         {/* Header */}
         <div className="flex justify-between items-start mb-8">
@@ -157,122 +157,27 @@ export default function InvoiceEditor() {
 
           {/* Table */}
           <div className="overflow-hidden mb-1">
-            <table className="w-full border-y-2 border-current">
-              <thead className="border-y-2 border-current">
-                <tr>
-                  <th className="text-left py-0.5 px-2 lg:px-3 font-medium">
-                    Umschreibung
-                  </th>
-                  <th className="w-16 py-0.5 px-2 lg:px-3 text-right font-medium">
-                    Menge
-                  </th>
-                  <th className="w-16 py-0.5 px-2 lg:px-3 text-right font-medium">
-                    Preis
-                  </th>
-                  <th className="w-20 py-0.5 px-2 lg:px-3 text-right font-medium">
-                    Nettowert
-                  </th>
-                  <th className="w-11"></th>
-                </tr>
-              </thead>
-              {items.length > 0 && (
-                <tbody>
-                  {items.map((item) => (
-                    <tr key={item.id} className="border-t">
-                      <td className="px-1 lg:px-2">
-                        <Input
-                          id="description"
-                          value={item.description}
-                          onChange={(e) =>
-                            updateItem(item.id, "description", e.target.value)
-                          }
-                          placeholder="Item description"
-                          className="border-1 p-0 pl-1 h-auto focus-visible:ring-0"
-                        />
-                      </td>
-                      <td className="px-2 lg:px-3">
-                        <Input
-                          id="quantity"
-                          type="number"
-                          value={item.quantity}
-                          onChange={(e) =>
-                            updateItem(
-                              item.id,
-                              "quantity",
-                              Number.parseFloat(e.target.value) || 0
-                            )
-                          }
-                          className="text-right border-1 p-0 h-auto focus-visible:ring-0"
-                          min="0"
-                          step="1"
-                        />
-                      </td>
-                      <td className="px-2 lg:px-3">
-                        <Input
-                          id="rate"
-                          type="number"
-                          value={item.rate}
-                          onChange={(e) =>
-                            updateItem(
-                              item.id,
-                              "rate",
-                              Number.parseFloat(e.target.value) || 0
-                            )
-                          }
-                          className="text-right border-1 p-0 h-auto focus-visible:ring-0"
-                          min="0"
-                          step="1"
-                        />
-                      </td>
-                      <td className="px-2 lg:px-3 text-right font-medium">
-                        {item.amount.toFixed(2)} €
-                      </td>
-                      <td className="pr-2 lg:pr-3">
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => removeItem(item.id)}
-                          className="h-8 w-8 p-0 text-red-400 hover:text-red-600"
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              )}
-            </table>
+            <Table
+              items={items}
+              updateItem={updateItem}
+              removeItem={removeItem}
+            />
           </div>
 
           {items.length === 0 && (
-            <div className="text-center py-2 text-gray-500 border-2 border-dashed rounded-lg">
+            <div className="text-center py-6 text-gray-500 border-2 border-dashed rounded-lg">
               <p>No items added yet</p>
             </div>
           )}
 
           {/* Totals */}
-
-          <div className="flex justify-end mr-12 lg:mr-14">
-            <div>
-              <div className="flex justify-end py-1 space-x-1 font-bold overflow-auto">
-                <span>Gesamtbetrag:</span>
-                <span className="w-23 text-right">{total.toFixed(2)} €</span>
-              </div>
-              <div className="flex justify-end py-1 space-x-1 border-t font-bold">
-                <span>Rechnungsbetrag (Netto):</span>
-                <span className="w-23 text-right">{subtotal.toFixed(2)} €</span>
-              </div>
-              <div className="flex justify-end py-1 space-x-1 font-bold">
-                <span>MwSt. von {taxRate},00 %:</span>
-                <span className="w-23 text-right">
-                  {taxAmount.toFixed(2)} €
-                </span>
-              </div>
-              <div className="flex justify-end py-1 space-x-1 border-t font-bold">
-                <span>Rechnungsbetrag (Brutto):</span>
-                <span className="w-23 text-right">{total.toFixed(2)} €</span>
-              </div>
-            </div>
+          <div className="flex justify-end mr-12">
+            <Total
+              total={total}
+              subtotal={subtotal}
+              taxRate={taxRate}
+              taxAmount={taxAmount}
+            />
           </div>
         </div>
       </div>
