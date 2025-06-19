@@ -23,7 +23,7 @@ export function SelectContact(props: SelectContactProps) {
       <Label className="text-sm font-medium mb-2 block">{label}:</Label>
       <Select onValueChange={selectContact}>
         <SelectTrigger className="w-full mb-2">
-          <SelectValue placeholder={`Select ${label}`} />
+          <SelectValue placeholder={`${label} auswählen`} />
         </SelectTrigger>
         <SelectContent>
           {contactList.map((contact) => (

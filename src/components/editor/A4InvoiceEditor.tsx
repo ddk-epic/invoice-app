@@ -19,6 +19,7 @@ export default function InvoiceEditor() {
 
   const [sender, setSender] = useState<Contact | null>(null);
   const [recipient, setRecipient] = useState<Contact | null>(null);
+  const [address, setAddress] = useState<Contact | null>(null);
   const [items, setItems] = useState<InvoiceItem[]>([]);
   const taxRate = 19;
 
@@ -65,6 +66,11 @@ export default function InvoiceEditor() {
     setRecipient(newRecipient || null);
   };
 
+  const updateAddress = (id: string) => {
+    const newAddress = sampleContacts.find((contact) => contact.id === id);
+    setAddress(newAddress || null);
+  };
+
   const subtotal = items.reduce((sum, item) => sum + item.amount, 0);
   const taxAmount = (subtotal * taxRate) / 100;
   const total = subtotal + taxAmount;
@@ -78,11 +84,11 @@ export default function InvoiceEditor() {
         {/* Header */}
         <div className="flex justify-between items-start mb-8">
           <div>
-            <h1 className="text-3xl font-bold text-gray-800 mb-2">INVOICE</h1>
+            <h1 className="text-3xl font-bold text-gray-800 mb-2">Rechnung</h1>
             <div className="space-y-1">
               <div className="flex items-center gap-2">
-                <Label className="text-sm font-medium min-w-[100px]">
-                  Invoice #:
+                <Label className="text-sm font-medium min-w-[160px]">
+                  Rechnungsnummer:
                 </Label>
                 <Input
                   id="invoice-number"
@@ -92,8 +98,8 @@ export default function InvoiceEditor() {
                 />
               </div>
               <div className="flex items-center gap-2">
-                <Label className="text-sm font-medium min-w-[100px]">
-                  Date:
+                <Label className="text-sm font-medium min-w-[160px]">
+                  Rechnungsdatum:
                 </Label>
                 <Input
                   id="invoice-date"
@@ -104,8 +110,8 @@ export default function InvoiceEditor() {
                 />
               </div>
               <div className="flex items-center gap-2">
-                <Label className="text-sm font-medium min-w-[100px]">
-                  Due Date:
+                <Label className="text-sm font-medium min-w-[160px]">
+                  Fälligkeitsdatum:
                 </Label>
                 <Input
                   id="due-date"
@@ -122,15 +128,15 @@ export default function InvoiceEditor() {
         {/* Sender and Recipient */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 mb-8">
           <SelectContact
-            label="Sender"
-            contact={sender}
-            selectContact={updateSender}
-            contactList={sampleSender}
-          />
-          <SelectContact
-            label="Recipient"
+            label="Lieferanschrift"
             contact={recipient}
             selectContact={updateRecipient}
+            contactList={sampleContacts}
+          />
+          <SelectContact
+            label="Rechnungsadresse"
+            contact={address}
+            selectContact={updateAddress}
             contactList={sampleContacts}
           />
         </div>
@@ -138,14 +144,14 @@ export default function InvoiceEditor() {
         {/* Invoice Items */}
         <div className="flex-1">
           <div className="flex justify-between items-center mb-4">
-            <h2 className="text-lg font-semibold">Items</h2>
+            <h2 className="text-lg font-semibold"></h2>
             <Button
               onClick={addItem}
               size="sm"
               className="flex items-center gap-2"
             >
               <Plus className="h-4 w-4" />
-              Add Item
+              Artikel hinzufügen
             </Button>
           </div>
 
@@ -155,16 +161,16 @@ export default function InvoiceEditor() {
               <thead className="border-y-2 border-current">
                 <tr>
                   <th className="text-left py-0.5 px-2 lg:px-3 font-medium">
-                    Description
+                    Umschreibung
                   </th>
                   <th className="w-16 py-0.5 px-2 lg:px-3 text-right font-medium">
-                    Qty
+                    Menge
                   </th>
                   <th className="w-16 py-0.5 px-2 lg:px-3 text-right font-medium">
-                    Rate
+                    Preis
                   </th>
-                  <th className="w-16 py-0.5 px-2 lg:px-3 text-right font-medium">
-                    Amount
+                  <th className="w-20 py-0.5 px-2 lg:px-3 text-right font-medium">
+                    Nettowert
                   </th>
                   <th className="w-11"></th>
                 </tr>
@@ -219,7 +225,7 @@ export default function InvoiceEditor() {
                         />
                       </td>
                       <td className="px-2 lg:px-3 text-right font-medium">
-                        ${item.amount.toFixed(2)}
+                        {item.amount.toFixed(2)} €
                       </td>
                       <td className="pr-2 lg:pr-3">
                         <Button
@@ -247,21 +253,24 @@ export default function InvoiceEditor() {
           {/* Totals */}
 
           <div className="flex justify-end mr-12 lg:mr-14">
-            <div className="w-47 border border-transparent">
-              <div className="flex justify-between py-1">
-                <span>Subtotal:</span>
-                <span>${subtotal.toFixed(2)}</span>
+            <div>
+              <div className="flex justify-end py-1 space-x-1 font-bold overflow-auto">
+                <span>Gesamtbetrag:</span>
+                <span className="w-23 text-right">{total.toFixed(2)} €</span>
               </div>
-              <div className="flex justify-between items-center py-1">
-                <div className="flex items-center gap-2">
-                  <span>Tax:</span>
-                  <span>{taxRate} %</span>
-                </div>
-                <span>${taxAmount.toFixed(2)}</span>
+              <div className="flex justify-end py-1 space-x-1 border-t font-bold">
+                <span>Rechnungsbetrag (Netto):</span>
+                <span className="w-23 text-right">{subtotal.toFixed(2)} €</span>
               </div>
-              <div className="flex justify-between py-1 border-t font-bold text-lg">
-                <span>Total:</span>
-                <span>${total.toFixed(2)}</span>
+              <div className="flex justify-end py-1 space-x-1 font-bold">
+                <span>MwSt. von {taxRate},00 %:</span>
+                <span className="w-23 text-right">
+                  {taxAmount.toFixed(2)} €
+                </span>
+              </div>
+              <div className="flex justify-end py-1 space-x-1 border-t font-bold">
+                <span>Rechnungsbetrag (Brutto):</span>
+                <span className="w-23 text-right">{total.toFixed(2)} €</span>
               </div>
             </div>
           </div>
