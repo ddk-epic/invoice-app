@@ -6,70 +6,50 @@ import { InvoiceItem } from "@/constants/types";
 
 interface TableProps {
   items: InvoiceItem[];
-  updateItem: (
-    id: string,
-    field: keyof InvoiceItem,
-    value: string | number
-  ) => void;
+  updateItemQty: (id: string, value: number) => void;
   removeItem: (id: string) => void;
 }
 
 function Table(props: TableProps) {
-  const { items, updateItem, removeItem } = props;
+  const { items, updateItemQty, removeItem } = props;
   return (
-    <table className="w-full border-y-2 border-current">
+    <table className="w-full">
       <thead className="border-y-2 border-current">
         <tr>
-          <th className="text-left py-0.5 px-2 font-medium">Umschreibung</th>
-          <th className="w-17 py-0.5 px-2 text-right font-medium">Menge</th>
-          <th className="w-17 py-0.5 px-2 text-right font-medium">Preis</th>
+          <th className="w-13 py-0.5 px-2 text-start font-medium">Nr.</th>
+          <th className="max-w-[300px] py-0.5 text-left font-medium">
+            Umschreibung
+          </th>
+          <th className="w-13 py-0.5 pr-2 text-right font-medium">Menge</th>
+          <th className="w-23 py-0.5 pr-2 text-right font-medium">Preis</th>
           <th className="w-23 py-0.5 text-right font-medium">Nettowert</th>
-          <th className="w-12"></th>
+          <th className="w-10"></th>
         </tr>
       </thead>
       {items.length > 0 && (
         <tbody>
           {items.map((item) => (
             <tr key={item.id} className="border-t">
-              <td className="max-w-[300px] pl-2 truncate">Item description</td>
-              <td className="w-13 px-2">
+              <td className="w-13 px-2">{item.id}</td>
+              <td className="max-w-[300px] truncate">Item description</td>
+              <td className="w-13 pr-2">
                 <Input
-                  id="quantity"
+                  id={item.id}
                   type="number"
                   value={item.quantity}
                   onChange={(e) =>
-                    updateItem(
-                      item.id,
-                      "quantity",
-                      Number.parseFloat(e.target.value) || 0
-                    )
+                    updateItemQty(item.id, Number(e.target.value) || 0)
                   }
                   className="w-13 h-auto border-1 p-0 text-right focus-visible:ring-0"
                   min="0"
                   step="1"
                 />
               </td>
-              <td className="w-13 px-2">
-                <Input
-                  id="rate"
-                  type="number"
-                  value={item.rate}
-                  onChange={(e) =>
-                    updateItem(
-                      item.id,
-                      "rate",
-                      Number.parseFloat(e.target.value) || 0
-                    )
-                  }
-                  className="w-13 h-auto border-1 p-0 text-right focus-visible:ring-0"
-                  min="0"
-                  step="1"
-                />
-              </td>
+              <td className="w-23 pr-2 text-right">{item.rate.toFixed(2)} €</td>
               <td className="w-23 text-right font-medium">
                 {item.amount.toFixed(2)} €
               </td>
-              <td className="px-2">
+              <td className="px-1">
                 <Button
                   variant="ghost"
                   size="sm"

@@ -26,35 +26,36 @@ export default function InvoiceEditor() {
   const taxRate = 19;
 
   const addItem = () => {
+    const lastItem = items[items.length - 1];
+    const newId = lastItem ? Number(lastItem.id) + 1 : 1;
+
     const newItem: InvoiceItem = {
-      id: Date.now().toString(),
+      id: newId.toString(),
       description: "",
       quantity: 1,
-      rate: 0,
+      rate: (Math.floor(Math.random() * 5000) + 1) / 100,
       amount: 0,
     };
+    newItem.amount = newItem.quantity * newItem.rate;
     setItems([...items, newItem]);
   };
 
-  const updateItem = (
-    id: string,
-    field: keyof InvoiceItem,
-    value: string | number
-  ) => {
+  const updateItemQty = (id: string, quantity: number) => {
     setItems(
       items.map((item) => {
         if (item.id === id) {
-          const updatedItem = { ...item, [field]: value };
-          if (field === "quantity" || field === "rate") {
-            updatedItem.amount = updatedItem.quantity * updatedItem.rate;
-          }
+          const updatedItem = {
+            ...item,
+            quantity,
+            amount: quantity * item.rate,
+          };
           return updatedItem;
         }
         return item;
       })
     );
   };
-  
+
   const removeItem = (id: string) => {
     setItems(items.filter((item) => item.id !== id));
   };
@@ -80,14 +81,14 @@ export default function InvoiceEditor() {
 
   return (
     <Card className="wrapper min-w-2xl min-h-[1086px] md:min-h-[1584px] bg-white shadow-lg">
-      <div className="py-6 px-12 h-full flex flex-col">
+      <div className="py-6 px-12 h-full flex flex-col text-sm">
         {/* Header */}
         <div className="flex justify-between items-start mb-8">
           <div>
             <h1 className="text-3xl font-bold text-gray-800 mb-2">Rechnung</h1>
             <div className="space-y-1">
               <div className="flex items-center gap-2">
-                <Label className="text-sm font-medium min-w-[160px]">
+                <Label className="font-medium min-w-[160px]">
                   Rechnungsnummer:
                 </Label>
                 <Input
@@ -98,7 +99,7 @@ export default function InvoiceEditor() {
                 />
               </div>
               <div className="flex items-center gap-2">
-                <Label className="text-sm font-medium min-w-[160px]">
+                <Label className="font-medium min-w-[160px]">
                   Rechnungsdatum:
                 </Label>
                 <Input
@@ -110,7 +111,7 @@ export default function InvoiceEditor() {
                 />
               </div>
               <div className="flex items-center gap-2">
-                <Label className="text-sm font-medium min-w-[160px]">
+                <Label className="font-medium min-w-[160px]">
                   Fälligkeitsdatum:
                 </Label>
                 <Input
@@ -156,29 +157,27 @@ export default function InvoiceEditor() {
           </div>
 
           {/* Table */}
-          <div className="overflow-hidden mb-1">
+          <div className="">
             <Table
               items={items}
-              updateItem={updateItem}
+              updateItemQty={updateItemQty}
               removeItem={removeItem}
             />
           </div>
 
           {items.length === 0 && (
-            <div className="text-center py-6 text-gray-500 border-2 border-dashed rounded-lg">
+            <div className="text-center py-4 my-2 text-gray-500 border-2 border-dashed rounded-lg">
               <p>No items added yet</p>
             </div>
           )}
 
-          {/* Totals */}
-          <div className="flex justify-end mr-12">
-            <Total
-              total={total}
-              subtotal={subtotal}
-              taxRate={taxRate}
-              taxAmount={taxAmount}
-            />
-          </div>
+          {/* Total */}
+          <Total
+            total={total}
+            subtotal={subtotal}
+            taxRate={taxRate}
+            taxAmount={taxAmount}
+          />
         </div>
       </div>
     </Card>
