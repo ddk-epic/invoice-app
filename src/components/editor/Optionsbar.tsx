@@ -7,7 +7,7 @@ import {
   SelectContent,
   SelectItem,
 } from "@/components/ui/select";
-import { Settings, Download, Save } from "lucide-react";
+import { Settings, Download, Save, BookCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Sheet,
@@ -50,6 +50,10 @@ function Optionsbar() {
               Export & Save
             </h3>
             <div className="space-y-2">
+              <Button className="w-full justify-start" variant="outline">
+                <BookCheck className="h-4 w-4 mr-1" />
+                Publish PDF
+              </Button>
               <Button className="w-full justify-start" variant="outline">
                 <Download className="h-4 w-4 mr-1" />
                 Download PDF
