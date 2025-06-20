@@ -61,11 +61,6 @@ export default function InvoiceEditor() {
     setItems(items.filter((item) => item.id !== id));
   };
 
-  const updateSender = (id: string) => {
-    const newSender = sampleSender.find((contact) => contact.id === id);
-    setSender(newSender || null);
-  };
-
   const updateRecipient = (id: string) => {
     const newRecipient = sampleContacts.find((contact) => contact.id === id);
     setRecipient(newRecipient || null);
