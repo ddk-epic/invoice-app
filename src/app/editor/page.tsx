@@ -1,6 +1,6 @@
 import React from "react";
-import A4InvoiceEditor from "@/components/editor/A4InvoiceEditor";
-import Optionsbar from "@/components/editor/Optionsbar";
+import A4InvoiceEditor from "@/components/editor/invoice-editor";
+import Optionsbar from "@/components/editor/optionsbar";
 
 function InvoiceEditorPage() {
   return (
