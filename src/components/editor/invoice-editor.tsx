@@ -89,13 +89,11 @@ export default function InvoiceEditor() {
     modificationDate: new Date().toISOString(),
   };
 
-  const sendPostRequest = async () => {
+  const sendRequest = async () => {
     try {
-      const res = await fetch("/invoice/2/pdf", {
-        method: "POST",
-        body: JSON.stringify(invoiceData),
+      await fetch(`/invoice/${invoiceId}/pdf`, {
+        method: "GET",
       });
-      console.log(res);
     } catch (error) {
       console.log(error);
     }
@@ -104,7 +102,7 @@ export default function InvoiceEditor() {
   return (
     <>
       <div className="z-50 fixed right-0 p-8">
-        <Optionsbar handleRequest={sendPostRequest} />
+        <Optionsbar handleRequest={sendRequest} />
       </div>
       <div className="max-w-4xl py-4 mx-auto">
         <Card className="wrapper min-w-2xl min-h-[1086px] md:min-h-[1584px] bg-white shadow-lg">
