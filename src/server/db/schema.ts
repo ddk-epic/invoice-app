@@ -1,10 +1,8 @@
 import {
-  int,
   text,
-  index,
   singlestoreTableCreator,
   bigint,
-  timestamp,
+  singlestoreTable,
 } from "drizzle-orm/singlestore-core";
 
 /**
@@ -13,6 +11,9 @@ import {
  *
  * @see https://orm.drizzle.team/docs/goodies#multi-project-schema
  */
-export const createTable = singlestoreTableCreator(
-  (name) => `invoice_${name}`,
-);
+export const createTable = singlestoreTableCreator((name) => `invoice_${name}`);
+
+export const users = singlestoreTable("users_table", {
+  id: bigint("id", { mode: "bigint" }).primaryKey().autoincrement(),
+  name: text("name"),
+});
