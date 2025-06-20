@@ -8,9 +8,9 @@ import { Label } from "@/components/ui/label";
 import { Card } from "@/components/ui/card";
 import { sampleContacts, sampleSender } from "@/constants/constants";
 import { Contact, InvoiceItem } from "@/constants/types";
-import { SelectContact } from "./SelectGroup";
-import Total from "./Total";
-import Table from "./Table";
+import { SelectContact } from "./select-group";
+import Total from "./total";
+import Table from "./table";
 
 export default function InvoiceEditor() {
   const [invoiceNumber, setInvoiceNumber] = useState("INV-001");
