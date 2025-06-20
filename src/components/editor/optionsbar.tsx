@@ -10,13 +10,17 @@ import {
 } from "@/components/ui/sheet";
 import { Separator } from "@/components/ui/separator";
 
-function Optionsbar() {
+interface OptionsbarProps {
+  handleRequest: () => Promise<void>;
+}
+
+function Optionsbar({ handleRequest }: OptionsbarProps) {
   return (
     <Sheet>
       {/* Actions Menu Header */}
       <SheetTrigger asChild>
         <Button className="rounded-full h-12 w-12 shadow-lg">
-          <Settings className="h-8 w-8" />
+          <Settings className="size-6" />
         </Button>
       </SheetTrigger>
       <SheetContent className="w-70 lg:w-80">
@@ -46,7 +50,11 @@ function Optionsbar() {
               Export & Save
             </h3>
             <div className="space-y-2">
-              <Button className="w-full justify-start" variant="outline">
+              <Button
+                onClick={handleRequest}
+                className="w-full justify-start"
+                variant="outline"
+              >
                 <BookCheck className="h-4 w-4 mr-1" />
                 Publish PDF
               </Button>
