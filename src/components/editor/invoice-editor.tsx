@@ -85,7 +85,7 @@ export default function InvoiceEditor() {
         {/* Header */}
         <div className="flex justify-between items-start mb-8">
           <div>
-            <h1 className="text-3xl font-bold text-gray-800 mb-2">Rechnung</h1>
+            <h1 className="text-3xl font-bold text-gray-800 mb-4">Rechnung</h1>
             <div className="space-y-1">
               <div className="flex items-center gap-2">
                 <Label className="font-medium min-w-[160px]">
@@ -167,7 +167,7 @@ export default function InvoiceEditor() {
 
           {items.length === 0 && (
             <div className="text-center py-4 my-2 text-gray-500 border-2 border-dashed rounded-lg">
-              <p>No items added yet</p>
+              <p>Noch keine Artikel hinzugefügt</p>
             </div>
           )}
 

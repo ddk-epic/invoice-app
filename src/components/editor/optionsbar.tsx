@@ -1,12 +1,4 @@
 import React from "react";
-import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectTrigger,
-  SelectValue,
-  SelectContent,
-  SelectItem,
-} from "@/components/ui/select";
 import { Settings, Download, Save, BookCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -21,27 +13,31 @@ import { Separator } from "@/components/ui/separator";
 function Optionsbar() {
   return (
     <Sheet>
-      {/* Actions Menu Button */}
+      {/* Actions Menu Header */}
       <SheetTrigger asChild>
         <Button className="rounded-full h-12 w-12 shadow-lg">
           <Settings className="h-8 w-8" />
         </Button>
       </SheetTrigger>
       <SheetContent className="w-70 lg:w-80">
-        <SheetHeader>
-          <SheetTitle>Invoice Options</SheetTitle>
+        <SheetHeader className="px-6">
+          <SheetTitle className="text-xl font-semibold">
+            Invoice Options
+          </SheetTitle>
         </SheetHeader>
 
-        <div className="px-6 space-y-6 mt-6">
+        <div className="px-6 space-y-6">
           {/* Details */}
-          <div className="font-light pb-2">
+          <div className="font-light">
             <h3>Details</h3>
             <div className="flex flex-col pl-4 pt-1 space-y-1">
               <span>Rechnung / PDF</span>
               <span>Author: phtt</span>
-              <span>For: ABC</span>
+              <span>Recipient: ABC</span>
             </div>
           </div>
+
+          <Separator />
 
           {/* Export & Save */}
           <div>

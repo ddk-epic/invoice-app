@@ -13,7 +13,7 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 
 - [x] UI scaffolding
 - [x] Auth (Clerk)
-- [ ] Deploy (Vercel)
+- [x] Deploy (Netlify)
 - [ ] Database (Single Store)
 - [ ] Database schemas
 - [ ] Connecting UI to db
