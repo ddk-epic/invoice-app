@@ -16,7 +16,11 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { FileChartColumn, Plus } from "lucide-react";
-import { recentInvoices, getStatusColor, user } from "@/constants/constants";
+import {
+  sampleRecentInvoices,
+  getStatusColor,
+  user,
+} from "@/constants/constants";
 
 export default function Dashboard() {
   return (
@@ -123,7 +127,7 @@ export default function Dashboard() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {recentInvoices.map((invoice) => (
+                {sampleRecentInvoices.map((invoice) => (
                   <TableRow key={invoice.id}>
                     <TableCell className="font-medium">{invoice.id}</TableCell>
                     <TableCell>{invoice.client}</TableCell>

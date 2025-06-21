@@ -1,14 +1,42 @@
+export interface Contact {
+  id: string;
+  name: string;
+  owner?: string;
+  address?: {
+    street: string;
+    city: string;
+    state: string;
+    zip: string;
+    country: string;
+  };
+}
+
 export interface InvoiceItem {
   id: string;
+  category: string;
   description: string;
+  brand: string;
+  origin?: string;
+  weight?: string;
+  perBox?: number;
   quantity: number;
   rate: number;
   amount: number;
 }
 
-export interface Contact {
-  id: string;
-  name: string;
-  address: string;
-  email: string;
+export interface InvoiceData {
+  invoiceId: number;
+  invoiceDate: string;
+  dueDate: string;
+
+  sender: Contact;
+  sendTo: Contact;
+  invoiceTo: Contact;
+
+  items: InvoiceItem[];
+  total: number;
+  taxRate: number;
+
+  creationDate: string;
+  modificationDate: string;
 }

@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card } from "@/components/ui/card";
-import { sampleContacts, sampleSender } from "@/constants/constants";
+import { sampleContacts } from "@/constants/constants";
 import { Contact, InvoiceItem } from "@/constants/types";
 import { SelectContact } from "./select-group";
 import Total from "./total";
@@ -20,7 +20,6 @@ export default function InvoiceEditor() {
   );
   const [dueDate, setDueDate] = useState("");
 
-  const [sender, setSender] = useState<Contact | null>(null);
   const [recipient, setRecipient] = useState<Contact | null>(null);
   const [address, setAddress] = useState<Contact | null>(null);
   const [items, setItems] = useState<InvoiceItem[]>([]);
@@ -32,7 +31,9 @@ export default function InvoiceEditor() {
 
     const newItem: InvoiceItem = {
       id: newId.toString(),
-      description: "",
+      category: "category",
+      description: "description",
+      brand: "brand",
       quantity: 1,
       rate: (Math.floor(Math.random() * 5000) + 1) / 100,
       amount: 0,
@@ -74,15 +75,6 @@ export default function InvoiceEditor() {
   const subtotal = items.reduce((sum, item) => sum + item.amount, 0);
   const taxAmount = (subtotal * taxRate) / 100;
   const total = subtotal + taxAmount;
-
-  const invoiceData = {
-    invoice: { invoiceId, invoiceDate, dueDate },
-    contacts: { sender, recipient, address },
-    items,
-    calculation: { taxRate, subtotal, taxAmount, total },
-    creationDate: new Date().toISOString(),
-    modificationDate: new Date().toISOString(),
-  };
 
   const sendRequest = async () => {
     try {

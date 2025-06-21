@@ -1,3 +1,5 @@
+import { InvoiceData, InvoiceItem } from "./types";
+
 export const user = {
   name: "John Doe",
   email: "john@example.com",
@@ -20,7 +22,7 @@ export const getStatusColor = (status: string) => {
 };
 
 // Mock data for recent invoices
-export const recentInvoices = [
+export const sampleRecentInvoices = [
   {
     id: "INV-001",
     client: "Acme Corp",
@@ -58,38 +60,139 @@ export const recentInvoices = [
   },
 ];
 
-export const sampleSender = [
-  {
-    id: "1",
-    name: "Maxima",
-    address: "123 Business St.\nNew York, NY 10001",
-    email: "maxima@gmail.com",
-  },
-  {
-    id: "2",
-    name: "Home",
-    address: "Home address\nStuttgart, GER 101",
-    email: "home@gmail.com",
-  }
-]
-
 export const sampleContacts = [
   {
     id: "1",
-    name: "Acme Corporation",
-    address: "123 Business St, Suite 100\nNew York, NY 10001",
-    email: "billing@acme.com",
+    name: "Maxima",
+    owner: "phtt",
+    address: {
+      street: "123 London street",
+      city: "Hamburg",
+      state: "HA",
+      zip: "77777",
+      country: "GER",
+    },
   },
   {
     id: "2",
     name: "Tech Solutions Inc",
-    address: "456 Innovation Ave\nSan Francisco, CA 94105",
-    email: "accounts@techsolutions.com",
+    address: {
+      street: "456 Innovation Ave",
+      city: "San Francisco",
+      state: "CA",
+      zip: "94105",
+      country: "USA",
+    },
   },
   {
     id: "3",
     name: "Global Enterprises",
-    address: "789 Commerce Blvd\nChicago, IL 60601",
-    email: "finance@globalent.com",
+    address: {
+      street: "456 Grocery Ave",
+      city: "Greenville",
+      state: "CA",
+      zip: "90210",
+      country: "USA",
+    },
+  },
+  {
+    id: "4",
+    name: "Acme Corporation",
+    address: {
+      street: "123 Business St, Suite 100",
+      city: "New York",
+      state: "NY",
+      zip: "10001",
+      country: "USA",
+    },
   },
 ];
+
+const sampleProducts: InvoiceItem[] = [
+  {
+    id: "11",
+    category: "fresh",
+    description: "Bananas (kg)",
+    brand: "Chiqueeta",
+    weight: "1 kg",
+    quantity: 3,
+    rate: 1.29,
+    amount: 3.87,
+  },
+  {
+    id: "12",
+    category: "fresh",
+    description: "Organic Milk (1 L)",
+    brand: "Hermes",
+    weight: "1 kg",
+    quantity: 1,
+    rate: 4.25,
+    amount: 4.25,
+  },
+  {
+    id: "13",
+    category: "fresh",
+    description: "Eggs",
+    brand: "Chiqueeta",
+    perBox: 10,
+    quantity: 2,
+    rate: 3.5,
+    amount: 7.0,
+  },
+  {
+    id: "14",
+    category: "fresh",
+    description: "Whole Wheat Bread",
+    brand: "Stones",
+    weight: "0.75 kg",
+    quantity: 1,
+    rate: 2.75,
+    amount: 2.75,
+  },
+];
+
+const sampleInvoiceData: InvoiceData = {
+  invoiceId: 10,
+  invoiceDate: "2025-06-20",
+  dueDate: "2025-07-05",
+  sender: {
+    id: "1",
+    name: "Maxima",
+    owner: "phtt",
+    address: {
+      street: "123 London street",
+      city: "Hamburg",
+      state: "HA",
+      zip: "77777",
+      country: "GER",
+    },
+  },
+  sendTo: {
+    id: "3",
+    name: "Global Enterprises",
+    address: {
+      street: "456 Grocery Ave",
+      city: "Greenville",
+      state: "CA",
+      zip: "90210",
+      country: "USA",
+    },
+  },
+  invoiceTo: {
+    id: "3",
+    name: "Global Enterprises",
+    address: {
+      street: "456 Grocery Ave",
+      city: "Greenville",
+      state: "CA",
+      zip: "90210",
+      country: "USA",
+    },
+  },
+  items: sampleProducts,
+
+  total: 17.87,
+  taxRate: 0.19,
+  creationDate: "2025-06-20T10:00:00Z",
+  modificationDate: "2025-06-20T10:00:00Z",
+};
