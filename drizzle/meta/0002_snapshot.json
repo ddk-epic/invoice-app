@@ -1,8 +1,8 @@
 {
   "version": "1",
   "dialect": "singlestore",
-  "id": "02330b2d-67ea-49ec-aea9-5a1a65e237f4",
-  "prevId": "00000000-0000-0000-0000-000000000000",
+  "id": "5915094d-4708-4913-9589-d3fc1a3fe234",
+  "prevId": "02330b2d-67ea-49ec-aea9-5a1a65e237f4",
   "tables": {
     "invoice_products_table": {
       "name": "invoice_products_table",
@@ -65,14 +65,14 @@
         },
         "rate": {
           "name": "rate",
-          "type": "decimal(10,2)",
+          "type": "int",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
         },
         "amount": {
           "name": "amount",
-          "type": "decimal(10,2)",
+          "type": "int",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false

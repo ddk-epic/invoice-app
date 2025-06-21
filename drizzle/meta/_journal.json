@@ -15,6 +15,13 @@
       "when": 1750534262363,
       "tag": "0001_magical_aaron_stack",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "1",
+      "when": 1750544933773,
+      "tag": "0002_peaceful_marvel_apes",
+      "breakpoints": true
     }
   ]
 }

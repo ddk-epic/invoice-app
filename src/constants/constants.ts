@@ -108,7 +108,7 @@ export const sampleContacts = [
   },
 ];
 
-const sampleProducts: InvoiceItem[] = [
+export const sampleProducts: InvoiceItem[] = [
   {
     id: "11",
     category: "fresh",
@@ -116,8 +116,8 @@ const sampleProducts: InvoiceItem[] = [
     brand: "Chiqueeta",
     weight: "1 kg",
     quantity: 3,
-    rate: 1.29,
-    amount: 3.87,
+    rate: 129,
+    amount: 387,
   },
   {
     id: "12",
@@ -126,8 +126,8 @@ const sampleProducts: InvoiceItem[] = [
     brand: "Hermes",
     weight: "1 kg",
     quantity: 1,
-    rate: 4.25,
-    amount: 4.25,
+    rate: 425,
+    amount: 425,
   },
   {
     id: "13",
@@ -136,8 +136,8 @@ const sampleProducts: InvoiceItem[] = [
     brand: "Chiqueeta",
     perBox: 10,
     quantity: 2,
-    rate: 3.5,
-    amount: 7.0,
+    rate: 35,
+    amount: 70,
   },
   {
     id: "14",
@@ -146,12 +146,12 @@ const sampleProducts: InvoiceItem[] = [
     brand: "Stones",
     weight: "0.75 kg",
     quantity: 1,
-    rate: 2.75,
-    amount: 2.75,
+    rate: 275,
+    amount: 275,
   },
 ];
 
-const sampleInvoiceData: InvoiceData = {
+export const sampleInvoiceData: InvoiceData = {
   invoiceId: 10,
   invoiceDate: "2025-06-20",
   dueDate: "2025-07-05",

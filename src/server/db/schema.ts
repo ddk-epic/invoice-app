@@ -29,6 +29,6 @@ export const products = createTable("products_table", {
   weight: varchar({ length: 255 }),
   perBox: int(),
   quantity: int().notNull(),
-  rate: decimal({ precision: 10, scale: 2 }).notNull(),
-  amount: decimal({ precision: 10, scale: 2 }).notNull(),
+  rate: int().notNull(),
+  amount: int().notNull(),
 });
