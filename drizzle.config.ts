@@ -9,7 +9,7 @@ export default {
     port: parseInt(process.env.SINGLESTORE_PORT!),
     user: process.env.SINGLESTORE_USER!,
     password: process.env.SINGLESTORE_PASS!,
-    database: process.env.SINGLESTORE_DB_NAME!,
+    database: process.env.SINGLESTORE_DB!,
     ssl: {},
   },
 } satisfies Config;

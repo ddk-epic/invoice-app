@@ -14,7 +14,9 @@ import {
  *
  * @see https://orm.drizzle.team/docs/goodies#multi-project-schema
  *
- * generate cmd: npx drizzle-kit generate
+ * generate:  npx drizzle-kit generate
+ * migrate:   npx drizzle-kit migrate
+ * push:      npx drizzle-kit push
  */
 export const createTable = singlestoreTableCreator((name) => `invoice_${name}`);
 
