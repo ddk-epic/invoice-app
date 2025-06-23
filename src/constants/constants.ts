@@ -191,8 +191,8 @@ export const sampleInvoiceData: InvoiceData = {
   },
   items: sampleProducts,
 
-  total: 17.87,
-  taxRate: 0.19,
+  total: 1787,
+  taxRate: 19,
   creationDate: "2025-06-20T10:00:00Z",
   modificationDate: "2025-06-20T10:00:00Z",
 };

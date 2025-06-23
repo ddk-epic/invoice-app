@@ -1,4 +1,11 @@
-import { integer, pgTable, serial, text, timestamp } from "drizzle-orm/pg-core";
+import {
+  integer,
+  jsonb,
+  pgTable,
+  serial,
+  text,
+  timestamp,
+} from "drizzle-orm/pg-core";
 
 /**
  * This is an example of how to use the multi-project schema feature of Drizzle ORM. Use the same
@@ -13,7 +20,7 @@ import { integer, pgTable, serial, text, timestamp } from "drizzle-orm/pg-core";
 
 export const productsSchema = pgTable("products_table", {
   id: serial("id").primaryKey(),
-  category: text("name").notNull(),
+  category: text("category").notNull(),
   description: text("description").notNull(),
   brand: text("brand").notNull(),
   origin: text("origin"),
@@ -33,7 +40,7 @@ export const invoiceSchema = pgTable("invoice_table", {
   sendTo: text("send_to").notNull(),
   invoiceTo: text("invoice_to").notNull(),
 
-  //items: invoice_product_table
+  items: jsonb().notNull(),
   total: integer().notNull(),
   taxRate: integer().notNull(),
 

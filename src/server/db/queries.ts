@@ -5,13 +5,14 @@ import { invoiceSchema, productsSchema } from "./schema";
 import { eq } from "drizzle-orm";
 
 export const QUERIES = {
+  // SELECT
   getAllProducts: async function () {
     return db.select().from(productsSchema);
   },
-  getInvoice: async function (invoiceId: string) {
+  getInvoiceById: async function (id: string) {
     return db
       .select()
       .from(invoiceSchema)
-      .where(eq(invoiceSchema.invoiceId, invoiceId));
+      .where(eq(invoiceSchema.id, parseInt(id)));
   },
 };
