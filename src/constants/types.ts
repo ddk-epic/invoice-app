@@ -25,7 +25,7 @@ export interface InvoiceItem {
 }
 
 export interface InvoiceData {
-  invoiceId: number;
+  id: number;
   invoiceDate: string;
   dueDate: string;
 
@@ -37,6 +37,6 @@ export interface InvoiceData {
   total: number;
   taxRate: number;
 
-  creationDate: string;
-  modificationDate: string;
+  createdAt: Date;
+  updatedAt: Date;
 }

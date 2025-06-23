@@ -152,7 +152,7 @@ export const sampleProducts: InvoiceItem[] = [
 ];
 
 export const sampleInvoiceData: InvoiceData = {
-  invoiceId: 10,
+  id: 10,
   invoiceDate: "2025-06-20",
   dueDate: "2025-07-05",
   sender: {
@@ -193,6 +193,92 @@ export const sampleInvoiceData: InvoiceData = {
 
   total: 1787,
   taxRate: 19,
-  creationDate: "2025-06-20T10:00:00Z",
-  modificationDate: "2025-06-20T10:00:00Z",
+  createdAt: new Date(),
+  updatedAt: new Date(),
 };
+
+export const invoiceJson = JSON.stringify({
+  id: 1,
+  invoiceDate: "2025-06-20",
+  dueDate: "2025-07-05",
+  sender: {
+    id: "1",
+    name: "Maxima",
+    owner: "phtt",
+    address: {
+      street: "123 London street",
+      city: "Hamburg",
+      state: "HA",
+      zip: "77777",
+      country: "GER",
+    },
+  },
+  sendTo: {
+    id: "3",
+    name: "Global Enterprises",
+    address: {
+      street: "456 Grocery Ave",
+      city: "Greenville",
+      state: "CA",
+      zip: "90210",
+      country: "USA",
+    },
+  },
+  invoiceTo: {
+    id: "3",
+    name: "Global Enterprises",
+    address: {
+      street: "456 Grocery Ave",
+      city: "Greenville",
+      state: "CA",
+      zip: "90210",
+      country: "USA",
+    },
+  },
+  items: [
+    {
+      id: "11",
+      category: "fresh",
+      description: "Bananas (kg)",
+      brand: "Chiqueeta",
+      weight: "1 kg",
+      quantity: 3,
+      rate: 129,
+      amount: 387,
+    },
+    {
+      id: "12",
+      category: "fresh",
+      description: "Organic Milk (1 L)",
+      brand: "Hermes",
+      weight: "1 kg",
+      quantity: 1,
+      rate: 425,
+      amount: 425,
+    },
+    {
+      id: "13",
+      category: "fresh",
+      description: "Eggs",
+      brand: "Chiqueeta",
+      perBox: 10,
+      quantity: 2,
+      rate: 35,
+      amount: 70,
+    },
+    {
+      id: "14",
+      category: "fresh",
+      description: "Whole Wheat Bread",
+      brand: "Stones",
+      weight: "0.75 kg",
+      quantity: 1,
+      rate: 275,
+      amount: 275,
+    },
+  ],
+  total: 1787,
+  taxRate: 19,
+  createdAt: "2025-06-23T18:33:25.603Z",
+  updatedAt: "2025-06-23T18:33:25.416Z",
+});
