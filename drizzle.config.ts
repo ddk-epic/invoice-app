@@ -1,15 +1,11 @@
 import { type Config } from "drizzle-kit";
 
 export default {
+  out: "./drizzle",
   schema: "./src/server/db/schema.ts",
-  dialect: "singlestore",
+  dialect: "postgresql",
   tablesFilter: ["invoice_*"],
   dbCredentials: {
-    host: process.env.SINGLESTORE_HOST!,
-    port: parseInt(process.env.SINGLESTORE_PORT!),
-    user: process.env.SINGLESTORE_USER!,
-    password: process.env.SINGLESTORE_PASS!,
-    database: process.env.SINGLESTORE_DB!,
-    ssl: {},
+    url: process.env.POSTGRES_URL!,
   },
 } satisfies Config;

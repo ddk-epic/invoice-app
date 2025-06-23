@@ -1,10 +1,4 @@
-import {
-  singlestoreTableCreator,
-  bigint,
-  varchar,
-  int,
-  timestamp,
-} from "drizzle-orm/singlestore-core";
+import { integer, pgTable, serial, text, timestamp } from "drizzle-orm/pg-core";
 
 /**
  * This is an example of how to use the multi-project schema feature of Drizzle ORM. Use the same
@@ -16,34 +10,41 @@ import {
  * migrate:   npx drizzle-kit migrate
  * push:      npx drizzle-kit push
  */
-export const createTable = singlestoreTableCreator((name) => `invoice_${name}`);
 
-export const productsSchema = createTable("products_table", {
-  id: bigint({ mode: "number", unsigned: true }).primaryKey().autoincrement(),
-  category: varchar({ length: 255 }).notNull(),
-  description: varchar({ length: 255 }).notNull(),
-  brand: varchar({ length: 255 }).notNull(),
-  origin: varchar({ length: 255 }),
-  weight: varchar({ length: 255 }),
-  perBox: int(),
-  quantity: int().notNull(),
-  rate: int().notNull(),
-  amount: int().notNull(),
+export const productsSchema = pgTable("products_table", {
+  id: serial("id").primaryKey(),
+  category: text("name").notNull(),
+  description: text("description").notNull(),
+  brand: text("brand").notNull(),
+  origin: text("origin"),
+  weight: text("weight"),
+  perBox: integer(),
+  quantity: integer().notNull(),
+  rate: integer().notNull(),
+  amount: integer().notNull(),
 });
 
-export const invoiceSchema = createTable("invoice_table", {
-  invoiceId: varchar({ length: 255 }).notNull(),
-  invoiceDate: varchar({ length: 255 }).notNull(),
-  dueDate: varchar({ length: 255 }).notNull(),
+export const invoiceSchema = pgTable("invoice_table", {
+  invoiceId: text("name").notNull(),
+  invoiceDate: text("name").notNull(),
+  dueDate: text("name").notNull(),
 
-  sender: varchar({ length: 255 }).notNull(),
-  sendTo: varchar({ length: 255 }).notNull(),
-  invoiceTo: varchar({ length: 255 }).notNull(),
+  sender: text("name").notNull(),
+  sendTo: text("name").notNull(),
+  invoiceTo: text("name").notNull(),
 
   //items: invoice_product_table
-  total: int().notNull(),
-  taxRate: int().notNull(),
+  total: integer().notNull(),
+  taxRate: integer().notNull(),
 
   createdAt: timestamp("createdAt").notNull().defaultNow(),
-  updatedAt: timestamp("updatedAt").notNull().defaultNow(),
+  updatedAt: timestamp("updatedAt")
+    .notNull()
+    .$onUpdate(() => new Date()),
 });
+
+export type InsertProduct = typeof productsSchema.$inferInsert;
+export type SelectProduct = typeof productsSchema.$inferSelect;
+
+export type InsertInvoice = typeof invoiceSchema.$inferInsert;
+export type SelectInvoice = typeof invoiceSchema.$inferSelect;
