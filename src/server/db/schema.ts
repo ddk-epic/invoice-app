@@ -1,11 +1,9 @@
 import {
-  text,
   singlestoreTableCreator,
   bigint,
-  singlestoreTable,
   varchar,
   int,
-  decimal,
+  timestamp,
 } from "drizzle-orm/singlestore-core";
 
 /**
@@ -20,7 +18,7 @@ import {
  */
 export const createTable = singlestoreTableCreator((name) => `invoice_${name}`);
 
-export const products = createTable("products_table", {
+export const productsSchema = createTable("products_table", {
   id: bigint({ mode: "number", unsigned: true }).primaryKey().autoincrement(),
   category: varchar({ length: 255 }).notNull(),
   description: varchar({ length: 255 }).notNull(),
@@ -31,4 +29,21 @@ export const products = createTable("products_table", {
   quantity: int().notNull(),
   rate: int().notNull(),
   amount: int().notNull(),
+});
+
+export const invoiceSchema = createTable("invoice_table", {
+  invoiceId: varchar({ length: 255 }).notNull(),
+  invoiceDate: varchar({ length: 255 }).notNull(),
+  dueDate: varchar({ length: 255 }).notNull(),
+
+  sender: varchar({ length: 255 }).notNull(),
+  sendTo: varchar({ length: 255 }).notNull(),
+  invoiceTo: varchar({ length: 255 }).notNull(),
+
+  //items: invoice_product_table
+  total: int().notNull(),
+  taxRate: int().notNull(),
+
+  createdAt: timestamp("createdAt").notNull().defaultNow(),
+  updatedAt: timestamp("updatedAt").notNull().defaultNow(),
 });

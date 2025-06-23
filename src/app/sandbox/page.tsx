@@ -1,6 +1,6 @@
 import React from "react";
 import { db } from "@/server/db";
-import { products } from "@/server/db/schema";
+import { productsSchema } from "@/server/db/schema";
 import { sampleProducts } from "@/constants/constants";
 
 const newItems = sampleProducts.map(
@@ -36,7 +36,9 @@ function SandboxPage() {
           action={async () => {
             "use server";
 
-            const productsInsert = await db.insert(products).values(newItems);
+            const productsInsert = await db
+              .insert(productsSchema)
+              .values(newItems);
             console.log(productsInsert);
           }}
         >
