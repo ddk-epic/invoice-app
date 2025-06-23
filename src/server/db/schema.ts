@@ -25,20 +25,20 @@ export const productsSchema = pgTable("products_table", {
 });
 
 export const invoiceSchema = pgTable("invoice_table", {
-  invoiceId: text("name").notNull(),
-  invoiceDate: text("name").notNull(),
-  dueDate: text("name").notNull(),
+  id: serial("id").primaryKey(),
+  invoiceDate: text("invoice_date").notNull(),
+  dueDate: text("due_date").notNull(),
 
-  sender: text("name").notNull(),
-  sendTo: text("name").notNull(),
-  invoiceTo: text("name").notNull(),
+  sender: text("sender").notNull(),
+  sendTo: text("send_to").notNull(),
+  invoiceTo: text("invoice_to").notNull(),
 
   //items: invoice_product_table
   total: integer().notNull(),
   taxRate: integer().notNull(),
 
-  createdAt: timestamp("createdAt").notNull().defaultNow(),
-  updatedAt: timestamp("updatedAt")
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at")
     .notNull()
     .$onUpdate(() => new Date()),
 });
