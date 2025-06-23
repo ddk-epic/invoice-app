@@ -5,15 +5,16 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 ## Features
 
 - [x] dashboard showing latest
-- [ ] one-click add address cards
-- [ ] one-click add item (from inventory)
-- [ ] serve pdf in a link
+- [ ] invoice pdf endpoints
 
 ## TO-DO
 
 - [x] UI scaffolding
 - [x] Auth (Clerk)
 - [x] Deploy (Netlify)
-- [x] Database (Single Store)
-- [ ] Database schemas
+- [x] Database (Neon)
+- [x] Database schemas
 - [ ] Connecting UI to db
+- [ ] serve pdf in a link
+- [ ] two-click add address cards (modal)
+- [ ] two-click add item (modal)
