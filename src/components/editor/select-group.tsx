@@ -36,8 +36,13 @@ export function SelectContact(props: SelectContactProps) {
       {contact ? (
         <div className="text-sm text-gray-600">
           <div className="font-medium">{contact.name}</div>
-          <div className="whitespace-pre-line">{contact.address}</div>
-          <div>{contact.email}</div>
+          <p>{contact?.owner}</p>
+          <p>{contact.address?.street}</p>
+          <p>
+            {contact.address?.zip} {contact.address?.state}
+          </p>
+          <p> {contact.address?.country}</p>
+          {!contact.owner && <div className="h-5"></div>}
         </div>
       ) : (
         <div className="text-sm text-gray-300 space-y-2 pb-1">
@@ -45,6 +50,7 @@ export function SelectContact(props: SelectContactProps) {
           <div className="h-3 bg-gray-200 rounded w-24"></div>
           <div className="h-3 bg-gray-200 rounded w-28"></div>
           <div className="h-3 bg-gray-200 rounded w-38"></div>
+          <div className="h-3 bg-gray-200 rounded w-28"></div>
         </div>
       )}
     </div>
