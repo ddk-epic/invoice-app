@@ -33,12 +33,13 @@ export const productsSchema = pgTable("products_table", {
 
 export const invoiceSchema = pgTable("invoice_table", {
   id: serial("id").primaryKey(),
+  invoiceId: text("invoice_id").notNull(),
   invoiceDate: text("invoice_date").notNull(),
   dueDate: text("due_date").notNull(),
 
-  sender: text("sender").notNull(),
-  sendTo: text("send_to").notNull(),
-  invoiceTo: text("invoice_to").notNull(),
+  sender: jsonb("sender").notNull(),
+  sendTo: jsonb("send_to").notNull(),
+  invoiceTo: jsonb("invoice_to").notNull(),
 
   items: jsonb().notNull(),
   total: integer().notNull(),

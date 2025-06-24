@@ -3,13 +3,15 @@ import { db } from "@/server/db";
 import { invoiceSchema, productsSchema } from "@/server/db/schema";
 import { sampleInvoiceData, sampleProducts } from "@/constants/constants";
 
-const newItems = sampleProducts.map(({ id, ...remainder }) => remainder);
+const newItems = sampleProducts.map(({ id, ...rest }) => rest);
+
+const { id, ...invoiceData } = sampleInvoiceData;
 const newInvoice = {
-  ...sampleInvoiceData,
-  sender: JSON.stringify(sampleInvoiceData.sender),
-  sendTo: JSON.stringify(sampleInvoiceData.sendTo),
-  invoiceTo: JSON.stringify(sampleInvoiceData.invoiceTo),
-  items: JSON.stringify(sampleInvoiceData.items),
+  ...invoiceData,
+  sender: JSON.stringify(invoiceData.sender),
+  sendTo: JSON.stringify(invoiceData.sendTo),
+  invoiceTo: JSON.stringify(invoiceData.invoiceTo),
+  items: JSON.stringify(invoiceData.items),
 };
 
 async function insertProducts() {

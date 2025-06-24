@@ -153,6 +153,7 @@ export const sampleProducts: InvoiceItem[] = [
 
 export const sampleInvoiceData: InvoiceData = {
   id: 10,
+  invoiceId: "INV-021",
   invoiceDate: "2025-06-20",
   dueDate: "2025-07-05",
   sender: {
@@ -199,6 +200,7 @@ export const sampleInvoiceData: InvoiceData = {
 
 export const invoiceJson = JSON.stringify({
   id: 1,
+  invoiceId: "INV-021",
   invoiceDate: "2025-06-20",
   dueDate: "2025-07-05",
   sender: {
