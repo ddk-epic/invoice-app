@@ -29,13 +29,18 @@ async function InvoiceGenerator(props: InvoiceGeneratorProps) {
 
   if (!invoice) notFound();
 
+  const total = invoice.total / 100;
+  const tax = invoice.taxRate / 100;
+  const subtotal = total / (1 + tax);
+  const taxAmount = total - subtotal;
+
   const indent = 3;
 
   const s = StyleSheet.create({
     page: {
       flexDirection: "column",
       fontSize: 10,
-      lineHeight: 1.25,
+      lineHeight: 1.4,
 
       padding: 32,
       paddingTop: 36,
@@ -50,11 +55,11 @@ async function InvoiceGenerator(props: InvoiceGeneratorProps) {
     inline: {
       flexDirection: "row",
     },
-    lineRow: {
+    header: {
       flexDirection: "column",
+      lineHeight: 0.7,
     },
     logo: {
-      flexGrow: 1,
       paddingBottom: 18,
     },
     contacts: {
@@ -62,9 +67,9 @@ async function InvoiceGenerator(props: InvoiceGeneratorProps) {
       width: 210,
       //borderWidth: 1,
     },
-    invDate: {
+    boxRight: {
       textAlign: "right",
-      marginRight: indent,
+      paddingRight: indent + 2,
     },
     tableHeader: {
       flexDirection: "row",
@@ -80,13 +85,30 @@ async function InvoiceGenerator(props: InvoiceGeneratorProps) {
           <View style={s.logo}>
             <Logo color={"#2f2f2f"} />
           </View>
-          <View style={[s.inline, { gap: "5rem" }]}>
-            <Text>Mobil: 0124 82591253</Text>
-            <Text>Email: test@gmail.com</Text>
+          {/* sender information */}
+          <View>
+            <View
+              style={[
+                s.inline,
+                { paddingLeft: 127, gap: "5rem", paddingBottom: indent },
+              ]}
+            >
+              <Text>Mobil: 0124 12312312</Text>
+              <Text>Email: test@gmail.com</Text>
+            </View>
+            <View
+              style={[
+                s.inline,
+                { paddingLeft: 127, gap: "5rem", paddingBottom: indent },
+              ]}
+            >
+              <Text>{/* details... */}</Text>
+              <Text>{/* details... */}</Text>
+            </View>
           </View>
         </View>
-        {/* divider */}
-        <View style={s.lineRow}>
+        {/* details header */}
+        <View style={s.header}>
           <Overline />
           <View style={[s.inline, { gap: "5rem" }]}>
             <Text style={s.ml}>Rechnungsnummer: {invoice.invoiceId}</Text>
@@ -126,37 +148,87 @@ async function InvoiceGenerator(props: InvoiceGeneratorProps) {
           </View>
         </View>
         {/* invoice date */}
-        <View style={s.invDate}>
+        <View style={s.boxRight}>
           <Text style={s.bold}>{invoice.invoiceDate}</Text>
         </View>
         {/* table header */}
-        <View style={s.lineRow}>
+        <View style={s.header}>
           <Overline />
           <View style={[s.ml, s.tableHeader]}>
             <Text style={[s.bold, { width: 30 }]}>Nr.</Text>
-            <Text style={[s.bold, { width: 318 }]}>Umschreibung</Text>
-            <Text style={[s.bold, { paddingRight: 44 }]}>Menge</Text>
-            <Text style={[s.bold, { paddingRight: 25 }]}>Preis</Text>
-            <Text style={[s.bold, { paddingRight: indent }]}>Nettowert</Text>
+            <Text style={[s.bold, { width: 274 }]}>Umschreibung</Text>
+            <Text style={[s.bold, { width: 73, textAlign: "right" }]}>
+              Menge
+            </Text>
+            <Text style={[s.bold, { width: 71, textAlign: "right" }]}>
+              Preis
+            </Text>
+            <Text style={[s.bold, { width: 71, textAlign: "right" }]}>
+              Nettowert
+            </Text>
           </View>
           <UnderLine />
         </View>
         {/* table items */}
         <View style={s.ml}>
-          {invoice.items.map((item) => (
+          {invoice.items.map((item, index) => (
             <View key={item.id} style={s.inline}>
-              <Text style={[{ width: 30 }]}>{item.id}</Text>
-              <Text style={[{ width: 339 }]}>{item.description}</Text>
-              <Text style={[{ width: 50 }]}>{item.quantity}</Text>
-              <Text style={[{ width: 50 }]}>{item.rate / 100} €</Text>
-              <Text style={[{ width: 50, textAlign: "right" }]}>
+              <Text style={[{ width: 30 }]}>{index + 1}</Text>
+              <Text style={[{ width: 273 }]}>
+                {item.description} {item.brand.toUpperCase()},{" "}
+                {item.perBox ? item.perBox + " X " + item.weight : item.weight}
+              </Text>
+              <Text style={[{ width: 72, textAlign: "right" }]}>
+                {item.quantity}
+              </Text>
+              <Text style={[{ width: 72, textAlign: "right" }]}>
+                {item.rate / 100} €
+              </Text>
+              <Text style={[{ width: 72, textAlign: "right" }]}>
                 {item.amount / 100} €
               </Text>
             </View>
           ))}
         </View>
-        <View>
-          <Text></Text>
+        {/* total header */}
+        <View style={s.header}>
+          <Overline />
+          <View style={s.tableHeader}>
+            <Text style={{ width: 384 }}></Text>
+            <Text style={[s.bold, { width: 88 }]}>Gesamtbetrag</Text>
+            <Text style={[s.bold, { width: 50, textAlign: "right" }]}>
+              {total} €
+            </Text>
+          </View>
+          <UnderLine />
+        </View>
+        {/* total details */}
+        <View></View>
+        <View style={{ alignItems: "flex-end", paddingTop: 12 }}>
+          <View style={[s.inline]}>
+            <Text style={[s.bold, { width: 150, textAlign: "right" }]}>
+              Rechnungsbetrag (Netto)
+            </Text>
+            <Text style={[s.bold, s.boxRight, { width: 77 }]}>
+              {subtotal.toFixed(2)} €
+            </Text>
+          </View>
+          <View style={[s.inline]}>
+            <Text style={[s.bold, { width: 150, textAlign: "right" }]}>
+              MwSt. von {invoice.taxRate.toFixed(2)} %
+            </Text>
+            <Text style={[s.bold, s.boxRight, { width: 77 }]}>
+              {taxAmount.toFixed(2)} €
+            </Text>
+          </View>
+          <View style={[s.inline]}>
+            <Text style={[s.bold, { width: 150, textAlign: "right" }]}>
+              Rechnungsbetrag (Brutto)
+            </Text>
+            <Text style={[s.bold, s.boxRight, { width: 77 }]}>
+              {total.toFixed(2)} €
+            </Text>
+          </View>
         </View>
       </Page>
     </Document>
@@ -167,39 +239,6 @@ async function InvoiceGenerator(props: InvoiceGeneratorProps) {
       <PdfViewer document={PdfDocument} />
     </main>
   );
-
-  // return (
-  //   <main className="wrapper top">
-  //     <div className="my-8 space-y-4">
-  //       <div>
-  //         <h2>
-  //           Invoice: {invoice.invoiceId}({invoice.id})
-  //         </h2>
-  //         <div>Invoice Date: {invoice.invoiceDate}</div>
-  //         <div>Due Date: {invoice.dueDate}</div>
-  //       </div>
-  //       <div>
-  //         <div>Sender Name: {invoice.sender.name}</div>
-  //         <div>Send To: {invoice.sendTo.name}</div>
-  //         <div>Invoice To: {invoice.invoiceTo.name}</div>
-  //       </div>
-  //       <div>
-  //         Items:
-  //         {invoice.items.map((item) => (
-  //           <div key={item.id}>{item.description}</div>
-  //         ))}
-  //       </div>
-  //       <div>
-  //         <div>Total: {invoice.total / 100}€</div>
-  //         <div>Tax Rate: {invoice.taxRate}%</div>
-  //       </div>
-  //       <div>
-  //         <div>Created At: {new Date(invoice.createdAt).toLocaleString()}</div>
-  //         <div>Updated At: {new Date(invoice.updatedAt).toLocaleString()}</div>
-  //       </div>
-  //     </div>
-  //   </main>
-  // );
 }
 
 export default InvoiceGenerator;
