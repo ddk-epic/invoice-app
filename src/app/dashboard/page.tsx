@@ -8,21 +8,10 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
+
 import { CreateInvoiceModal } from "@/components/dashboard/create-modal";
-import {
-  sampleRecentInvoices,
-  getStatusColor,
-  user,
-} from "@/constants/constants";
+import { user } from "@/constants/constants";
+import InvoiceTable from "@/components/dashboard/invoice-table";
 
 export default function Dashboard() {
   return (
@@ -115,33 +104,7 @@ export default function Dashboard() {
             </div>
           </CardHeader>
           <CardContent>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Invoice ID</TableHead>
-                  <TableHead>Client</TableHead>
-                  <TableHead>Amount</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Date</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {sampleRecentInvoices.map((invoice) => (
-                  <TableRow key={invoice.id}>
-                    <TableCell className="font-medium">{invoice.id}</TableCell>
-                    <TableCell>{invoice.client}</TableCell>
-                    <TableCell>{invoice.amount}</TableCell>
-                    <TableCell>
-                      <Badge className={getStatusColor(invoice.status)}>
-                        {invoice.status.charAt(0).toUpperCase() +
-                          invoice.status.slice(1)}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>{invoice.date}</TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+            <InvoiceTable />
           </CardContent>
         </Card>
       </div>
