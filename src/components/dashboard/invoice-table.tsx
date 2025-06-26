@@ -15,11 +15,11 @@ const InvoiceTable = () => {
     <Table>
       <TableHeader>
         <TableRow>
-          <TableHead>Invoice ID</TableHead>
-          <TableHead>Client</TableHead>
-          <TableHead>Amount</TableHead>
+          <TableHead>Rechnungs ID</TableHead>
+          <TableHead>Kunde</TableHead>
+          <TableHead>Betrag</TableHead>
           <TableHead>Status</TableHead>
-          <TableHead>Date</TableHead>
+          <TableHead>Datum</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
