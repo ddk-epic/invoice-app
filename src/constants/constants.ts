@@ -18,19 +18,19 @@ export const getStatusColor = (status: string) => {
 
 export const invoiceStatistics = [
   {
-    category: "Total Invoices",
+    category: "Gesamte Rechnungen",
     value: "24",
-    comment: "+2 from last month",
+    comment: "+2 seit letztem Monat",
   },
   {
-    category: "Outstanding Amount",
+    category: "Ausstehender Betrag",
     value: "12,450 €",
-    comment: "3 pending invoices",
+    comment: "3 ausstehende Rechnungen",
   },
   {
-    category: "This Month",
+    category: "Diesen Monat",
     value: "8,750 €",
-    comment: "+15% from last month",
+    comment: "+15 % gegenüber dem Vormonat",
   },
 ];
 

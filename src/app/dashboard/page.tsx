@@ -22,10 +22,10 @@ export default async function Dashboard() {
         {/* Welcome Section */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900">
-            Welcome back, {user?.firstName}!
+            Willkommen zurück, {user?.firstName}!
           </h1>
           <p className="mt-2 text-gray-600">
-            Manage your invoices for your business.
+            Verwalten Sie Rechnungen für Ihr Unternehmen.
           </p>
         </div>
 
@@ -34,10 +34,10 @@ export default async function Dashboard() {
           <Card className="purple-gradient text-white">
             <CardHeader>
               <CardTitle className="text-white">
-                Ready to create a new invoice?
+                Bereit, eine neue Rechnung zu erstellen?
               </CardTitle>
               <CardDescription className="text-purple-100">
-                Generate professional invoices in minutes
+                Erstellen Sie professionelle Rechnungen in Minuten!
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -69,11 +69,13 @@ export default async function Dashboard() {
           <CardHeader>
             <div className="flex items-center justify-between">
               <div>
-                <CardTitle>Recent Invoices</CardTitle>
-                <CardDescription>Your latest invoice activity</CardDescription>
+                <CardTitle>Kürzlich ausgestellte Rechnungen</CardTitle>
+                <CardDescription>
+                  Ihre letzte Rechnungsaktivität
+                </CardDescription>
               </div>
               <Button variant="outline" size="sm">
-                View All
+                Alle ansehen
               </Button>
             </div>
           </CardHeader>

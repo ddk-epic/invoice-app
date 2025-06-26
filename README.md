@@ -16,6 +16,6 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 - [x] Database schemas
 - [x] Connecting UI to db
 - [x] serve pdf in a link
+- [x] /dashboard: display correct information
 - [ ] two-click add address cards (modal)
 - [ ] two-click add item (modal)
-- [ ] /dashboard: display correct information
