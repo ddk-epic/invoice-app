@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import { QUERIES } from "@/server/db/queries";
 import { InvoiceData } from "@/constants/types";
 import { unstable_cache } from "next/cache";
-import PdfViewer from "@/components/pdf-viewer";
+import PdfViewer from "@/components/pdf/pdf-viewer";
 import PdfDocument from "@/components/pdf/pdf-document";
 
 interface InvoiceGeneratorProps {
