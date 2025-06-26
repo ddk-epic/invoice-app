@@ -10,17 +10,19 @@ import {
 } from "@/components/ui/card";
 
 import { CreateInvoiceModal } from "@/components/dashboard/create-modal";
-import { invoiceStatistics, user } from "@/constants/constants";
+import { invoiceStatistics } from "@/constants/constants";
 import InvoiceTable from "@/components/dashboard/invoice-table";
+import { currentUser } from "@clerk/nextjs/server";
 
-export default function Dashboard() {
+export default async function Dashboard() {
+  const user = await currentUser();
   return (
     <main className="wrapper top min-h-screen bg-gray-50">
       <div className="px-4 py-6 sm:px-0">
         {/* Welcome Section */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900">
-            Welcome back, {user.name}!
+            Welcome back, {user?.firstName}!
           </h1>
           <p className="mt-2 text-gray-600">
             Manage your invoices for your business.
@@ -28,7 +30,7 @@ export default function Dashboard() {
         </div>
 
         {/* Quick Actions */}
-        <div className="mb-8">
+        <div className="my-4">
           <Card className="purple-gradient text-white">
             <CardHeader>
               <CardTitle className="text-white">
@@ -45,7 +47,7 @@ export default function Dashboard() {
         </div>
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
           {invoiceStatistics.map((item, index) => (
             <Card key={index}>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">

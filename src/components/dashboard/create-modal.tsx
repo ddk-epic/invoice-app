@@ -33,7 +33,7 @@ export const CreateInvoiceModal = () => {
           Create New Invoice
         </Button>
       </DialogTrigger>
-      <DialogContent className="max-w-4xl max-h-[95vh] overflow-y-auto">
+      <DialogContent className="max-w-2xl max-h-[95vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Create New Invoice</DialogTitle>
           <DialogDescription>
@@ -44,7 +44,7 @@ export const CreateInvoiceModal = () => {
           {/* Client Information */}
           <div className="flex flex-col gap-4">
             <div className="space-y-4">
-              <h3 className="text-lg font-semibold text-purple-600">
+              <h3 className="pt-2 text-lg font-semibold text-purple-600">
                 Client Information
               </h3>
               <div className="space-y-2">
@@ -52,15 +52,6 @@ export const CreateInvoiceModal = () => {
                 <Input
                   id="clientName"
                   placeholder="Enter client name"
-                  required
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="clientEmail">Email</Label>
-                <Input
-                  id="clientEmail"
-                  type="email"
-                  placeholder="client@example.com"
                   required
                 />
               </div>
@@ -96,7 +87,7 @@ export const CreateInvoiceModal = () => {
           </div>
 
           {/* Form Actions */}
-          <div className="flex justify-end space-x-2 pt-4 border-t">
+          <div className="flex justify-end space-x-2 pt-4">
             <Button
               type="button"
               variant="outline"

@@ -126,7 +126,7 @@ main {
 }
 
 .wrapper {
-  @apply max-w-5xl mx-auto px-4 sm:px-6 lg:px-8;
+  @apply max-w-4xl mx-auto px-4 sm:px-6 lg:px-8;
 }
 
 .purple-gradient {
@@ -134,7 +134,9 @@ main {
 }
 
 .cl-footer,
-.cl-internal-1hp5nqm {
+.cl-internal-1hp5nqm,
+.cl-internal-13u79ez,
+.cl-internal-1dauvpw {
   @apply hidden;
 }
 
