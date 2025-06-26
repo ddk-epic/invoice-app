@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/card";
 
 import { CreateInvoiceModal } from "@/components/dashboard/create-modal";
-import { user } from "@/constants/constants";
+import { invoiceStatistics, user } from "@/constants/constants";
 import InvoiceTable from "@/components/dashboard/invoice-table";
 
 export default function Dashboard() {
@@ -46,48 +46,20 @@ export default function Dashboard() {
 
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">
-                Total Invoices
-              </CardTitle>
-              <FileChartColumn className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">24</div>
-              <p className="text-xs text-muted-foreground">
-                +2 from last month
-              </p>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">
-                Outstanding Amount
-              </CardTitle>
-              <FileChartColumn className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">$12,450</div>
-              <p className="text-xs text-muted-foreground">
-                3 pending invoices
-              </p>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">This Month</CardTitle>
-              <FileChartColumn className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">$8,750</div>
-              <p className="text-xs text-muted-foreground">
-                +15% from last month
-              </p>
-            </CardContent>
-          </Card>
+          {invoiceStatistics.map((item, index) => (
+            <Card key={index}>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">
+                  {item.category}
+                </CardTitle>
+                <FileChartColumn className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">{item.value}</div>
+                <p className="text-xs text-muted-foreground">{item.comment}</p>
+              </CardContent>
+            </Card>
+          ))}
         </div>
 
         {/* Recent Invoices */}

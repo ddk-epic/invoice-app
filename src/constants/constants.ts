@@ -21,6 +21,24 @@ export const getStatusColor = (status: string) => {
   }
 };
 
+export const invoiceStatistics = [
+  {
+    category: "Total Invoices",
+    value: "24",
+    comment: "+2 from last month",
+  },
+  {
+    category: "Outstanding Amount",
+    value: "12,450 €",
+    comment: "3 pending invoices",
+  },
+  {
+    category: "This Month",
+    value: "8,750 €",
+    comment: "+15% from last month",
+  },
+];
+
 // Mock data for recent invoices
 export const sampleRecentInvoices = [
   {
