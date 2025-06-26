@@ -13,6 +13,7 @@ import { CreateInvoiceModal } from "@/components/dashboard/create-modal";
 import { invoiceStatistics } from "@/constants/constants";
 import InvoiceTable from "@/components/dashboard/invoice-table";
 import { currentUser } from "@clerk/nextjs/server";
+import Link from "next/link";
 
 export default async function Dashboard() {
   const user = await currentUser();
@@ -74,8 +75,8 @@ export default async function Dashboard() {
                   Ihre letzte Rechnungsaktivität
                 </CardDescription>
               </div>
-              <Button variant="outline" size="sm">
-                Alle ansehen
+              <Button variant="outline" size="sm" asChild>
+                <Link href="/invoice">Alle ansehen</Link>
               </Button>
             </div>
           </CardHeader>
