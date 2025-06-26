@@ -5,7 +5,7 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 ## Features
 
 - [x] dashboard showing latest
-- [ ] invoice pdf endpoints
+- [x] invoice pdf endpoints
 
 ## TO-DO
 
@@ -14,7 +14,8 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 - [x] Deploy (Netlify)
 - [x] Database (Neon)
 - [x] Database schemas
-- [ ] Connecting UI to db
-- [ ] serve pdf in a link
+- [x] Connecting UI to db
+- [x] serve pdf in a link
 - [ ] two-click add address cards (modal)
 - [ ] two-click add item (modal)
+- [ ] /dashboard: display correct information
