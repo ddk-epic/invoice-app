@@ -1,3 +1,5 @@
+import React from "react";
+import { FileChartColumn } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -15,7 +17,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { FileChartColumn, Plus } from "lucide-react";
+import { CreateInvoiceModal } from "@/components/dashboard/create-modal";
 import {
   sampleRecentInvoices,
   getStatusColor,
@@ -48,10 +50,7 @@ export default function Dashboard() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <Button className="bg-white text-purple-600 hover:bg-gray-100">
-                <Plus className="mt-0.5 mr-1 h-4 w-4" />
-                Create New Invoice
-              </Button>
+              <CreateInvoiceModal />
             </CardContent>
           </Card>
         </div>
