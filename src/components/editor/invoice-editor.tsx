@@ -82,10 +82,6 @@ export default function InvoiceEditor() {
     setAddress(newAddress || null);
   };
 
-  const subtotal = items.reduce((sum, item) => sum + item.amount, 0);
-  const taxAmount = (subtotal * taxRate) / 100;
-  const total = subtotal + taxAmount;
-
   return (
     <>
       <Optionsbar id={invoiceId} />
@@ -145,12 +141,7 @@ export default function InvoiceEditor() {
               )}
 
               {/* Total */}
-              <Total
-                total={total}
-                subtotal={subtotal}
-                taxRate={taxRate}
-                taxAmount={taxAmount}
-              />
+              <Total items={items} taxRate={taxRate} />
             </div>
           </div>
         </Card>

@@ -1,14 +1,17 @@
 import React from "react";
+import { InvoiceItem } from "@/constants/types";
 
 interface TotalProps {
-  total: number;
-  subtotal: number;
+  items: InvoiceItem[];
   taxRate: number;
-  taxAmount: number;
 }
 
-function Total(props: TotalProps) {
-  const { total, subtotal, taxRate, taxAmount } = props;
+function Total({ items, taxRate }: TotalProps) {
+  const total = items.reduce((sum, item) => sum + item.amount, 0);
+  const tax = taxRate / 100;
+  const subtotal = total / (1 + tax);
+  const taxAmount = total - subtotal;
+
   return (
     <>
       {/* Total */}
