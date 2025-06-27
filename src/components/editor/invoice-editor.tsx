@@ -1,33 +1,20 @@
 "use client";
 
-import { useState } from "react";
-import { Plus } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import React, { useState } from "react";
+
 import { Card } from "@/components/ui/card";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import { sampleContacts, sampleProducts } from "@/constants/constants";
-import { Contact, InvoiceItem } from "@/constants/types";
 import { SelectContact } from "./select-group";
 import Total from "./total";
 import Table from "./table";
 import Optionsbar from "./optionsbar";
 import AddItemModal from "./add-item-modal";
+import InvoiceDetails from "./invoice-details";
+
+import { sampleContacts, sampleProducts } from "@/constants/constants";
+import { Contact, InvoiceItem } from "@/constants/types";
 
 export default function InvoiceEditor() {
   const [invoiceId, setInvoiceId] = useState(1);
-  const [invoiceDate, setInvoiceDate] = useState(
-    new Date().toISOString().split("T")[0]
-  );
-  const [dueDate, setDueDate] = useState("");
-  const [isAddItemModalOpen, setIsAddItemModalOpen] = useState(false);
 
   const [recipient, setRecipient] = useState<Contact | null>(null);
   const [address, setAddress] = useState<Contact | null>(null);
@@ -101,9 +88,8 @@ export default function InvoiceEditor() {
 
   return (
     <>
-      <div className="z-50 fixed right-0 p-8">
-        <Optionsbar id={invoiceId} />
-      </div>
+      <Optionsbar id={invoiceId} />
+
       <div className="max-w-4xl py-4 mx-auto">
         <Card className="wrapper min-w-2xl min-h-[1086px] md:min-h-[1584px] bg-white shadow-lg">
           <div className="py-6 px-12 h-full flex flex-col text-sm">
@@ -113,43 +99,10 @@ export default function InvoiceEditor() {
                 <h1 className="text-3xl font-bold text-gray-800 mb-4">
                   Rechnung
                 </h1>
-                <div className="space-y-1">
-                  <div className="flex items-center gap-2">
-                    <Label className="font-medium min-w-[160px]">
-                      Rechnungsnummer:
-                    </Label>
-                    <Input
-                      id="invoice-number"
-                      value={invoiceId}
-                      onChange={(e) => setInvoiceId(Number(e.target.value))}
-                      className="w-30 md:w-36 h-8"
-                    />
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Label className="font-medium min-w-[160px]">
-                      Rechnungsdatum:
-                    </Label>
-                    <Input
-                      id="invoice-date"
-                      type="date"
-                      value={invoiceDate}
-                      onChange={(e) => setInvoiceDate(e.target.value)}
-                      className="w-30 md:w-36 h-8"
-                    />
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Label className="font-medium min-w-[160px]">
-                      Fälligkeitsdatum:
-                    </Label>
-                    <Input
-                      id="due-date"
-                      type="date"
-                      value={dueDate}
-                      onChange={(e) => setDueDate(e.target.value)}
-                      className="w-30 md:w-36 h-8"
-                    />
-                  </div>
-                </div>
+                <InvoiceDetails
+                  invoiceId={invoiceId}
+                  setInvoiceId={setInvoiceId}
+                />
               </div>
             </div>
 
@@ -169,32 +122,11 @@ export default function InvoiceEditor() {
               />
             </div>
 
-            {/* Invoice Items */}
             <div className="flex-1">
+              {/* Invoice Items */}
               <div className="flex justify-between items-center mb-4">
-                <h2 className="text-lg font-semibold"></h2>
-                <Dialog
-                  open={isAddItemModalOpen}
-                  onOpenChange={setIsAddItemModalOpen}
-                >
-                  <DialogTrigger asChild>
-                    <Button size="sm" className="flex items-center gap-2">
-                      <Plus className="h-4 w-4" />
-                      Artikel hinzufügen
-                    </Button>
-                  </DialogTrigger>
-                  <DialogContent className="max-w-2xl max-h-[95vh] overflow-y-auto">
-                    <DialogHeader>
-                      <DialogTitle>
-                        Zu Hinzufügende Artikel auswählen
-                      </DialogTitle>
-                    </DialogHeader>
-                    <AddItemModal
-                      addItem={addItem}
-                      setIsAddItemModalOpen={setIsAddItemModalOpen}
-                    />
-                  </DialogContent>
-                </Dialog>
+                <h2 className="text-lg font-semibold">{/*Items*/}</h2>
+                <AddItemModal addItem={addItem} />
               </div>
 
               {/* Table */}
