@@ -25,25 +25,24 @@ function AddItemModal(props: AddItemModalProps) {
                   <p className="text-sm text-gray-500">{item.category}</p>
                 </div>
                 <div className="text-right mr-4">
-                  <p className="font-medium">{item.rate/100} €</p>
+                  <p className="font-medium">{item.rate / 100} €</p>
                   <p className="text-sm text-gray-500">{item.weight}</p>
                 </div>
               </div>
             </div>
             <Button
-              size="sm"
+              size="icon"
               onClick={() => addItem(item)}
-              className="flex items-center gap-1"
+              className="flex items-center rounded-full"
             >
-              <Plus className="h-3 w-3" />
-              Add
+              <Plus />
             </Button>
           </div>
         ))}
       </div>
       <div className="flex justify-end pt-4 border-t">
         <Button variant="outline" onClick={() => setIsAddItemModalOpen(false)}>
-          Close
+          Abbrechen
         </Button>
       </div>
     </div>

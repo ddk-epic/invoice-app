@@ -1,6 +1,6 @@
 import React from "react";
 import Link from "next/link";
-import { Settings, Download, Save, BookCheck } from "lucide-react";
+import { Settings, Download, Save, BookCheck, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Sheet,
@@ -23,7 +23,7 @@ function Optionsbar({ id: invoiceId }: { id: number }) {
       <SheetContent className="w-70 lg:w-80">
         <SheetHeader className="px-6">
           <SheetTitle className="text-xl font-semibold">
-            Invoice Options
+            Rechnungsoptionen
           </SheetTitle>
         </SheetHeader>
 
@@ -34,7 +34,7 @@ function Optionsbar({ id: invoiceId }: { id: number }) {
             <div className="flex flex-col pl-4 pt-1 space-y-1">
               <span>Rechnung / PDF</span>
               <span>Author: phtt</span>
-              <span>Recipient: ABC</span>
+              <span>Empfänger: ABC</span>
             </div>
           </div>
 
@@ -44,7 +44,7 @@ function Optionsbar({ id: invoiceId }: { id: number }) {
           <div>
             <h3 className="font-medium mb-3 flex items-center gap-2">
               <Download className="h-4 w-4" />
-              Export & Save
+              Exportieren & Speichern
             </h3>
             <div className="space-y-2">
               <Button
@@ -54,21 +54,30 @@ function Optionsbar({ id: invoiceId }: { id: number }) {
               >
                 <Link href={`/invoice/${invoiceId}/pdf`}>
                   <BookCheck className="h-4 w-4 mr-1" />
-                  Publish PDF
+                  PDF veröffentlichen
                 </Link>
               </Button>
               <Button className="w-full justify-start" variant="outline">
                 <Download className="h-4 w-4 mr-1" />
-                Download PDF
+                PDF herunterladen
               </Button>
               <Button className="w-full justify-start" variant="outline">
                 <Save className="h-4 w-4 mr-1" />
-                Save as Draft
+                Als Entwurf speichern
               </Button>
             </div>
           </div>
 
-          {/* <Separator /> */}
+          <Separator />
+
+          <div>
+            <div className="space-y-2">
+              <Button className="w-full justify-start" variant="outline">
+                <Trash2 className="h-4 w-4 mr-1" />
+                Entwurf verwerfen
+              </Button>
+            </div>
+          </div>
 
           {/* Share & Send */}
           {/* <div>

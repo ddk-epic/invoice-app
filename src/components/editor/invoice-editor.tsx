@@ -180,12 +180,14 @@ export default function InvoiceEditor() {
                   <DialogTrigger asChild>
                     <Button size="sm" className="flex items-center gap-2">
                       <Plus className="h-4 w-4" />
-                      Add Item
+                      Artikel hinzufügen
                     </Button>
                   </DialogTrigger>
                   <DialogContent className="max-w-2xl max-h-[95vh] overflow-y-auto">
                     <DialogHeader>
-                      <DialogTitle>Select Items to Add</DialogTitle>
+                      <DialogTitle>
+                        Zu Hinzufügende Artikel auswählen
+                      </DialogTitle>
                     </DialogHeader>
                     <AddItemModal
                       addItem={addItem}
