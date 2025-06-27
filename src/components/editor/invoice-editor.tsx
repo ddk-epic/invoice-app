@@ -3,7 +3,6 @@
 import React, { useState } from "react";
 
 import { Card } from "@/components/ui/card";
-import { SelectContact } from "./select-group";
 import Total from "./total";
 import Table from "./table";
 import Optionsbar from "./optionsbar";
@@ -12,12 +11,17 @@ import InvoiceDetails from "./invoice-details";
 
 import { sampleContacts, sampleProducts } from "@/constants/constants";
 import { Contact, InvoiceItem } from "@/constants/types";
+import SelectContactModal from "./add-contact-modal";
 
 export default function InvoiceEditor() {
   const [invoiceId, setInvoiceId] = useState(1);
 
-  const [recipient, setRecipient] = useState<Contact | null>(null);
-  const [address, setAddress] = useState<Contact | null>(null);
+  const [isSendToModalOpen, setIsSendToModalOpen] = useState(false);
+  const [isInvoiceToModalOpen, setIsInvoiceToModalOpen] = useState(false);
+
+  const [sendTo, setSendTo] = useState<Contact | null>(null);
+  const [invoiceTo, setInvoiceTo] = useState<Contact | null>(null);
+
   const [items, setItems] = useState<InvoiceItem[]>([]);
   const taxRate = 19;
 
@@ -72,14 +76,15 @@ export default function InvoiceEditor() {
     setItems(items.filter((item) => item.id !== id));
   };
 
-  const updateRecipient = (id: string) => {
-    const newRecipient = sampleContacts.find((contact) => contact.id === id);
-    setRecipient(newRecipient || null);
-  };
-
-  const updateAddress = (id: string) => {
-    const newAddress = sampleContacts.find((contact) => contact.id === id);
-    setAddress(newAddress || null);
+  const updateContactById = (
+    id: string,
+    setter: (contact: Contact) => void
+  ) => {
+    const contact = sampleContacts.find((contact) => contact.id === id);
+    if (!contact) return;
+    setter(contact);
+    setIsSendToModalOpen(false);
+    setIsInvoiceToModalOpen(false);
   };
 
   return (
@@ -104,16 +109,22 @@ export default function InvoiceEditor() {
 
             {/* Sender and Recipient */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 mb-8">
-              <SelectContact
+              <SelectContactModal
+                isModalOpen={isSendToModalOpen}
+                setIsModalOpen={setIsSendToModalOpen}
                 label="Lieferanschrift"
-                contact={recipient}
-                selectContact={updateRecipient}
+                contact={sendTo}
+                setter={setSendTo}
+                updateContact={updateContactById}
                 contactList={sampleContacts}
               />
-              <SelectContact
+              <SelectContactModal
+                isModalOpen={isInvoiceToModalOpen}
+                setIsModalOpen={setIsInvoiceToModalOpen}
                 label="Rechnungsadresse"
-                contact={address}
-                selectContact={updateAddress}
+                contact={invoiceTo}
+                setter={setInvoiceTo}
+                updateContact={updateContactById}
                 contactList={sampleContacts}
               />
             </div>
@@ -133,7 +144,7 @@ export default function InvoiceEditor() {
                   removeItem={removeItem}
                 />
               </div>
-
+              {/* fallback */}
               {items.length === 0 && (
                 <div className="text-center py-4 my-2 text-gray-500 border-2 border-dashed rounded-lg">
                   <p>Noch keine Artikel hinzugefügt</p>
