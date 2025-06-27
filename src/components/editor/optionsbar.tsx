@@ -1,4 +1,5 @@
 import React from "react";
+import Link from "next/link";
 import { Settings, Download, Save, BookCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -10,11 +11,7 @@ import {
 } from "@/components/ui/sheet";
 import { Separator } from "@/components/ui/separator";
 
-interface OptionsbarProps {
-  handleRequest: () => Promise<void>;
-}
-
-function Optionsbar({ handleRequest }: OptionsbarProps) {
+function Optionsbar({ id: invoiceId }: { id: number }) {
   return (
     <Sheet>
       {/* Actions Menu Header */}
@@ -51,12 +48,14 @@ function Optionsbar({ handleRequest }: OptionsbarProps) {
             </h3>
             <div className="space-y-2">
               <Button
-                onClick={handleRequest}
                 className="w-full justify-start"
                 variant="outline"
+                asChild
               >
-                <BookCheck className="h-4 w-4 mr-1" />
-                Publish PDF
+                <Link href={`/invoice/${invoiceId}/pdf`}>
+                  <BookCheck className="h-4 w-4 mr-1" />
+                  Publish PDF
+                </Link>
               </Button>
               <Button className="w-full justify-start" variant="outline">
                 <Download className="h-4 w-4 mr-1" />

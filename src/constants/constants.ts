@@ -1,4 +1,4 @@
-import { InvoiceData, InvoiceItem } from "./types";
+import { Contact, Invoice, InvoiceData, InvoiceItem } from "./types";
 
 // Invoice status
 export const getStatusColor = (status: string) => {
@@ -35,45 +35,45 @@ export const invoiceStatistics = [
 ];
 
 // Mock data for recent invoices
-export const sampleRecentInvoices = [
+export const sampleRecentInvoices: Invoice[] = [
   {
     id: "INV-001",
     client: "Acme Corp",
-    amount: "$2,500.00",
+    amount: "2500,00 €",
     status: "paid",
     date: "2024-01-15",
   },
   {
     id: "INV-002",
     client: "TechStart Inc",
-    amount: "$1,800.00",
+    amount: "1800,00 €",
     status: "pending",
     date: "2024-01-12",
   },
   {
     id: "INV-003",
     client: "Design Studio",
-    amount: "$3,200.00",
+    amount: "3200,00 €",
     status: "overdue",
     date: "2024-01-08",
   },
   {
     id: "INV-004",
     client: "Marketing Pro",
-    amount: "$950.00",
+    amount: "950,00 €",
     status: "paid",
     date: "2024-01-05",
   },
   {
     id: "INV-005",
     client: "Web Solutions",
-    amount: "$4,100.00",
+    amount: "4100,00 €",
     status: "draft",
     date: "2024-01-03",
   },
 ];
 
-export const sampleContacts = [
+export const sampleContacts: Contact[] = [
   {
     id: "1",
     name: "Maxima",

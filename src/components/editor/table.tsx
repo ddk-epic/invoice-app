@@ -31,7 +31,7 @@ function Table(props: TableProps) {
           {items.map((item) => (
             <tr key={item.id} className="border-t">
               <td className="w-13 px-2">{item.id}</td>
-              <td className="max-w-[300px] truncate">Item description</td>
+              <td className="max-w-[300px] truncate">{item.description}</td>
               <td className="w-13 pr-2">
                 <Input
                   id={item.id}

@@ -1,3 +1,11 @@
+export interface Invoice {
+  id: string;
+  client: string;
+  amount: string;
+  status: string;
+  date: string;
+}
+
 export interface Contact {
   id: string;
   name: string;

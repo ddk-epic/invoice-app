@@ -6,12 +6,20 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card } from "@/components/ui/card";
-import { sampleContacts } from "@/constants/constants";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { sampleContacts, sampleProducts } from "@/constants/constants";
 import { Contact, InvoiceItem } from "@/constants/types";
 import { SelectContact } from "./select-group";
 import Total from "./total";
 import Table from "./table";
 import Optionsbar from "./optionsbar";
+import AddItemModal from "./add-item-modal";
 
 export default function InvoiceEditor() {
   const [invoiceId, setInvoiceId] = useState(1);
@@ -19,27 +27,42 @@ export default function InvoiceEditor() {
     new Date().toISOString().split("T")[0]
   );
   const [dueDate, setDueDate] = useState("");
+  const [isAddItemModalOpen, setIsAddItemModalOpen] = useState(false);
 
   const [recipient, setRecipient] = useState<Contact | null>(null);
   const [address, setAddress] = useState<Contact | null>(null);
   const [items, setItems] = useState<InvoiceItem[]>([]);
   const taxRate = 19;
 
-  const addItem = () => {
-    const lastItem = items[items.length - 1];
-    const newId = lastItem ? Number(lastItem.id) + 1 : 1;
-
-    const newItem: InvoiceItem = {
-      id: newId.toString(),
-      category: "category",
-      description: "description",
-      brand: "brand",
-      quantity: 1,
-      rate: (Math.floor(Math.random() * 5000) + 1) / 100,
-      amount: 0,
-    };
-    newItem.amount = newItem.quantity * newItem.rate;
-    setItems([...items, newItem]);
+  const addItem = (item: (typeof sampleProducts)[0]) => {
+    const existingItem = items.find((i) => i.id === item.id);
+    if (existingItem) {
+      const updatedItem = items.map((i) => {
+        if (i.id === item.id) {
+          const newQuantity = i.quantity + 1;
+          return {
+            ...i,
+            quantity: newQuantity,
+            amount: newQuantity * i.rate,
+          };
+        }
+        return i;
+      });
+      setItems(updatedItem);
+    } else {
+      const newItem: InvoiceItem = {
+        id: item.id,
+        category: item.category,
+        description: item.description,
+        brand: item?.brand ?? "",
+        weight: item?.weight ?? "",
+        perBox: item?.perBox,
+        quantity: 1,
+        rate: item.rate / 100,
+        amount: item.rate / 100,
+      };
+      setItems([...items, newItem]);
+    }
   };
 
   const updateItemQty = (id: string, quantity: number) => {
@@ -76,20 +99,10 @@ export default function InvoiceEditor() {
   const taxAmount = (subtotal * taxRate) / 100;
   const total = subtotal + taxAmount;
 
-  const sendRequest = async () => {
-    try {
-      await fetch(`/invoice/${invoiceId}/pdf`, {
-        method: "GET",
-      });
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
   return (
     <>
       <div className="z-50 fixed right-0 p-8">
-        <Optionsbar handleRequest={sendRequest} />
+        <Optionsbar id={invoiceId} />
       </div>
       <div className="max-w-4xl py-4 mx-auto">
         <Card className="wrapper min-w-2xl min-h-[1086px] md:min-h-[1584px] bg-white shadow-lg">
@@ -160,14 +173,26 @@ export default function InvoiceEditor() {
             <div className="flex-1">
               <div className="flex justify-between items-center mb-4">
                 <h2 className="text-lg font-semibold"></h2>
-                <Button
-                  onClick={addItem}
-                  size="sm"
-                  className="flex items-center gap-2"
+                <Dialog
+                  open={isAddItemModalOpen}
+                  onOpenChange={setIsAddItemModalOpen}
                 >
-                  <Plus className="h-4 w-4" />
-                  Artikel hinzufügen
-                </Button>
+                  <DialogTrigger asChild>
+                    <Button size="sm" className="flex items-center gap-2">
+                      <Plus className="h-4 w-4" />
+                      Add Item
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent className="max-w-2xl max-h-[95vh] overflow-y-auto">
+                    <DialogHeader>
+                      <DialogTitle>Select Items to Add</DialogTitle>
+                    </DialogHeader>
+                    <AddItemModal
+                      addItem={addItem}
+                      setIsAddItemModalOpen={setIsAddItemModalOpen}
+                    />
+                  </DialogContent>
+                </Dialog>
               </div>
 
               {/* Table */}
