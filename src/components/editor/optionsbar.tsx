@@ -1,5 +1,4 @@
 import React from "react";
-import Link from "next/link";
 import { Settings, Download, Save, BookCheck, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -10,6 +9,7 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet";
 import { Separator } from "@/components/ui/separator";
+import Link from "next/link";
 
 function Optionsbar({ id: invoiceId }: { id: number }) {
   return (
@@ -79,50 +79,6 @@ function Optionsbar({ id: invoiceId }: { id: number }) {
                 </Button>
               </div>
             </div>
-
-            {/* Share & Send */}
-            {/* <div>
-            <h3 className="font-medium mb-3 flex items-center gap-2">
-              <Mail className="h-4 w-4" />
-              Share & Send
-            </h3>
-            <div className="space-y-2">
-              <Button className="w-full justify-start" variant="outline">
-                <Mail className="h-4 w-4 mr-1" />
-                Email Invoice
-              </Button>
-              <Button className="w-full justify-start" variant="outline">
-                <Printer className="h-4 w-4 mr-1" />
-                Print Invoice
-              </Button>
-            </div>
-          </div> */}
-
-            {/* Invoice Settings */}
-            {/* <div>
-            <h3 className="font-medium mb-3 flex items-center gap-2">
-              <Settings className="h-4 w-4" />
-              Settings
-            </h3>
-            <div className="space-y-3">
-              <div>
-                <Label className="text-sm font-medium mb-1 block">
-                  Currency
-                </Label>
-                <Select defaultValue="EUR">
-                  <SelectTrigger className="h-8">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="EUR">EUR (€)</SelectItem>
-                    <SelectItem value="USD">USD ($)</SelectItem>
-                    <SelectItem value="GBP">GBP (£)</SelectItem>
-                    <SelectItem value="JPY">JPY (¥)</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-          </div> */}
           </div>
         </SheetContent>
       </Sheet>

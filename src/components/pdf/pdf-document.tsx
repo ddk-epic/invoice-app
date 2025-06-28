@@ -3,6 +3,7 @@ import Logo from "./logo";
 import { Page, Text, View, Document, StyleSheet } from "@react-pdf/renderer";
 import { Overline, UnderLine } from "./pdf-components";
 import { InvoiceData } from "@/constants/types";
+import { toEuro } from "@/lib/utils";
 
 function PdfDocument({ data: invoice }: { data: InvoiceData }) {
   const total = invoice.total / 100;
@@ -158,10 +159,10 @@ function PdfDocument({ data: invoice }: { data: InvoiceData }) {
                 {item.quantity}
               </Text>
               <Text style={[{ width: 72, textAlign: "right" }]}>
-                {item.rate / 100} €
+                {toEuro(item.rate / 100)}
               </Text>
               <Text style={[{ width: 72, textAlign: "right" }]}>
-                {item.amount / 100} €
+                {toEuro(item.amount / 100)}
               </Text>
             </View>
           ))}
@@ -173,7 +174,7 @@ function PdfDocument({ data: invoice }: { data: InvoiceData }) {
             <Text style={{ width: 384 }}></Text>
             <Text style={[s.bold, { width: 88 }]}>Gesamtbetrag</Text>
             <Text style={[s.bold, { width: 50, textAlign: "right" }]}>
-              {total} €
+              {toEuro(total)}
             </Text>
           </View>
           <UnderLine />
@@ -186,15 +187,15 @@ function PdfDocument({ data: invoice }: { data: InvoiceData }) {
               Rechnungsbetrag (Netto)
             </Text>
             <Text style={[s.bold, s.boxRight, { width: 77 }]}>
-              {subtotal.toFixed(2)} €
+              {toEuro(subtotal)}
             </Text>
           </View>
           <View style={[s.inline]}>
             <Text style={[s.bold, { width: 150, textAlign: "right" }]}>
-              MwSt. von {invoice.taxRate.toFixed(2)} %
+              MwSt. von {invoice.taxRate},00 %:
             </Text>
             <Text style={[s.bold, s.boxRight, { width: 77 }]}>
-              {taxAmount.toFixed(2)} €
+              {toEuro(taxAmount)}
             </Text>
           </View>
           <View style={[s.inline]}>
@@ -202,7 +203,7 @@ function PdfDocument({ data: invoice }: { data: InvoiceData }) {
               Rechnungsbetrag (Brutto)
             </Text>
             <Text style={[s.bold, s.boxRight, { width: 77 }]}>
-              {total.toFixed(2)} €
+              {toEuro(total)}
             </Text>
           </View>
         </View>

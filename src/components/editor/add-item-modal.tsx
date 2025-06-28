@@ -9,6 +9,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { moreSampleProducts, sampleProducts } from "@/constants/constants";
+import { toEuro } from "@/lib/utils";
 
 interface AddItemModalProps {
   addItem: (predefinedItem: (typeof sampleProducts)[0]) => void;
@@ -43,9 +44,7 @@ function AddItemModal({ addItem }: AddItemModalProps) {
                     <p className="text-sm text-gray-500">{item.category}</p>
                   </div>
                   <div className="text-right mr-4">
-                    <p className="font-medium">
-                      {(item.rate / 100).toFixed(2)} €
-                    </p>
+                    <p className="font-medium">{toEuro(item.rate / 100)}</p>
                     <p className="text-sm text-gray-500">{item.weight}</p>
                   </div>
                 </div>
