@@ -8,7 +8,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { sampleProducts } from "@/constants/constants";
+import { moreSampleProducts, sampleProducts } from "@/constants/constants";
 
 interface AddItemModalProps {
   addItem: (predefinedItem: (typeof sampleProducts)[0]) => void;
@@ -29,43 +29,44 @@ function AddItemModal({ addItem }: AddItemModalProps) {
         <DialogHeader>
           <DialogTitle>Zu Hinzufügende Artikel auswählen</DialogTitle>
         </DialogHeader>
-        <div className="space-y-4">
-          <div className="grid gap-3">
-            {sampleProducts.map((item) => (
-              <div
-                key={item.id}
-                className="flex items-center justify-between p-3 rounded-lg border hover:bg-gray-50"
-              >
-                <div className="flex-1">
-                  <div className="flex justify-between items-start">
-                    <div>
-                      <h4 className="font-medium">{item.description}</h4>
-                      <p className="text-sm text-gray-500">{item.category}</p>
-                    </div>
-                    <div className="text-right mr-4">
-                      <p className="font-medium">{item.rate / 100} €</p>
-                      <p className="text-sm text-gray-500">{item.weight}</p>
-                    </div>
+
+        <div className="grid">
+          {moreSampleProducts.map((item) => (
+            <div
+              key={item.id}
+              className="flex justify-between items-center min-w-[450px] p-1 border-t"
+            >
+              <div className="flex-1 ml-2">
+                <div className="flex justify-between items-start">
+                  <div>
+                    <h4 className="font-medium">{item.description}</h4>
+                    <p className="text-sm text-gray-500">{item.category}</p>
+                  </div>
+                  <div className="text-right mr-4">
+                    <p className="font-medium">
+                      {(item.rate / 100).toFixed(2)} €
+                    </p>
+                    <p className="text-sm text-gray-500">{item.weight}</p>
                   </div>
                 </div>
-                <Button
-                  size="icon"
-                  onClick={() => addItem(item)}
-                  className="flex items-center rounded-full"
-                >
-                  <Plus />
-                </Button>
               </div>
-            ))}
-          </div>
-          <div className="flex justify-end pt-4 border-t">
-            <Button
-              variant="outline"
-              onClick={() => setIsAddItemModalOpen(false)}
-            >
-              Abbrechen
-            </Button>
-          </div>
+              <Button
+                size="icon"
+                onClick={() => addItem(item)}
+                className="flex items-center rounded-full mr-2"
+              >
+                <Plus />
+              </Button>
+            </div>
+          ))}
+        </div>
+        <div className="flex justify-end pt-2">
+          <Button
+            variant="outline"
+            onClick={() => setIsAddItemModalOpen(false)}
+          >
+            Abbrechen
+          </Button>
         </div>
       </DialogContent>
     </Dialog>

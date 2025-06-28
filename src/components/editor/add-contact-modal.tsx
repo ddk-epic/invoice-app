@@ -54,7 +54,7 @@ function SelectContactModal(props: SelectContactModalProps) {
         </Button>
       </DialogTrigger>
       <DialogContent className="max-w-2xl max-h-[95vh] overflow-y-auto gap-2">
-        <DialogHeader>
+        <DialogHeader className="mb-2">
           <DialogTitle>Kontakt auswählen</DialogTitle>
         </DialogHeader>
         {contactList.map((contact) => (

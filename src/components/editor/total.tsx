@@ -15,12 +15,12 @@ function Total({ items, taxRate }: TotalProps) {
   return (
     <>
       {/* Total */}
-      <div className="flex justify-end py-1.5 pr-10 space-x-2 font-bold border-y-2 border-current">
+      <div className="flex justify-end py-0.5 pr-10 space-x-2 font-bold border-y-2 border-current">
         <span>Gesamtbetrag:</span>
         <span className="w-23 text-right">{total.toFixed(2)} €</span>
       </div>
       {/* SubTotal */}
-      <div className="flex justify-end pr-10">
+      <div className="flex justify-end pt-1 pr-10">
         <div>
           <div className="flex justify-end py-1.5 space-x-2 font-bold">
             <span>Rechnungsbetrag (Netto):</span>
