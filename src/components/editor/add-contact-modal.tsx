@@ -49,6 +49,7 @@ function SelectContactModal(props: SelectContactModalProps) {
                   {contact.address?.zip} {contact.address?.state}
                 </p>
                 <p>{contact.address?.country}</p>
+                {!contact?.owner && <p className="h-5"></p>}
               </div>
             ) : (
               <div className="flex justify-center items-center w-full h-full space-x-2 text-base text-gray-500 border-2 border-dashed rounded-lg">
