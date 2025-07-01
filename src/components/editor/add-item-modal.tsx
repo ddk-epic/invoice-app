@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+
 import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -8,14 +9,16 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { moreSampleProducts, sampleProducts } from "@/constants/constants";
+
+import { InvoiceItem } from "@/constants/types";
 import { toEuro } from "@/lib/utils";
 
 interface AddItemModalProps {
-  addItem: (predefinedItem: (typeof sampleProducts)[0]) => void;
+  products: InvoiceItem[];
+  addItem: (item: InvoiceItem) => void;
 }
 
-function AddItemModal({ addItem }: AddItemModalProps) {
+function AddItemModal({ products: productList, addItem }: AddItemModalProps) {
   const [isAddItemModalOpen, setIsAddItemModalOpen] = useState(false);
 
   return (
@@ -32,7 +35,7 @@ function AddItemModal({ addItem }: AddItemModalProps) {
         </DialogHeader>
 
         <div className="grid">
-          {moreSampleProducts.map((item) => (
+          {productList.map((item) => (
             <div
               key={item.id}
               className="flex justify-between items-center min-w-[450px] p-1 border-t"

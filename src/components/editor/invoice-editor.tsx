@@ -11,22 +11,32 @@ import AddItemModal from "./add-item-modal";
 import InvoiceDetails from "./invoice-details";
 import SelectContactModal from "./add-contact-modal";
 
-import { sampleContacts, sampleProducts } from "@/constants/constants";
 import { Contact, InvoiceItem } from "@/constants/types";
 
-export default function InvoiceEditor() {
+interface InvoiceEditorProps {
+  contacts: Contact[];
+  products: InvoiceItem[];
+}
+
+export default function InvoiceEditor(props: InvoiceEditorProps) {
+  const { contacts: contactList, products: productList } = props;
   const { invoiceId, handleInvoiceId, contactId } = useInvoiceContext();
 
   const [isSendToModalOpen, setIsSendToModalOpen] = useState(false);
   const [isInvoiceToModalOpen, setIsInvoiceToModalOpen] = useState(false);
 
-  const [sendTo, setSendTo] = useState<Contact | null>(null);
-  const [invoiceTo, setInvoiceTo] = useState<Contact | null>(null);
+  const getContactById = (contactId: string) => {
+    return contactList.find((contact) => contact.id.toString() === contactId);
+  };
+  const initialContact = getContactById(contactId.toString()) ?? null;
+
+  const [sendTo, setSendTo] = useState<Contact | null>(initialContact);
+  const [invoiceTo, setInvoiceTo] = useState<Contact | null>(initialContact);
 
   const [items, setItems] = useState<InvoiceItem[]>([]);
   const taxRate = 19;
 
-  const addItem = (item: (typeof sampleProducts)[0]) => {
+  const addItem = (item: InvoiceItem) => {
     const existingItem = items.find((i) => i.id === item.id);
     if (existingItem) {
       const updatedItem = items.map((i) => {
@@ -81,7 +91,7 @@ export default function InvoiceEditor() {
     id: string,
     setter: (contact: Contact) => void
   ) => {
-    const contact = sampleContacts.find((contact) => contact.id.toString() === id);
+    const contact = contactList.find((contact) => contact.id.toString() === id);
     if (!contact) return;
     setter(contact);
     setIsSendToModalOpen(false);
@@ -117,7 +127,7 @@ export default function InvoiceEditor() {
                 contact={sendTo}
                 setter={setSendTo}
                 updateContact={updateContactById}
-                contactList={sampleContacts}
+                contactList={contactList}
               />
               <SelectContactModal
                 isModalOpen={isInvoiceToModalOpen}
@@ -126,7 +136,7 @@ export default function InvoiceEditor() {
                 contact={invoiceTo}
                 setter={setInvoiceTo}
                 updateContact={updateContactById}
-                contactList={sampleContacts}
+                contactList={contactList}
               />
             </div>
 
@@ -134,7 +144,7 @@ export default function InvoiceEditor() {
               {/* Invoice Items */}
               <div className="flex justify-between items-center mb-4">
                 <h2 className="text-lg font-semibold">{/*Items*/}</h2>
-                <AddItemModal addItem={addItem} />
+                <AddItemModal products={productList} addItem={addItem} />
               </div>
 
               {/* Table */}

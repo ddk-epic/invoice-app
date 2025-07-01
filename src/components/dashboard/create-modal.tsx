@@ -23,8 +23,6 @@ import {
   SelectContent,
   SelectItem,
 } from "@/components/ui/select";
-
-import { sampleContacts } from "@/constants/constants";
 import { Contact } from "@/constants/types";
 import { idPrefix } from "@/lib/utils";
 
@@ -40,8 +38,6 @@ export const CreateInvoiceModal = ({
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [contactField, setContactField] = useState<Contact | null>(null);
   const { handleInvoiceId, handleContactId } = useInvoiceContext();
-
-  const allContacts = sampleContacts;
 
   const handleCreateInvoice = (e: React.FormEvent) => {
     e.preventDefault();

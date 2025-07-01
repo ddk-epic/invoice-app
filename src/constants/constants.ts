@@ -1,4 +1,4 @@
-import { Contact, Invoice, InvoiceData, InvoiceItem } from "./types";
+import { Contact, InvoiceData, InvoiceItem } from "./types";
 
 // Invoice status
 export const getStatusColor = (status: string) => {
@@ -83,49 +83,6 @@ export const sampleContacts: Contact[] = [
       zip: "10001",
       country: "USA",
     },
-  },
-];
-
-export const sampleProducts: InvoiceItem[] = [
-  {
-    id: 11,
-    category: "fresh",
-    description: "Bananas (kg)",
-    brand: "Chiqueeta",
-    weight: "1 kg",
-    quantity: 3,
-    rate: 129,
-    amount: 387,
-  },
-  {
-    id: 12,
-    category: "fresh",
-    description: "Organic Milk (1 L)",
-    brand: "Hermes",
-    weight: "1 kg",
-    quantity: 1,
-    rate: 425,
-    amount: 425,
-  },
-  {
-    id: 13,
-    category: "fresh",
-    description: "Eggs",
-    brand: "Chiqueeta",
-    perBox: 10,
-    quantity: 2,
-    rate: 35,
-    amount: 70,
-  },
-  {
-    id: 14,
-    category: "fresh",
-    description: "Whole Wheat Bread",
-    brand: "Stones",
-    weight: "0.75 kg",
-    quantity: 1,
-    rate: 275,
-    amount: 275,
   },
 ];
 
