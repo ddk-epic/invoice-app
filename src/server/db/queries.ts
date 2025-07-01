@@ -9,6 +9,11 @@ export const QUERIES = {
   getAllProducts: async function () {
     return db.select().from(productsSchema);
   },
+
+  getAllInvoices: async function () {
+    return db.select().from(invoiceSchema);
+  },
+
   getInvoiceById: async function (id: string) {
     return db
       .select()

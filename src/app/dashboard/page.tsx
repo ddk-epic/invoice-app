@@ -1,5 +1,6 @@
 import React from "react";
 import { FileChartColumn } from "lucide-react";
+
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -8,15 +9,28 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-
 import { CreateInvoiceModal } from "@/components/dashboard/create-modal";
-import { invoiceStatistics } from "@/constants/constants";
 import InvoiceTable from "@/components/dashboard/invoice-table";
+
 import { currentUser } from "@clerk/nextjs/server";
 import Link from "next/link";
+import { QUERIES } from "@/server/db/queries";
+
+import { InvoiceData } from "@/constants/types";
+import { invoiceStatistics } from "@/constants/constants";
+import { idPrefix } from "@/lib/utils";
+
+const getLatestInvoiceId = (invoices: InvoiceData[]) => {
+  return invoices.reduce((max, invoice) => {
+    return invoice.invoiceId > max.invoiceId ? invoice : max;
+  });
+};
 
 export default async function Dashboard() {
   const user = await currentUser();
+  const invoices = (await QUERIES.getAllInvoices()) as InvoiceData[];
+  const latestId = getLatestInvoiceId(invoices).invoiceId + 1;
+
   return (
     <main className="wrapper top min-h-screen bg-gray-50">
       <div className="px-4 py-6 sm:px-0">
@@ -42,7 +56,7 @@ export default async function Dashboard() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <CreateInvoiceModal />
+              <CreateInvoiceModal invoiceId={idPrefix(latestId)} />
             </CardContent>
           </Card>
         </div>
@@ -81,7 +95,7 @@ export default async function Dashboard() {
             </div>
           </CardHeader>
           <CardContent>
-            <InvoiceTable />
+            <InvoiceTable invoices={invoices} />
           </CardContent>
         </Card>
       </div>

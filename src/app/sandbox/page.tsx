@@ -1,9 +1,9 @@
 import React from "react";
 import { db } from "@/server/db";
 import { invoiceSchema, productsSchema } from "@/server/db/schema";
-import { sampleInvoiceData, sampleProducts } from "@/constants/constants";
+import { moreSampleProducts, sampleInvoiceData } from "@/constants/constants";
 
-const newItems = sampleProducts.map(({ id, ...rest }) => rest);
+const newItems = moreSampleProducts.map(({ id, ...rest }) => rest);
 
 const { id, ...invoiceData } = sampleInvoiceData;
 const newInvoice = {

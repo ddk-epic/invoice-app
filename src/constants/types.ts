@@ -34,9 +34,10 @@ export interface InvoiceItem {
 
 export interface InvoiceData {
   id: number;
-  invoiceId: string;
+  invoiceId: number;
   invoiceDate: string;
   dueDate: string;
+  status: string;
 
   sender: Contact;
   sendTo: Contact;

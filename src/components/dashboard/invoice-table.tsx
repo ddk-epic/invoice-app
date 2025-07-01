@@ -1,4 +1,6 @@
 import React from "react";
+
+import { Badge } from "@/components/ui/badge";
 import {
   Table,
   TableBody,
@@ -7,10 +9,12 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
-import { sampleRecentInvoices, getStatusColor } from "@/constants/constants";
 
-const InvoiceTable = () => {
+import { getStatusColor } from "@/constants/constants";
+import { InvoiceData } from "@/constants/types";
+import { idPrefix, toEuro } from "@/lib/utils";
+
+const InvoiceTable = ({ invoices }: { invoices: InvoiceData[] }) => {
   return (
     <Table>
       <TableHeader>
@@ -23,18 +27,20 @@ const InvoiceTable = () => {
         </TableRow>
       </TableHeader>
       <TableBody>
-        {sampleRecentInvoices.map((invoice) => (
+        {invoices.map((invoice) => (
           <TableRow key={invoice.id}>
-            <TableCell className="font-medium">{invoice.id}</TableCell>
-            <TableCell>{invoice.client}</TableCell>
-            <TableCell>{invoice.amount}</TableCell>
+            <TableCell className="font-medium">
+              {idPrefix(invoice.invoiceId)}
+            </TableCell>
+            <TableCell>{invoice.sendTo.name}</TableCell>
+            <TableCell>{toEuro(invoice.total / 100)}</TableCell>
             <TableCell>
               <Badge className={getStatusColor(invoice.status)}>
                 {invoice.status.charAt(0).toUpperCase() +
                   invoice.status.slice(1)}
               </Badge>
             </TableCell>
-            <TableCell>{invoice.date}</TableCell>
+            <TableCell>{invoice.invoiceDate}</TableCell>
           </TableRow>
         ))}
       </TableBody>

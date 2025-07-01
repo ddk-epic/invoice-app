@@ -305,12 +305,12 @@ export const moreSampleProducts: InvoiceItem[] = [
   },
 ];
 
-
 export const sampleInvoiceData: InvoiceData = {
   id: 10,
-  invoiceId: "INV-021",
+  invoiceId: 21,
   invoiceDate: "2025-06-20",
   dueDate: "2025-07-05",
+  status: "pending",
   sender: {
     id: "1",
     name: "Maxima",
@@ -345,7 +345,7 @@ export const sampleInvoiceData: InvoiceData = {
       country: "USA",
     },
   },
-  items: sampleProducts,
+  items: moreSampleProducts,
 
   total: 1787,
   taxRate: 19,
