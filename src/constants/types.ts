@@ -7,10 +7,11 @@ export interface Invoice {
 }
 
 export interface Contact {
-  id: string;
+  id: number;
+  type: string;
   name: string;
   owner?: string;
-  address?: {
+  address: {
     street: string;
     city: string;
     state: string;
@@ -20,7 +21,7 @@ export interface Contact {
 }
 
 export interface InvoiceItem {
-  id: string;
+  id: number;
   category: string;
   description: string;
   brand: string;

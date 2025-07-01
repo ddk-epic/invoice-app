@@ -18,6 +18,14 @@ import {
  * push:      npx drizzle-kit push
  */
 
+export const contactsSchema = pgTable("contacts_table", {
+  id: serial("id").primaryKey(),
+  type: text("type").notNull(),
+  name: text("name").notNull(),
+  owner: text("owner"),
+  address: jsonb("address").notNull(),
+});
+
 export const productsSchema = pgTable("products_table", {
   id: serial("id").primaryKey(),
   category: text("category").notNull(),

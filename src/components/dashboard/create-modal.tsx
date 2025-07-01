@@ -32,8 +32,10 @@ import { redirect, RedirectType } from "next/navigation";
 
 export const CreateInvoiceModal = ({
   invoiceId: id,
+  contacts,
 }: {
   invoiceId: number;
+  contacts: Contact[];
 }) => {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [contactField, setContactField] = useState<Contact | null>(null);
@@ -57,8 +59,8 @@ export const CreateInvoiceModal = ({
   };
 
   const selectContactById = (contactId: string) => {
-    const selectedContact = allContacts.find(
-      (contact) => contact.id === contactId
+    const selectedContact = contacts.find(
+      (contact) => contact.id.toString() === contactId
     );
     if (!selectedContact) return;
     setContactField(selectedContact);
@@ -103,8 +105,11 @@ export const CreateInvoiceModal = ({
                     />
                   </SelectTrigger>
                   <SelectContent>
-                    {allContacts.map((contact) => (
-                      <SelectItem key={contact.id} value={contact.id}>
+                    {contacts.map((contact) => (
+                      <SelectItem
+                        key={contact.id}
+                        value={contact.id.toString()}
+                      >
                         {contact.name}
                       </SelectItem>
                     ))}

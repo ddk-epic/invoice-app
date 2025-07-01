@@ -16,9 +16,8 @@ import { currentUser } from "@clerk/nextjs/server";
 import Link from "next/link";
 import { QUERIES } from "@/server/db/queries";
 
-import { InvoiceData } from "@/constants/types";
+import { Contact, InvoiceData } from "@/constants/types";
 import { invoiceStatistics } from "@/constants/constants";
-import { idPrefix } from "@/lib/utils";
 
 const getLatestInvoiceId = (invoices: InvoiceData[]) => {
   return invoices.reduce((max, invoice) => {
@@ -27,9 +26,15 @@ const getLatestInvoiceId = (invoices: InvoiceData[]) => {
 };
 
 export default async function Dashboard() {
-  const user = await currentUser();
-  const invoices = (await QUERIES.getAllInvoices()) as InvoiceData[];
-  const latestId = getLatestInvoiceId(invoices).invoiceId + 1;
+  const [user, invoices, contacts] = await Promise.all([
+    currentUser(),
+    QUERIES.getAllInvoices(),
+    QUERIES.getAllContacts(),
+  ]);
+  const invoiceList = invoices as InvoiceData[];
+  const contactList = contacts as Contact[];
+
+  const latestId = getLatestInvoiceId(invoiceList).invoiceId + 1;
 
   return (
     <main className="wrapper top min-h-screen bg-gray-50">
@@ -56,7 +61,7 @@ export default async function Dashboard() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <CreateInvoiceModal invoiceId={latestId} />
+              <CreateInvoiceModal invoiceId={latestId} contacts={contactList} />
             </CardContent>
           </Card>
         </div>
@@ -95,7 +100,7 @@ export default async function Dashboard() {
             </div>
           </CardHeader>
           <CardContent>
-            <InvoiceTable invoices={invoices} />
+            <InvoiceTable invoices={invoiceList} />
           </CardContent>
         </Card>
       </div>

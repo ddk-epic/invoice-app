@@ -1,7 +1,20 @@
 import React from "react";
+
 import { db } from "@/server/db";
-import { invoiceSchema, productsSchema } from "@/server/db/schema";
-import { moreSampleProducts, sampleInvoiceData } from "@/constants/constants";
+import {
+  contactsSchema,
+  invoiceSchema,
+  productsSchema,
+} from "@/server/db/schema";
+import {
+  moreSampleProducts,
+  sampleContacts,
+  sampleInvoiceData,
+} from "@/constants/constants";
+
+const newContacts = sampleContacts.map(({ id, ...rest }) => {
+  return { ...rest, address: JSON.stringify(rest.address) };
+});
 
 const newItems = moreSampleProducts.map(({ id, ...rest }) => rest);
 
@@ -13,6 +26,10 @@ const newInvoice = {
   invoiceTo: JSON.stringify(invoiceData.invoiceTo),
   items: JSON.stringify(invoiceData.items),
 };
+
+async function insertContacts() {
+  return await db.insert(contactsSchema).values(newContacts);
+}
 
 async function insertProducts() {
   return await db.insert(productsSchema).values(newItems);
@@ -27,7 +44,22 @@ function SandboxPage() {
     <main>
       <div className="wrapper top flex-col py-12 space-y-4">
         <div>
-          Seed Function:
+          Seed Contacts
+          <form
+            action={async () => {
+              "use server";
+
+              const contactsInsert = insertContacts();
+              console.log(contactsInsert);
+            }}
+          >
+            <button className="px-1 outline rounded-md" type="submit">
+              Seed DB
+            </button>
+          </form>
+        </div>
+        <div>
+          Seed Products:
           <form
             action={async () => {
               "use server";

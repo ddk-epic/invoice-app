@@ -1,11 +1,15 @@
 import "server-only";
 
 import { db } from "./index";
-import { invoiceSchema, productsSchema } from "./schema";
+import { contactsSchema, invoiceSchema, productsSchema } from "./schema";
 import { eq } from "drizzle-orm";
 
 export const QUERIES = {
   // SELECT
+  getAllContacts: async function () {
+    return db.select().from(contactsSchema);
+  },
+
   getAllProducts: async function () {
     return db.select().from(productsSchema);
   },

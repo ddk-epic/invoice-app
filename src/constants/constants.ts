@@ -34,48 +34,10 @@ export const invoiceStatistics = [
   },
 ];
 
-// Mock data for recent invoices
-export const sampleRecentInvoices: Invoice[] = [
-  {
-    id: "INV-001",
-    client: "Acme Corp",
-    amount: "2500,00 €",
-    status: "paid",
-    date: "2024-01-15",
-  },
-  {
-    id: "INV-002",
-    client: "TechStart Inc",
-    amount: "1800,00 €",
-    status: "pending",
-    date: "2024-01-12",
-  },
-  {
-    id: "INV-003",
-    client: "Design Studio",
-    amount: "3200,00 €",
-    status: "overdue",
-    date: "2024-01-08",
-  },
-  {
-    id: "INV-004",
-    client: "Marketing Pro",
-    amount: "950,00 €",
-    status: "paid",
-    date: "2024-01-05",
-  },
-  {
-    id: "INV-005",
-    client: "Web Solutions",
-    amount: "4100,00 €",
-    status: "draft",
-    date: "2024-01-03",
-  },
-];
-
 export const sampleContacts: Contact[] = [
   {
-    id: "1",
+    id: 1,
+    type: "admin",
     name: "Maxima",
     owner: "phtt",
     address: {
@@ -87,7 +49,8 @@ export const sampleContacts: Contact[] = [
     },
   },
   {
-    id: "2",
+    id: 2,
+    type: "client",
     name: "Tech Solutions Inc",
     address: {
       street: "456 Innovation Ave",
@@ -98,7 +61,8 @@ export const sampleContacts: Contact[] = [
     },
   },
   {
-    id: "3",
+    id: 3,
+    type: "client",
     name: "Global Enterprises",
     address: {
       street: "456 Grocery Ave",
@@ -109,7 +73,8 @@ export const sampleContacts: Contact[] = [
     },
   },
   {
-    id: "4",
+    id: 4,
+    type: "client",
     name: "Acme Corporation",
     address: {
       street: "123 Business St, Suite 100",
@@ -123,7 +88,7 @@ export const sampleContacts: Contact[] = [
 
 export const sampleProducts: InvoiceItem[] = [
   {
-    id: "11",
+    id: 11,
     category: "fresh",
     description: "Bananas (kg)",
     brand: "Chiqueeta",
@@ -133,7 +98,7 @@ export const sampleProducts: InvoiceItem[] = [
     amount: 387,
   },
   {
-    id: "12",
+    id: 12,
     category: "fresh",
     description: "Organic Milk (1 L)",
     brand: "Hermes",
@@ -143,7 +108,7 @@ export const sampleProducts: InvoiceItem[] = [
     amount: 425,
   },
   {
-    id: "13",
+    id: 13,
     category: "fresh",
     description: "Eggs",
     brand: "Chiqueeta",
@@ -153,7 +118,7 @@ export const sampleProducts: InvoiceItem[] = [
     amount: 70,
   },
   {
-    id: "14",
+    id: 14,
     category: "fresh",
     description: "Whole Wheat Bread",
     brand: "Stones",
@@ -166,7 +131,7 @@ export const sampleProducts: InvoiceItem[] = [
 
 export const moreSampleProducts: InvoiceItem[] = [
   {
-    id: "21",
+    id: 21,
     category: "fresh",
     description: "Apples (kg)",
     brand: "FarmGold",
@@ -176,7 +141,7 @@ export const moreSampleProducts: InvoiceItem[] = [
     amount: 300,
   },
   {
-    id: "22",
+    id: 22,
     category: "dairy",
     description: "Greek Yogurt",
     brand: "Milko",
@@ -186,7 +151,7 @@ export const moreSampleProducts: InvoiceItem[] = [
     amount: 360,
   },
   {
-    id: "23",
+    id: 23,
     category: "bakery",
     description: "Croissants (Box of 4)",
     brand: "BakeHouse",
@@ -196,7 +161,7 @@ export const moreSampleProducts: InvoiceItem[] = [
     amount: 250,
   },
   {
-    id: "24",
+    id: 24,
     category: "beverages",
     description: "Orange Juice",
     brand: "SunFresh",
@@ -206,7 +171,7 @@ export const moreSampleProducts: InvoiceItem[] = [
     amount: 360,
   },
   {
-    id: "25",
+    id: 25,
     category: "snacks",
     description: "Potato Chips",
     brand: "CrunchyBite",
@@ -216,7 +181,7 @@ export const moreSampleProducts: InvoiceItem[] = [
     amount: 320,
   },
   {
-    id: "26",
+    id: 26,
     category: "frozen",
     description: "Chicken Nuggets",
     brand: "MeatyBites",
@@ -226,7 +191,7 @@ export const moreSampleProducts: InvoiceItem[] = [
     amount: 700,
   },
   {
-    id: "27",
+    id: 27,
     category: "fresh",
     description: "Spinach",
     brand: "GreenLeaf",
@@ -236,7 +201,7 @@ export const moreSampleProducts: InvoiceItem[] = [
     amount: 120,
   },
   {
-    id: "28",
+    id: 28,
     category: "grains",
     description: "Basmati Rice",
     brand: "RoyalGrain",
@@ -246,7 +211,7 @@ export const moreSampleProducts: InvoiceItem[] = [
     amount: 820,
   },
   {
-    id: "29",
+    id: 29,
     category: "spices",
     description: "Turmeric Powder",
     brand: "SpiceKing",
@@ -256,7 +221,7 @@ export const moreSampleProducts: InvoiceItem[] = [
     amount: 95,
   },
   {
-    id: "30",
+    id: 30,
     category: "personal care",
     description: "Toothpaste",
     brand: "BrightSmile",
@@ -266,7 +231,7 @@ export const moreSampleProducts: InvoiceItem[] = [
     amount: 180,
   },
   {
-    id: "31",
+    id: 31,
     category: "cleaning",
     description: "Dishwashing Liquid",
     brand: "Sparkle",
@@ -276,7 +241,7 @@ export const moreSampleProducts: InvoiceItem[] = [
     amount: 150,
   },
   {
-    id: "32",
+    id: 32,
     category: "baby",
     description: "Baby Wipes (Pack of 80)",
     brand: "SoftCare",
@@ -285,7 +250,7 @@ export const moreSampleProducts: InvoiceItem[] = [
     amount: 220,
   },
   {
-    id: "33",
+    id: 33,
     category: "pets",
     description: "Dog Food - Chicken Flavor",
     brand: "PawPride",
@@ -295,7 +260,7 @@ export const moreSampleProducts: InvoiceItem[] = [
     amount: 600,
   },
   {
-    id: "34",
+    id: 34,
     category: "household",
     description: "Garbage Bags (Large, Pack of 15)",
     brand: "CleanZone",
@@ -312,7 +277,8 @@ export const sampleInvoiceData: InvoiceData = {
   dueDate: "2025-07-05",
   status: "pending",
   sender: {
-    id: "1",
+    id: 1,
+    type: "admin",
     name: "Maxima",
     owner: "phtt",
     address: {
@@ -324,7 +290,8 @@ export const sampleInvoiceData: InvoiceData = {
     },
   },
   sendTo: {
-    id: "3",
+    id: 3,
+    type: "client",
     name: "Global Enterprises",
     address: {
       street: "456 Grocery Ave",
@@ -335,7 +302,8 @@ export const sampleInvoiceData: InvoiceData = {
     },
   },
   invoiceTo: {
-    id: "3",
+    id: 3,
+    type: "client",
     name: "Global Enterprises",
     address: {
       street: "456 Grocery Ave",
