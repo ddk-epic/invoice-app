@@ -14,7 +14,7 @@ import InvoiceTable from "@/components/dashboard/invoice-table";
 
 import { currentUser } from "@clerk/nextjs/server";
 import Link from "next/link";
-import { QUERIES } from "@/server/db/queries";
+import { getInvoicesAndContacts } from "@/server/db/queries";
 
 import { Contact, InvoiceData } from "@/constants/types";
 import { invoiceStatistics } from "@/constants/constants";
@@ -26,14 +26,8 @@ const getLatestInvoiceId = (invoices: InvoiceData[]) => {
 };
 
 export default async function Dashboard() {
-  const [user, invoices, contacts] = await Promise.all([
-    currentUser(),
-    QUERIES.getAllInvoices(),
-    QUERIES.getAllContacts(),
-  ]);
-  const invoiceList = invoices as InvoiceData[];
-  const contactList = contacts as Contact[];
-
+  const user = await currentUser();
+  const { invoiceList, contactList } = await getInvoicesAndContacts();
   const latestId = getLatestInvoiceId(invoiceList).invoiceId + 1;
 
   return (

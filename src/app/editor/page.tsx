@@ -1,16 +1,10 @@
 import React from "react";
 
 import A4InvoiceEditor from "@/components/editor/invoice-editor";
-import { QUERIES } from "@/server/db/queries";
-import { Contact, InvoiceItem } from "@/constants/types";
+import { getContactsAndProducts } from "@/server/db/queries";
 
 async function InvoiceEditorPage() {
-  const [contacts, products] = await Promise.all([
-    QUERIES.getAllContacts(),
-    QUERIES.getAllProducts(),
-  ]);
-  const contactList = contacts as Contact[];
-  const productList = products as unknown as InvoiceItem[];
+  const { contactList, productList } = await getContactsAndProducts();
 
   return (
     <main className="min-h-screen top bg-gray-100">
