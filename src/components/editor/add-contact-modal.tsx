@@ -66,7 +66,7 @@ function SelectContactModal(props: SelectContactModalProps) {
           {contactList.map((contact) => (
             <Button
               key={contact.id}
-              onClick={() => updateContact(contact.id, setter)}
+              onClick={() => updateContact(contact.id.toString(), setter)}
               variant="ghost"
               className="h-[3rem]"
               asChild

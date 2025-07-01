@@ -3,7 +3,7 @@ import Logo from "./logo";
 import { Page, Text, View, Document, StyleSheet } from "@react-pdf/renderer";
 import { Overline, UnderLine } from "./pdf-components";
 import { InvoiceData } from "@/constants/types";
-import { toEuro } from "@/lib/utils";
+import { idPrefix, toEuro } from "@/lib/utils";
 
 function PdfDocument({ data: invoice }: { data: InvoiceData }) {
   const total = invoice.total / 100;
@@ -55,7 +55,7 @@ function PdfDocument({ data: invoice }: { data: InvoiceData }) {
   });
 
   return (
-    <Document title={invoice.invoiceId} language="german">
+    <Document title={idPrefix(invoice.invoiceId)} language="german">
       <Page size="A4" dpi={300} style={s.page}>
         {/* header */}
         <View style={s.inline}>

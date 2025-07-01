@@ -60,7 +60,7 @@ export default function InvoiceEditor() {
   const updateItemQty = (id: string, quantity: number) => {
     setItems(
       items.map((item) => {
-        if (item.id === id) {
+        if (item.id.toString() === id) {
           const updatedItem = {
             ...item,
             quantity,
@@ -74,14 +74,14 @@ export default function InvoiceEditor() {
   };
 
   const removeItem = (id: string) => {
-    setItems(items.filter((item) => item.id !== id));
+    setItems(items.filter((item) => item.id.toString() !== id));
   };
 
   const updateContactById = (
     id: string,
     setter: (contact: Contact) => void
   ) => {
-    const contact = sampleContacts.find((contact) => contact.id === id);
+    const contact = sampleContacts.find((contact) => contact.id.toString() === id);
     if (!contact) return;
     setter(contact);
     setIsSendToModalOpen(false);

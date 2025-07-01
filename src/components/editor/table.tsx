@@ -35,11 +35,14 @@ function Table(props: TableProps) {
               <td className="max-w-[300px] truncate">{item.description}</td>
               <td className="w-13 pr-2">
                 <Input
-                  id={item.id}
+                  id={item.id.toString()}
                   type="number"
                   value={item.quantity}
                   onChange={(e) =>
-                    updateItemQty(item.id, Number(e.target.value) || 0)
+                    updateItemQty(
+                      item.id.toString(),
+                      Number(e.target.value) || 0
+                    )
                   }
                   className="w-13 h-auto border-1 p-0 text-right focus-visible:ring-0"
                   min="0"
@@ -54,7 +57,7 @@ function Table(props: TableProps) {
                 <Button
                   variant="ghost"
                   size="sm"
-                  onClick={() => removeItem(item.id)}
+                  onClick={() => removeItem(item.id.toString())}
                   className="h-8 w-8 p-0 text-red-400 hover:text-red-600"
                 >
                   <Trash2 className="h-4 w-4" />
