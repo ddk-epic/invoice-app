@@ -1,9 +1,11 @@
 "use client";
 
 import React, { useState } from "react";
+import { useInvoiceContext } from "@/hooks/use-state-data";
+
 import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
+import { Card, CardContent } from "@/components/ui/card";
 import {
   Dialog,
   DialogTrigger,
@@ -12,6 +14,8 @@ import {
   DialogDescription,
   DialogHeader,
 } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectTrigger,
@@ -19,21 +23,37 @@ import {
   SelectContent,
   SelectItem,
 } from "@/components/ui/select";
+
 import { sampleContacts } from "@/constants/constants";
 import { Contact } from "@/constants/types";
-import { Card, CardContent } from "../ui/card";
+import { idPrefix } from "@/lib/utils";
 
-export const CreateInvoiceModal = () => {
+import { redirect, RedirectType } from "next/navigation";
+
+export const CreateInvoiceModal = ({
+  invoiceId: id,
+}: {
+  invoiceId: number;
+}) => {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
-  const [contact, setContact] = useState<Contact | null>(null);
+  const [contactField, setContactField] = useState<Contact | null>(null);
+  const { handleInvoiceId, handleContactId } = useInvoiceContext();
+
   const allContacts = sampleContacts;
 
   const handleCreateInvoice = (e: React.FormEvent) => {
     e.preventDefault();
-    // Here you would typically send the data to your backend
+
     console.log("Creating invoice...");
+
+    if (!id) throw new Error("invoiceId is null");
+    handleInvoiceId(id);
+    if (!contactField) throw new Error("contactField is null");
+    handleContactId(contactField.id);
+
     setIsCreateModalOpen(false);
-    // Reset form or show success message
+    setContactField(null);
+    redirect("/editor", RedirectType.push);
   };
 
   const selectContactById = (contactId: string) => {
@@ -41,7 +61,7 @@ export const CreateInvoiceModal = () => {
       (contact) => contact.id === contactId
     );
     if (!selectedContact) return;
-    setContact(selectedContact);
+    setContactField(selectedContact);
   };
 
   return (
@@ -64,10 +84,23 @@ export const CreateInvoiceModal = () => {
           <div className="flex flex-col gap-4">
             <div className="space-y-4">
               <div className="space-y-2">
+                <Label htmlFor="invoiceNumber">Rechnungsnummer</Label>
+                <Input
+                  className="font-semibold"
+                  id="invoiceNumber"
+                  type="string"
+                  placeholder={idPrefix(id)}
+                  disabled
+                />
+              </div>
+              <div className="space-y-2">
                 <Label htmlFor="clientAddress">Kunde</Label>
-                <Select onValueChange={selectContactById}>
+                <Select onValueChange={selectContactById} required>
                   <SelectTrigger className="w-full mb-2">
-                    <SelectValue placeholder="Kontakt auswählen" />
+                    <SelectValue
+                      id="clientAddress"
+                      placeholder="Kontakt auswählen"
+                    />
                   </SelectTrigger>
                   <SelectContent>
                     {allContacts.map((contact) => (
@@ -78,16 +111,16 @@ export const CreateInvoiceModal = () => {
                   </SelectContent>
                 </Select>
               </div>
-              {contact ? (
+              {contactField ? (
                 <Card className="flex flex-col h-[172px] p-2 text-base text-gray-500 font-normal">
                   <CardContent className="px-1">
-                    <div className="font-medium">{contact.name}</div>
-                    <p>{contact?.owner}</p>
-                    <p>{contact.address?.street}</p>
+                    <div className="font-medium">{contactField.name}</div>
+                    <p>{contactField?.owner}</p>
+                    <p>{contactField.address?.street}</p>
                     <p>
-                      {contact.address?.zip} {contact.address?.state}
+                      {contactField.address?.zip} {contactField.address?.state}
                     </p>
-                    <p>{contact.address?.country}</p>
+                    <p>{contactField.address?.country}</p>
                   </CardContent>
                 </Card>
               ) : (
@@ -105,7 +138,7 @@ export const CreateInvoiceModal = () => {
               variant="outline"
               onClick={() => (
                 setIsCreateModalOpen(false),
-                setTimeout(() => setContact(null)),
+                setTimeout(() => setContactField(null)),
                 500
               )}
             >

@@ -1,6 +1,6 @@
 import React from "react";
-import { FileChartColumn } from "lucide-react";
 
+import { FileChartColumn } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -37,7 +37,7 @@ export default async function Dashboard() {
         {/* Welcome Section */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900">
-            Willkommen zurück, {user?.firstName}!
+            Willkommen zurück, {user?.firstName ?? "Benutzer"}!
           </h1>
           <p className="mt-2 text-gray-600">
             Verwalten Sie Rechnungen für Ihr Unternehmen.
@@ -56,7 +56,7 @@ export default async function Dashboard() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <CreateInvoiceModal invoiceId={idPrefix(latestId)} />
+              <CreateInvoiceModal invoiceId={latestId} />
             </CardContent>
           </Card>
         </div>

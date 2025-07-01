@@ -5,6 +5,7 @@ import { ClerkProvider } from "@clerk/nextjs";
 import Navbar from "@/components/navbar";
 import { Suspense } from "react";
 import Loading from "@/components/loading";
+import { InvoiceContextProvider } from "@/context/state-context";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -42,7 +43,7 @@ export default function RootLayout({
         >
           <Suspense fallback={<Loading />}>
             <Navbar />
-            {children}
+            <InvoiceContextProvider>{children} </InvoiceContextProvider>
           </Suspense>
         </body>
       </html>

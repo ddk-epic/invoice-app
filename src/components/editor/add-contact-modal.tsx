@@ -53,7 +53,7 @@ function SelectContactModal(props: SelectContactModalProps) {
               </div>
             ) : (
               <div className="flex justify-center items-center w-full h-full space-x-2 text-base text-gray-500 border-2 border-dashed rounded-lg">
-                <Plus className="h-4 w-4" size="icon" />
+                <Plus className="h-4 w-4" />
                 <p>{label} hinzufügen</p>
               </div>
             )}

@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import { useInvoiceContext } from "@/hooks/use-state-data";
 
 import { Card } from "@/components/ui/card";
 import Total from "./total";
@@ -8,13 +9,13 @@ import Table from "./table";
 import Optionsbar from "./optionsbar";
 import AddItemModal from "./add-item-modal";
 import InvoiceDetails from "./invoice-details";
+import SelectContactModal from "./add-contact-modal";
 
 import { sampleContacts, sampleProducts } from "@/constants/constants";
 import { Contact, InvoiceItem } from "@/constants/types";
-import SelectContactModal from "./add-contact-modal";
 
 export default function InvoiceEditor() {
-  const [invoiceId, setInvoiceId] = useState(1);
+  const { invoiceId, handleInvoiceId, contactId } = useInvoiceContext();
 
   const [isSendToModalOpen, setIsSendToModalOpen] = useState(false);
   const [isInvoiceToModalOpen, setIsInvoiceToModalOpen] = useState(false);
@@ -102,7 +103,7 @@ export default function InvoiceEditor() {
                 </h1>
                 <InvoiceDetails
                   invoiceId={invoiceId}
-                  setInvoiceId={setInvoiceId}
+                  setInvoiceId={handleInvoiceId}
                 />
               </div>
             </div>
