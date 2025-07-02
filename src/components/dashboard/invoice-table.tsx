@@ -12,7 +12,7 @@ import {
 
 import { getStatusColor } from "@/constants/constants";
 import { InvoiceData } from "@/constants/types";
-import { idPrefix, toEuro } from "@/lib/utils";
+import { idPrefix, centsToEuro } from "@/lib/utils";
 
 const InvoiceTable = ({ invoices }: { invoices: InvoiceData[] }) => {
   return (
@@ -33,7 +33,7 @@ const InvoiceTable = ({ invoices }: { invoices: InvoiceData[] }) => {
               {idPrefix(invoice.invoiceId)}
             </TableCell>
             <TableCell>{invoice.sendTo.name}</TableCell>
-            <TableCell>{toEuro(invoice.total / 100)}</TableCell>
+            <TableCell>{centsToEuro(invoice.total)}</TableCell>
             <TableCell>
               <Badge className={getStatusColor(invoice.status)}>
                 {invoice.status.charAt(0).toUpperCase() +

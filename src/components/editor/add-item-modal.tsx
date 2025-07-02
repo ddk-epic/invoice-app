@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/dialog";
 
 import { InvoiceItem } from "@/constants/types";
-import { toEuro } from "@/lib/utils";
+import { centsToEuro } from "@/lib/utils";
 
 interface AddItemModalProps {
   products: InvoiceItem[];
@@ -47,7 +47,7 @@ function AddItemModal({ products: productList, addItem }: AddItemModalProps) {
                     <p className="text-sm text-gray-500">{item.category}</p>
                   </div>
                   <div className="text-right mr-4">
-                    <p className="font-medium">{toEuro(item.rate / 100)}</p>
+                    <p className="font-medium">{centsToEuro(item.rate)}</p>
                     <p className="text-sm text-gray-500">{item.weight}</p>
                   </div>
                 </div>

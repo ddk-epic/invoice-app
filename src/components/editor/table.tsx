@@ -3,7 +3,7 @@ import { Trash2 } from "lucide-react";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { InvoiceItem } from "@/constants/types";
-import { toEuro } from "@/lib/utils";
+import { centsToEuro } from "@/lib/utils";
 
 interface TableProps {
   items: InvoiceItem[];
@@ -32,7 +32,10 @@ function Table(props: TableProps) {
           {items.map((item, index) => (
             <tr key={item.id} className="border-t">
               <td className="w-13 px-2">{index + 1}</td>
-              <td className="max-w-[300px] truncate">{item.description}</td>
+              <td className="max-w-[300px] truncate">
+                {item.description} {item.brand.toUpperCase()},{" "}
+                {item.perBox ? item.perBox + " X " + item.weight : item.weight}
+              </td>
               <td className="w-13 pr-2">
                 <Input
                   id={item.id.toString()}
@@ -49,9 +52,9 @@ function Table(props: TableProps) {
                   step="1"
                 />
               </td>
-              <td className="w-23 pr-2 text-right">{toEuro(item.rate)}</td>
+              <td className="w-23 pr-2 text-right">{centsToEuro(item.rate)}</td>
               <td className="w-23 text-right font-medium">
-                {toEuro(item.amount)}
+                {centsToEuro(item.amount)}
               </td>
               <td className="px-1">
                 <Button

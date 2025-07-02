@@ -1,39 +1,47 @@
-import React from "react";
+import React, { useEffect } from "react";
+
 import { InvoiceItem } from "@/constants/types";
-import { toEuro } from "@/lib/utils";
+import { centsToEuro } from "@/lib/utils";
 
 interface TotalProps {
   items: InvoiceItem[];
   taxRate: number;
+  total: number;
+  setTotal: (total: number) => void;
 }
 
-function Total({ items, taxRate }: TotalProps) {
-  const total = items.reduce((sum, item) => sum + item.amount, 0);
+function Total({ items, taxRate, setTotal }: TotalProps) {
+  const totalAmount = items.reduce((sum, item) => sum + item.amount, 0);
+
   const tax = taxRate / 100;
-  const subtotal = total / (1 + tax);
-  const taxAmount = total - subtotal;
+  const subtotal = totalAmount / (1 + tax);
+  const taxAmount = totalAmount - subtotal;
+
+  useEffect(() => {
+    setTotal(totalAmount);
+  }, [totalAmount]);
 
   return (
     <>
       {/* Total */}
       <div className="flex justify-end py-0.5 pr-10 space-x-2 font-bold border-y-2 border-current">
         <span>Gesamtbetrag:</span>
-        <span className="w-23 text-right">{toEuro(total)}</span>
+        <span className="w-23 text-right">{centsToEuro(totalAmount)}</span>
       </div>
       {/* SubTotal */}
       <div className="flex justify-end pt-1 pr-10">
         <div>
           <div className="flex justify-end py-1.5 space-x-2 font-bold">
             <span>Rechnungsbetrag (Netto):</span>
-            <span className="w-23 text-right">{toEuro(subtotal)}</span>
+            <span className="w-23 text-right">{centsToEuro(subtotal)}</span>
           </div>
           <div className="flex justify-end py-1.5 space-x-2 font-bold">
             <span>MwSt. von {taxRate},00 %:</span>
-            <span className="w-23 text-right">{toEuro(taxAmount)}</span>
+            <span className="w-23 text-right">{centsToEuro(taxAmount)}</span>
           </div>
           <div className="flex justify-end py-1.5 space-x-2 border-t font-bold">
             <span>Rechnungsbetrag (Brutto):</span>
-            <span className="w-23 text-right">{toEuro(total)}</span>
+            <span className="w-23 text-right">{centsToEuro(totalAmount)}</span>
           </div>
         </div>
       </div>

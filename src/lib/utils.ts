@@ -5,8 +5,12 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-export function toEuro(number: number) {
-  return number.toLocaleString("de-DE", { currency: "EUR", style: "currency" });
+// for editor price display
+export function centsToEuro(number: number) {
+  return (number / 100).toLocaleString("de-DE", {
+    currency: "EUR",
+    style: "currency",
+  });
 }
 
 export function idPrefix(id: number) {
