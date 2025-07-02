@@ -11,7 +11,21 @@ import AddItemModal from "./add-item-modal";
 import InvoiceDetails from "./invoice-details";
 import SelectContactModal from "./add-contact-modal";
 
-import { Contact, InvoiceItem } from "@/constants/types";
+import { Contact, InvoiceData, InvoiceItem } from "@/constants/types";
+
+const sender = {
+  id: 1,
+  type: "admin",
+  name: "Maxima",
+  owner: "phtt",
+  address: {
+    street: "123 London street",
+    city: "Hamburg",
+    state: "HA",
+    zip: "77777",
+    country: "GER",
+  },
+};
 
 interface InvoiceEditorProps {
   contacts: Contact[];
@@ -34,6 +48,7 @@ export default function InvoiceEditor(props: InvoiceEditorProps) {
   const [invoiceTo, setInvoiceTo] = useState<Contact | null>(initialContact);
 
   const [items, setItems] = useState<InvoiceItem[]>([]);
+  const [total, setTotal] = useState<number>(0);
   const taxRate = 19;
 
   const addItem = (item: InvoiceItem) => {
@@ -60,8 +75,8 @@ export default function InvoiceEditor(props: InvoiceEditorProps) {
         weight: item?.weight ?? "",
         perBox: item?.perBox,
         quantity: 1,
-        rate: item.rate / 100,
-        amount: item.rate / 100,
+        rate: item.rate,
+        amount: item.rate,
       };
       setItems([...items, newItem]);
     }
@@ -98,9 +113,32 @@ export default function InvoiceEditor(props: InvoiceEditorProps) {
     setIsInvoiceToModalOpen(false);
   };
 
+  const getInvoiceData = (): InvoiceData => {
+    return {
+      id: 0,
+      invoiceId: invoiceId,
+      invoiceDate: new Date().toISOString().split("T")[0],
+      dueDate: new Date().toISOString().split("T")[0],
+      status: "open",
+
+      sender,
+      sendTo: sendTo ?? sender,
+      invoiceTo: invoiceTo ?? sender,
+
+      items,
+      total,
+      taxRate,
+
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
+  };
+
+  const invoiceData: InvoiceData = getInvoiceData();
+
   return (
     <>
-      <Optionsbar id={invoiceId} />
+      <Optionsbar id={invoiceId} invoiceData={invoiceData} />
 
       <div className="max-w-4xl py-4 mx-auto">
         <Card className="wrapper min-w-2xl min-h-[1086px] md:min-h-[1584px] bg-white shadow-lg">
@@ -148,7 +186,7 @@ export default function InvoiceEditor(props: InvoiceEditorProps) {
               </div>
 
               {/* Table */}
-              <div className="">
+              <div>
                 <Table
                   items={items}
                   updateItemQty={updateItemQty}
@@ -163,7 +201,12 @@ export default function InvoiceEditor(props: InvoiceEditorProps) {
               )}
 
               {/* Total */}
-              <Total items={items} taxRate={taxRate} />
+              <Total
+                items={items}
+                taxRate={taxRate}
+                total={total}
+                setTotal={setTotal}
+              />
             </div>
           </div>
         </Card>

@@ -3,11 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { PDFViewer } from "@react-pdf/renderer";
 
-interface PdfViewerProps {
-  document: React.JSX.Element;
-}
-
-function PdfViewer(props: PdfViewerProps) {
+function PdfViewer(props: {document: React.JSX.Element;}) {
   const { document: pdfDocument } = props;
 
   const [loaded, setLoaded] = useState(false);

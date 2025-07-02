@@ -1,4 +1,5 @@
 import React from "react";
+
 import { Settings, Download, Save, BookCheck, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -9,9 +10,19 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet";
 import { Separator } from "@/components/ui/separator";
-import Link from "next/link";
 
-function Optionsbar({ id: invoiceId }: { id: number }) {
+import Link from "next/link";
+import { PDFDownloadLink } from "@react-pdf/renderer";
+import PdfDocument from "../pdf/pdf-document";
+import { InvoiceData } from "@/constants/types";
+
+interface OptionsbarProps {
+  id: number;
+  invoiceData: InvoiceData;
+}
+
+function Optionsbar(props: OptionsbarProps) {
+  const { id: invoiceId, invoiceData } = props;
   return (
     <div className="z-50 fixed right-0 p-8">
       <Sheet>
@@ -58,9 +69,19 @@ function Optionsbar({ id: invoiceId }: { id: number }) {
                     PDF veröffentlichen
                   </Link>
                 </Button>
-                <Button className="w-full justify-start" variant="outline">
-                  <Download className="h-4 w-4 mr-1" />
-                  PDF herunterladen
+                <Button
+                  className="w-full justify-start"
+                  variant="outline"
+                  asChild
+                >
+                  <PDFDownloadLink
+                    document={<PdfDocument data={invoiceData} />}
+                    fileName={`client_${invoiceId}`}
+                    target="_blank"
+                  >
+                    <Download className="h-4 w-4 mr-1" />
+                    PDF herunterladen
+                  </PDFDownloadLink>
                 </Button>
                 <Button className="w-full justify-start" variant="outline">
                   <Save className="h-4 w-4 mr-1" />
