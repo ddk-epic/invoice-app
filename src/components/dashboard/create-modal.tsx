@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState } from "react";
-import { useInvoiceContext } from "@/hooks/use-state-data";
 
 import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -23,31 +22,38 @@ import {
   SelectContent,
   SelectItem,
 } from "@/components/ui/select";
-import { Contact } from "@/constants/types";
+
+import { invoiceTemplate } from "@/constants/constants";
+import { Contact, InvoiceData } from "@/constants/types";
 import { idPrefix } from "@/lib/utils";
 
 import { redirect, RedirectType } from "next/navigation";
+import { submitCreateInvoice } from "@/context/local-storage";
 
-export const CreateInvoiceModal = ({
-  invoiceId: id,
-  contacts,
-}: {
+interface CreatInvoiceModalProps {
   invoiceId: number;
   contacts: Contact[];
-}) => {
+}
+
+export const CreateInvoiceModal = ({
+  invoiceId,
+  contacts,
+}: CreatInvoiceModalProps) => {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [contactField, setContactField] = useState<Contact | null>(null);
-  const { handleInvoiceId, handleContactId } = useInvoiceContext();
 
   const handleCreateInvoice = (e: React.FormEvent) => {
     e.preventDefault();
 
-    console.log("Creating invoice...");
+    const invoiceData: InvoiceData = {
+      ...invoiceTemplate,
+      invoiceId,
+      sendTo: contactField!,
+      invoiceTo: contactField!,
+    };
 
-    if (!id) throw new Error("invoiceId is null");
-    handleInvoiceId(id);
-    if (!contactField) throw new Error("contactField is null");
-    handleContactId(contactField.id);
+    console.log("Creating invoice...", invoiceData);
+    submitCreateInvoice(invoiceData); // save to local storage
 
     setIsCreateModalOpen(false);
     setContactField(null);
@@ -87,7 +93,7 @@ export const CreateInvoiceModal = ({
                   className="font-semibold"
                   id="invoiceNumber"
                   type="string"
-                  placeholder={idPrefix(id)}
+                  placeholder={idPrefix(invoiceId)}
                   disabled
                 />
               </div>

@@ -1,7 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
-import { useInvoiceContext } from "@/hooks/use-state-data";
+import React, { useEffect, useState } from "react";
 
 import { Card } from "@/components/ui/card";
 import Total from "./total";
@@ -12,6 +11,7 @@ import InvoiceDetails from "./invoice-details";
 import SelectContactModal from "./add-contact-modal";
 
 import { Contact, InvoiceData, InvoiceItem } from "@/constants/types";
+import { getSavedInvoice } from "@/context/local-storage";
 
 const sender = {
   id: 1,
@@ -34,22 +34,25 @@ interface InvoiceEditorProps {
 
 export default function InvoiceEditor(props: InvoiceEditorProps) {
   const { contacts: contactList, products: productList } = props;
-  const { invoiceId, handleInvoiceId, contactId } = useInvoiceContext();
 
   const [isSendToModalOpen, setIsSendToModalOpen] = useState(false);
   const [isInvoiceToModalOpen, setIsInvoiceToModalOpen] = useState(false);
 
-  const getContactById = (contactId: string) => {
-    return contactList.find((contact) => contact.id.toString() === contactId);
-  };
-  const initialContact = getContactById(contactId.toString()) ?? null;
-
-  const [sendTo, setSendTo] = useState<Contact | null>(initialContact);
-  const [invoiceTo, setInvoiceTo] = useState<Contact | null>(initialContact);
-
+  const [invoiceId, setInvoiceId] = useState<number>(0);
+  const [sendTo, setSendTo] = useState<Contact | null>(null);
+  const [invoiceTo, setInvoiceTo] = useState<Contact | null>(null);
   const [items, setItems] = useState<InvoiceItem[]>([]);
   const [total, setTotal] = useState<number>(0);
   const taxRate = 19;
+
+  // on invoice creation
+  useEffect(() => {
+    const invoice = getSavedInvoice();
+
+    setInvoiceId(invoice.invoiceId);
+    setSendTo(invoice.sendTo);
+    setInvoiceTo(invoice.invoiceTo);
+  }, []);
 
   const addItem = (item: InvoiceItem) => {
     const existingItem = items.find((i) => i.id === item.id);
@@ -151,7 +154,7 @@ export default function InvoiceEditor(props: InvoiceEditorProps) {
                 </h1>
                 <InvoiceDetails
                   invoiceId={invoiceId}
-                  setInvoiceId={handleInvoiceId}
+                  setInvoiceId={setInvoiceId}
                 />
               </div>
             </div>

@@ -34,7 +34,7 @@ export interface InvoiceItem {
 }
 
 export interface InvoiceData {
-  id: number;
+  id?: number;
   invoiceId: number;
   invoiceDate: string;
   dueDate: string;
