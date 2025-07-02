@@ -11,9 +11,10 @@ import {
 } from "@/components/ui/sheet";
 import { Separator } from "@/components/ui/separator";
 
-import Link from "next/link";
 import { PDFDownloadLink } from "@react-pdf/renderer";
-import PdfDocument from "../pdf/pdf-document";
+import PdfDocument from "@/components/pdf/pdf-document";
+
+import Link from "next/link";
 import { InvoiceData } from "@/constants/types";
 
 interface OptionsbarProps {
@@ -45,8 +46,8 @@ function Optionsbar(props: OptionsbarProps) {
               <h3>Details</h3>
               <div className="flex flex-col pl-4 pt-1 space-y-1">
                 <span>Rechnung / PDF</span>
-                <span>Author: phtt</span>
-                <span>Empfänger: ABC</span>
+                <span>Author: {invoiceData.sender.name}</span>
+                <span>Empfänger: {invoiceData.sendTo.name}</span>
               </div>
             </div>
 
@@ -76,7 +77,10 @@ function Optionsbar(props: OptionsbarProps) {
                 >
                   <PDFDownloadLink
                     document={<PdfDocument data={invoiceData} />}
-                    fileName={`client_${invoiceId}`}
+
+                    fileName={
+                      invoiceData.sendTo.name.split(" ")[0] + "_" + invoiceId
+                    }
                     target="_blank"
                   >
                     <Download className="h-4 w-4 mr-1" />
