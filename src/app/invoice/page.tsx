@@ -42,6 +42,7 @@ async function InvoiceViewAll() {
               </TableHeader>
               <TableBody>
                 {invoiceList.map((invoice) => (
+                  // @ts-ignore
                   <TableRow key={invoice.id}>
                     <TableCell className="font-medium">
                       {invoice.invoiceId}

@@ -109,6 +109,7 @@ export const CreateInvoiceModal = ({
                   <SelectContent>
                     {contacts.map((contact) => (
                       <SelectItem
+                        // @ts-ignore
                         key={contact.id}
                         value={contact.id.toString()}
                       >

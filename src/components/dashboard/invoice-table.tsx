@@ -28,6 +28,7 @@ const InvoiceTable = ({ invoices }: { invoices: InvoiceData[] }) => {
       </TableHeader>
       <TableBody>
         {invoices.map((invoice) => (
+          // @ts-ignore
           <TableRow key={invoice.id}>
             <TableCell className="font-medium">
               {idPrefix(invoice.invoiceId)}

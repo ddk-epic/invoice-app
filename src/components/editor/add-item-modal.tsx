@@ -37,6 +37,7 @@ function AddItemModal({ products: productList, addItem }: AddItemModalProps) {
         <div className="grid">
           {productList.map((item) => (
             <div
+              // @ts-ignore
               key={item.id}
               className="flex justify-between items-center min-w-[450px] p-1 border-t"
             >

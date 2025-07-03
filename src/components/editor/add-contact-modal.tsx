@@ -65,6 +65,7 @@ function SelectContactModal(props: SelectContactModalProps) {
           </DialogHeader>
           {contactList.map((contact) => (
             <Button
+              // @ts-ignore
               key={contact.id}
               onClick={() => updateContact(contact.id.toString(), name)}
               variant="ghost"

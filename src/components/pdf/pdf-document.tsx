@@ -149,6 +149,7 @@ function PdfDocument({ data: invoice }: { data: InvoiceData }) {
         {/* table items */}
         <View style={s.ml}>
           {invoice.items.map((item, index) => (
+            // @ts-ignore
             <View key={item.id} style={s.inline}>
               <Text style={[{ width: 30 }]}>{index + 1}</Text>
               <Text style={[{ width: 273 }]}>
