@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 
 import { Settings, Download, Save, BookCheck, Trash2 } from "lucide-react";
@@ -20,10 +22,12 @@ import { InvoiceData } from "@/constants/types";
 interface OptionsbarProps {
   id: number;
   invoiceData: InvoiceData;
+  discardData: () => void;
 }
 
 function Optionsbar(props: OptionsbarProps) {
-  const { id: invoiceId, invoiceData } = props;
+  const { id: invoiceId, invoiceData, discardData } = props;
+
   return (
     <div className="z-50 fixed right-0 p-8">
       <Sheet>
@@ -47,7 +51,9 @@ function Optionsbar(props: OptionsbarProps) {
               <div className="flex flex-col pl-4 pt-1 space-y-1">
                 <span>Rechnung / PDF</span>
                 <span>Author: {invoiceData.sender.name}</span>
-                <span>Empfänger: {invoiceData.sendTo.name}</span>
+                <span>
+                  Empfänger: {invoiceData.sendTo.name}
+                </span>
               </div>
             </div>
 
@@ -77,11 +83,9 @@ function Optionsbar(props: OptionsbarProps) {
                 >
                   <PDFDownloadLink
                     document={<PdfDocument data={invoiceData} />}
-
                     fileName={
                       invoiceData.sendTo.name.split(" ")[0] + "_" + invoiceId
                     }
-                    target="_blank"
                   >
                     <Download className="h-4 w-4 mr-1" />
                     PDF herunterladen
@@ -98,7 +102,11 @@ function Optionsbar(props: OptionsbarProps) {
 
             <div>
               <div className="space-y-2">
-                <Button className="w-full justify-start" variant="outline">
+                <Button
+                  onClick={discardData}
+                  className="w-full justify-start"
+                  variant="outline"
+                >
                   <Trash2 className="h-4 w-4 mr-1" />
                   Entwurf verwerfen
                 </Button>

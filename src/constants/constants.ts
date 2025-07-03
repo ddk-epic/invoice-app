@@ -34,6 +34,19 @@ export const invoiceStatistics = [
   },
 ];
 
+export const empty: Contact = {
+  id: 0,
+  type: "client",
+  name: "undefined",
+  address: {
+    street: "",
+    city: "",
+    state: "",
+    zip: "",
+    country: "",
+  },
+};
+
 export const sampleContacts: Contact[] = [
   {
     id: 1,
@@ -245,34 +258,12 @@ export const invoiceTemplate: InvoiceData = {
       country: "GER",
     },
   },
-  sendTo: {
-    id: 3,
-    type: "client",
-    name: "Global Enterprises",
-    address: {
-      street: "456 Grocery Ave",
-      city: "Greenville",
-      state: "CA",
-      zip: "90210",
-      country: "USA",
-    },
-  },
-  invoiceTo: {
-    id: 3,
-    type: "client",
-    name: "Global Enterprises",
-    address: {
-      street: "456 Grocery Ave",
-      city: "Greenville",
-      state: "CA",
-      zip: "90210",
-      country: "USA",
-    },
-  },
+  sendTo: empty,
+  invoiceTo: empty,
   items: [],
 
-  total: 1787,
-  taxRate: 19,
+  total: 0,
+  taxRate: 7,
   createdAt: new Date(),
   updatedAt: new Date(),
 };

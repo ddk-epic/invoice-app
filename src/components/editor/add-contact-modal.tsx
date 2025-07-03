@@ -1,4 +1,5 @@
 import React from "react";
+
 import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -8,13 +9,14 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+
 import { Contact } from "@/constants/types";
 
 interface SelectContactModalProps {
   isModalOpen: boolean;
   setIsModalOpen: (isContactModalOpen: boolean) => void;
   label: string;
-  contact: Contact | null;
+  contact: Contact;
   name: string;
   updateContact: (id: string, name: string) => void;
   contactList: Contact[];
@@ -40,15 +42,15 @@ function SelectContactModal(props: SelectContactModalProps) {
             variant="ghost"
             className="h-[130px] w-full p-0 pb-0.5 m-0 block text-left"
           >
-            {contact ? (
+            {contact.name !== "undefined" ? (
               <div className="flex flex-col px-2 text-sm text-gray-500 font-normal">
                 <div className="font-medium">{contact.name}</div>
-                <p>{contact?.owner}</p>
-                <p>{contact.address?.street}</p>
+                <p>{contact.owner}</p>
+                <p>{contact.address.street}</p>
                 <p>
-                  {contact.address?.zip} {contact.address?.state}
+                  {contact.address.zip} {contact.address.state}
                 </p>
-                <p>{contact.address?.country}</p>
+                <p>{contact.address.country}</p>
                 {!contact?.owner && <p className="h-5"></p>}
               </div>
             ) : (

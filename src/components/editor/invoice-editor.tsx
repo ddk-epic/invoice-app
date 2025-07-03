@@ -10,9 +10,13 @@ import AddItemModal from "./add-item-modal";
 import InvoiceDetails from "./invoice-details";
 import SelectContactModal from "./add-contact-modal";
 
-import { invoiceTemplate } from "@/constants/constants";
+import { empty, invoiceTemplate } from "@/constants/constants";
 import { Contact, InvoiceData, InvoiceItem } from "@/constants/types";
-import { getInvoiceChanges, saveInvoiceChanges } from "@/context/local-storage";
+import {
+  deleteInvoiceChanges,
+  getInvoiceChanges,
+  saveInvoiceChanges,
+} from "@/context/local-storage";
 
 interface InvoiceEditorProps {
   contacts: Contact[];
@@ -24,19 +28,34 @@ export default function InvoiceEditor(props: InvoiceEditorProps) {
 
   const [isSendToModalOpen, setIsSendToModalOpen] = useState(false);
   const [isInvoiceToModalOpen, setIsInvoiceToModalOpen] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
 
   const [invoiceData, setInvoiceData] = useState<InvoiceData>(invoiceTemplate);
 
-  // on invoice creation
+  // Load saved invoice on initial mount
   useEffect(() => {
-    const invoice = getInvoiceChanges();
-    setInvoiceData(invoice);
+    let savedInvoice = getInvoiceChanges("invoice-data");
+    console.log("data", savedInvoice);
+    if (savedInvoice) setInvoiceData(savedInvoice);
   }, []);
 
-  // on data changes
+  // Save to localStorage after 2s of no input
   useEffect(() => {
-    saveInvoiceChanges(invoiceData);
-  }, [JSON.stringify(invoiceData)]);
+    setIsSaving(true);
+
+    const timeout = setTimeout(() => {
+      saveInvoiceChanges("invoice-data", invoiceData);
+      setIsSaving(false);
+    }, 2000); // 2 seconds
+
+    // debounce: clear timeout if data changes before 2s
+    return () => clearTimeout(timeout);
+  }, [
+    invoiceData.invoiceId,
+    JSON.stringify(invoiceData.sendTo),
+    JSON.stringify(invoiceData.invoiceTo),
+    JSON.stringify(invoiceData.items),
+  ]);
 
   const handleItems = (items: InvoiceItem[]) => {
     setInvoiceData((prev) => ({ ...prev, items }));
@@ -65,7 +84,7 @@ export default function InvoiceEditor(props: InvoiceEditorProps) {
         description: item.description,
         brand: item?.brand ?? "",
         weight: item?.weight ?? "",
-        perBox: item?.perBox,
+        perBox: item?.perBox || 0,
         quantity: 1,
         rate: item.rate,
         amount: item.rate,
@@ -110,9 +129,25 @@ export default function InvoiceEditor(props: InvoiceEditorProps) {
     setInvoiceData((prev) => ({ ...prev, total: value }));
   };
 
+  const discardData = () => {
+    console.log("deleting current data...");
+    deleteInvoiceChanges("invoice-data");
+    setInvoiceData((prev) => ({
+      ...prev,
+      dueDate: "",
+      sendTo: empty,
+      invoiceTo: empty,
+      items: [],
+    }));
+  };
+
   return (
     <>
-      <Optionsbar id={invoiceData.invoiceId} invoiceData={invoiceData} />
+      <Optionsbar
+        id={invoiceData.invoiceId}
+        invoiceData={invoiceData}
+        discardData={discardData}
+      />
 
       <div className="max-w-4xl py-4 mx-auto">
         <Card className="wrapper min-w-2xl min-h-[1086px] md:min-h-[1584px] bg-white shadow-lg">

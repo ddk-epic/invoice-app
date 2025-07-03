@@ -1,7 +1,10 @@
 import React from "react";
+
 import Logo from "./logo";
+
 import { Page, Text, View, Document, StyleSheet } from "@react-pdf/renderer";
 import { Overline, UnderLine } from "./pdf-components";
+
 import { InvoiceData } from "@/constants/types";
 import { centsToEuro, idPrefix } from "@/lib/utils";
 
@@ -100,26 +103,24 @@ function PdfDocument({ data: invoice }: { data: InvoiceData }) {
               <Text style={s.bold}>Lieferanschrift</Text>
               <Text>{invoice.sendTo.name}</Text>
               <Text>{invoice.sendTo.owner}</Text>
-              <Text>{invoice.sendTo.address?.street}</Text>
+              <Text>{invoice.sendTo.address.street}</Text>
               <Text>
-                {invoice.sendTo.address?.zip +
-                  " " +
-                  invoice.sendTo.address?.city}
+                {invoice.sendTo.address.zip + " " + invoice.sendTo.address.city}
               </Text>
-              <Text>{invoice.sendTo.address?.country}</Text>
+              <Text>{invoice.sendTo.address.country}</Text>
             </View>
             <View>
               <View style={s.contacts}>
                 <Text style={s.bold}>Rechnungsadresse</Text>
                 <Text>{invoice.invoiceTo.name}</Text>
                 <Text>{invoice.invoiceTo.owner}</Text>
-                <Text>{invoice.invoiceTo.address?.street}</Text>
+                <Text>{invoice.invoiceTo.address.street}</Text>
                 <Text>
-                  {invoice.invoiceTo.address?.zip +
+                  {invoice.invoiceTo.address.zip +
                     " " +
-                    invoice.invoiceTo.address?.city}
+                    invoice.invoiceTo.address.city}
                 </Text>
-                <Text>{invoice.invoiceTo.address?.country}</Text>
+                <Text>{invoice.invoiceTo.address.country}</Text>
               </View>
             </View>
           </View>
@@ -153,7 +154,8 @@ function PdfDocument({ data: invoice }: { data: InvoiceData }) {
             <View key={item.id} style={s.inline}>
               <Text style={[{ width: 30 }]}>{index + 1}</Text>
               <Text style={[{ width: 273 }]}>
-                {item.description} {item.brand.toUpperCase()},{" "}
+                {item.description} {item.brand.toUpperCase()}
+                {item.weight && ", "}
                 {item.perBox ? item.perBox + " X " + item.weight : item.weight}
               </Text>
               <Text style={[{ width: 72, textAlign: "right" }]}>
