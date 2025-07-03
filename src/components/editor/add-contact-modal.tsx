@@ -15,8 +15,8 @@ interface SelectContactModalProps {
   setIsModalOpen: (isContactModalOpen: boolean) => void;
   label: string;
   contact: Contact | null;
-  setter: (contact: Contact) => void;
-  updateContact: (id: string, setter: (contact: Contact) => void) => void;
+  name: string;
+  updateContact: (id: string, name: string) => void;
   contactList: Contact[];
 }
 
@@ -26,7 +26,7 @@ function SelectContactModal(props: SelectContactModalProps) {
     setIsModalOpen,
     label,
     contact,
-    setter,
+    name,
     updateContact,
     contactList,
   } = props;
@@ -66,15 +66,12 @@ function SelectContactModal(props: SelectContactModalProps) {
           {contactList.map((contact) => (
             <Button
               key={contact.id}
-              onClick={() => updateContact(contact.id.toString(), setter)}
+              onClick={() => updateContact(contact.id.toString(), name)}
               variant="ghost"
               className="h-[3rem]"
               asChild
             >
-              <div
-                key={contact.id}
-                className="flex items-center justify-between p-3 rounded-lg border hover:bg-gray-50"
-              >
+              <div className="flex items-center justify-between p-3 rounded-lg border hover:bg-gray-50">
                 <div className="flex-1">
                   <h4 className="font-medium">{contact.name}</h4>
                   <p className="text-sm text-gray-500">{contact.owner}</p>

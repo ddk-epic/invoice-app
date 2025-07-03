@@ -3,25 +3,25 @@
 import React, { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { InvoiceData } from "@/constants/types";
 
 interface InvoiceDetailsProps {
-  invoiceId: number;
-  setInvoiceId: (invoiceId: number) => void;
+  invoiceData: InvoiceData;
+  updateDetails: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
-function InvoiceDetails({ invoiceId, setInvoiceId }: InvoiceDetailsProps) {
+function InvoiceDetails({ invoiceData, updateDetails }: InvoiceDetailsProps) {
   const [invoiceDate, setInvoiceDate] = useState(
     new Date().toISOString().split("T")[0]
   );
-  const [dueDate, setDueDate] = useState("");
   return (
     <div className="space-y-1">
       <div className="flex items-center gap-2">
         <Label className="font-medium min-w-[160px]">Rechnungsnummer:</Label>
         <Input
           id="invoice-number"
-          value={invoiceId}
-          onChange={(e) => setInvoiceId(Number(e.target.value))}
+          value={invoiceData.invoiceId}
+          onChange={(e) => updateDetails(e)}
           className="w-30 md:w-36 h-8"
         />
       </div>
@@ -31,7 +31,7 @@ function InvoiceDetails({ invoiceId, setInvoiceId }: InvoiceDetailsProps) {
           id="invoice-date"
           type="date"
           value={invoiceDate}
-          onChange={(e) => setInvoiceDate(e.target.value)}
+          onChange={(e) => updateDetails(e)}
           className="w-30 md:w-36 h-8"
         />
       </div>
@@ -40,8 +40,8 @@ function InvoiceDetails({ invoiceId, setInvoiceId }: InvoiceDetailsProps) {
         <Input
           id="due-date"
           type="date"
-          value={dueDate}
-          onChange={(e) => setDueDate(e.target.value)}
+          value={invoiceData.dueDate}
+          onChange={(e) => updateDetails(e)}
           className="w-30 md:w-36 h-8"
         />
       </div>

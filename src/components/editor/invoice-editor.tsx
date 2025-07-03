@@ -12,6 +12,7 @@ import SelectContactModal from "./add-contact-modal";
 
 import { Contact, InvoiceData, InvoiceItem } from "@/constants/types";
 import { getSavedInvoice } from "@/context/local-storage";
+import { invoiceTemplate } from "@/constants/constants";
 
 const sender = {
   id: 1,
@@ -38,20 +39,13 @@ export default function InvoiceEditor(props: InvoiceEditorProps) {
   const [isSendToModalOpen, setIsSendToModalOpen] = useState(false);
   const [isInvoiceToModalOpen, setIsInvoiceToModalOpen] = useState(false);
 
-  const [invoiceId, setInvoiceId] = useState<number>(0);
-  const [sendTo, setSendTo] = useState<Contact | null>(null);
-  const [invoiceTo, setInvoiceTo] = useState<Contact | null>(null);
+  const [invoiceData, setInvoiceData] = useState<InvoiceData>(invoiceTemplate);
   const [items, setItems] = useState<InvoiceItem[]>([]);
-  const [total, setTotal] = useState<number>(0);
-  const taxRate = 19;
 
   // on invoice creation
   useEffect(() => {
     const invoice = getSavedInvoice();
-
-    setInvoiceId(invoice.invoiceId);
-    setSendTo(invoice.sendTo);
-    setInvoiceTo(invoice.invoiceTo);
+    setInvoiceData(invoice);
   }, []);
 
   const addItem = (item: InvoiceItem) => {
@@ -105,43 +99,26 @@ export default function InvoiceEditor(props: InvoiceEditorProps) {
     setItems(items.filter((item) => item.id.toString() !== id));
   };
 
-  const updateContactById = (
-    id: string,
-    setter: (contact: Contact) => void
-  ) => {
+  const updateContactById = (id: string, name: string) => {
     const contact = contactList.find((contact) => contact.id.toString() === id);
     if (!contact) return;
-    setter(contact);
+    setInvoiceData((prev) => ({ ...prev, [name]: contact }));
     setIsSendToModalOpen(false);
     setIsInvoiceToModalOpen(false);
   };
 
-  const getInvoiceData = (): InvoiceData => {
-    return {
-      id: 0,
-      invoiceId: invoiceId,
-      invoiceDate: new Date().toISOString().split("T")[0],
-      dueDate: new Date().toISOString().split("T")[0],
-      status: "open",
-
-      sender,
-      sendTo: sendTo ?? sender,
-      invoiceTo: invoiceTo ?? sender,
-
-      items,
-      total,
-      taxRate,
-
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    };
+  const updateInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setInvoiceData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const invoiceData: InvoiceData = getInvoiceData();
+  const updateTotal = (value: number) => {
+    setInvoiceData((prev) => ({ ...prev, total: value }));
+  };
 
   return (
     <>
-      <Optionsbar id={invoiceId} invoiceData={invoiceData} />
+      <Optionsbar id={invoiceData.invoiceId} invoiceData={invoiceData} />
 
       <div className="max-w-4xl py-4 mx-auto">
         <Card className="wrapper min-w-2xl min-h-[1086px] md:min-h-[1584px] bg-white shadow-lg">
@@ -153,8 +130,8 @@ export default function InvoiceEditor(props: InvoiceEditorProps) {
                   Rechnung
                 </h1>
                 <InvoiceDetails
-                  invoiceId={invoiceId}
-                  setInvoiceId={setInvoiceId}
+                  invoiceData={invoiceData}
+                  updateDetails={updateInput}
                 />
               </div>
             </div>
@@ -165,8 +142,8 @@ export default function InvoiceEditor(props: InvoiceEditorProps) {
                 isModalOpen={isSendToModalOpen}
                 setIsModalOpen={setIsSendToModalOpen}
                 label="Lieferanschrift"
-                contact={sendTo}
-                setter={setSendTo}
+                name="sendTo"
+                contact={invoiceData.sendTo}
                 updateContact={updateContactById}
                 contactList={contactList}
               />
@@ -174,8 +151,8 @@ export default function InvoiceEditor(props: InvoiceEditorProps) {
                 isModalOpen={isInvoiceToModalOpen}
                 setIsModalOpen={setIsInvoiceToModalOpen}
                 label="Rechnungsadresse"
-                contact={invoiceTo}
-                setter={setInvoiceTo}
+                name="invoiceTo"
+                contact={invoiceData.invoiceTo}
                 updateContact={updateContactById}
                 contactList={contactList}
               />
@@ -206,9 +183,9 @@ export default function InvoiceEditor(props: InvoiceEditorProps) {
               {/* Total */}
               <Total
                 items={items}
-                taxRate={taxRate}
-                total={total}
-                setTotal={setTotal}
+                taxRate={invoiceData.taxRate}
+                total={invoiceData.total}
+                setTotal={updateTotal}
               />
             </div>
           </div>
