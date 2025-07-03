@@ -14,20 +14,6 @@ import { Contact, InvoiceData, InvoiceItem } from "@/constants/types";
 import { getSavedInvoice } from "@/context/local-storage";
 import { invoiceTemplate } from "@/constants/constants";
 
-const sender = {
-  id: 1,
-  type: "admin",
-  name: "Maxima",
-  owner: "phtt",
-  address: {
-    street: "123 London street",
-    city: "Hamburg",
-    state: "HA",
-    zip: "77777",
-    country: "GER",
-  },
-};
-
 interface InvoiceEditorProps {
   contacts: Contact[];
   products: InvoiceItem[];
@@ -40,7 +26,6 @@ export default function InvoiceEditor(props: InvoiceEditorProps) {
   const [isInvoiceToModalOpen, setIsInvoiceToModalOpen] = useState(false);
 
   const [invoiceData, setInvoiceData] = useState<InvoiceData>(invoiceTemplate);
-  const [items, setItems] = useState<InvoiceItem[]>([]);
 
   // on invoice creation
   useEffect(() => {
@@ -48,10 +33,15 @@ export default function InvoiceEditor(props: InvoiceEditorProps) {
     setInvoiceData(invoice);
   }, []);
 
+  const handleItems = (items: InvoiceItem[]) => {
+    setInvoiceData((prev) => ({ ...prev, items }));
+  };
+
   const addItem = (item: InvoiceItem) => {
-    const existingItem = items.find((i) => i.id === item.id);
+    const items = invoiceData.items;
+    const existingItem = invoiceData.items.find((i) => i.id === item.id);
     if (existingItem) {
-      const updatedItem = items.map((i) => {
+      const updatedItems = invoiceData.items.map((i) => {
         if (i.id === item.id) {
           const newQuantity = i.quantity + 1;
           return {
@@ -62,7 +52,7 @@ export default function InvoiceEditor(props: InvoiceEditorProps) {
         }
         return i;
       });
-      setItems(updatedItem);
+      handleItems(updatedItems);
     } else {
       const newItem: InvoiceItem = {
         id: item.id,
@@ -75,28 +65,27 @@ export default function InvoiceEditor(props: InvoiceEditorProps) {
         rate: item.rate,
         amount: item.rate,
       };
-      setItems([...items, newItem]);
+      handleItems([...items, newItem]);
     }
   };
 
   const updateItemQty = (id: string, quantity: number) => {
-    setItems(
-      items.map((item) => {
-        if (item.id.toString() === id) {
-          const updatedItem = {
-            ...item,
-            quantity,
-            amount: quantity * item.rate,
-          };
-          return updatedItem;
-        }
-        return item;
-      })
-    );
+    const updatedItems = invoiceData.items.map((i) => {
+      if (i.id.toString() === id) {
+        const updatedItem = {
+          ...i,
+          quantity,
+          amount: quantity * i.rate,
+        };
+        return updatedItem;
+      }
+      return i;
+    });
+    handleItems(updatedItems);
   };
 
   const removeItem = (id: string) => {
-    setItems(items.filter((item) => item.id.toString() !== id));
+    handleItems(invoiceData.items.filter((item) => item.id.toString() !== id));
   };
 
   const updateContactById = (id: string, name: string) => {
@@ -168,13 +157,13 @@ export default function InvoiceEditor(props: InvoiceEditorProps) {
               {/* Table */}
               <div>
                 <Table
-                  items={items}
+                  items={invoiceData.items}
                   updateItemQty={updateItemQty}
                   removeItem={removeItem}
                 />
               </div>
               {/* fallback */}
-              {items.length === 0 && (
+              {invoiceData.items.length === 0 && (
                 <div className="text-center py-4 my-2 text-gray-500 border-2 border-dashed rounded-lg">
                   <p>Noch keine Artikel hinzugefügt</p>
                 </div>
@@ -182,7 +171,7 @@ export default function InvoiceEditor(props: InvoiceEditorProps) {
 
               {/* Total */}
               <Total
-                items={items}
+                items={invoiceData.items}
                 taxRate={invoiceData.taxRate}
                 total={invoiceData.total}
                 setTotal={updateTotal}
