@@ -28,17 +28,16 @@ import { Contact, InvoiceData } from "@/constants/types";
 import { idPrefix } from "@/lib/utils";
 
 import { redirect, RedirectType } from "next/navigation";
-import { submitCreateInvoice } from "@/context/local-storage";
+import { saveInvoiceChanges } from "@/context/local-storage";
 
 interface CreatInvoiceModalProps {
   invoiceId: number;
   contacts: Contact[];
 }
 
-export const CreateInvoiceModal = ({
-  invoiceId,
-  contacts,
-}: CreatInvoiceModalProps) => {
+export const CreateInvoiceModal = (props: CreatInvoiceModalProps) => {
+  const { invoiceId, contacts } = props;
+  
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [contactField, setContactField] = useState<Contact | null>(null);
 
@@ -53,7 +52,7 @@ export const CreateInvoiceModal = ({
     };
 
     console.log("Creating invoice...", invoiceData);
-    submitCreateInvoice(invoiceData); // save to local storage
+    saveInvoiceChanges(invoiceData); // save to local storage
 
     setIsCreateModalOpen(false);
     setContactField(null);

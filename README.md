@@ -20,7 +20,7 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 - [x] two-click add address cards (modal)
 - [x] two-click add item (modal)
 - [x] connect actions to the UI
-- [ ] persist editor in localStorage
+- [x] persist editor in localStorage
 - [ ] searchbar in add items
 - [ ] add option to add item to product list
 - [ ] add option to add contact to contact list

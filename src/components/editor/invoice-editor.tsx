@@ -10,9 +10,9 @@ import AddItemModal from "./add-item-modal";
 import InvoiceDetails from "./invoice-details";
 import SelectContactModal from "./add-contact-modal";
 
-import { Contact, InvoiceData, InvoiceItem } from "@/constants/types";
-import { getSavedInvoice } from "@/context/local-storage";
 import { invoiceTemplate } from "@/constants/constants";
+import { Contact, InvoiceData, InvoiceItem } from "@/constants/types";
+import { getInvoiceChanges, saveInvoiceChanges } from "@/context/local-storage";
 
 interface InvoiceEditorProps {
   contacts: Contact[];
@@ -29,9 +29,14 @@ export default function InvoiceEditor(props: InvoiceEditorProps) {
 
   // on invoice creation
   useEffect(() => {
-    const invoice = getSavedInvoice();
+    const invoice = getInvoiceChanges();
     setInvoiceData(invoice);
   }, []);
+
+  // on data changes
+  useEffect(() => {
+    saveInvoiceChanges(invoiceData);
+  }, [JSON.stringify(invoiceData)]);
 
   const handleItems = (items: InvoiceItem[]) => {
     setInvoiceData((prev) => ({ ...prev, items }));
