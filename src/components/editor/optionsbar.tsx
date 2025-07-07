@@ -51,9 +51,7 @@ function Optionsbar(props: OptionsbarProps) {
               <div className="flex flex-col pl-4 pt-1 space-y-1">
                 <span>Rechnung / PDF</span>
                 <span>Author: {invoiceData.sender.name}</span>
-                <span>
-                  Empfänger: {invoiceData.sendTo.name}
-                </span>
+                <span>Empfänger: {invoiceData.sendTo.name}</span>
               </div>
             </div>
 
@@ -66,6 +64,7 @@ function Optionsbar(props: OptionsbarProps) {
                 Exportieren & Speichern
               </h3>
               <div className="space-y-2">
+                {/* publish PDF */}
                 <Button
                   className="w-full justify-start"
                   variant="outline"
@@ -76,21 +75,28 @@ function Optionsbar(props: OptionsbarProps) {
                     PDF veröffentlichen
                   </Link>
                 </Button>
+                {/* download PDF */}
                 <Button
                   className="w-full justify-start"
                   variant="outline"
                   asChild
                 >
                   <PDFDownloadLink
+                    // @ts-ignore
+                    key={Date.now()}
                     document={<PdfDocument data={invoiceData} />}
                     fileName={
-                      invoiceData.sendTo.name.split(" ")[0] + "_" + invoiceId
+                      invoiceData.sendTo.name.split(" ")[0] +
+                      "_" +
+                      invoiceId +
+                      ".pdf"
                     }
                   >
                     <Download className="h-4 w-4 mr-1" />
                     PDF herunterladen
                   </PDFDownloadLink>
                 </Button>
+                {/* save draft */}
                 <Button className="w-full justify-start" variant="outline">
                   <Save className="h-4 w-4 mr-1" />
                   Als Entwurf speichern
@@ -102,6 +108,7 @@ function Optionsbar(props: OptionsbarProps) {
 
             <div>
               <div className="space-y-2">
+                {/* discard draft */}
                 <Button
                   onClick={discardData}
                   className="w-full justify-start"
