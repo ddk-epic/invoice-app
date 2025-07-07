@@ -99,7 +99,7 @@ function AddItemModal({ products: productList, addItem }: AddItemModalProps) {
               ))
             ) : (
               <div className="text-center py-8 text-gray-500">
-                <p>No items found matching "{searchQuery}"</p>
+                <p>Keine passenden Artikel zu "{searchQuery}" gefunden.</p>
               </div>
             )}
           </div>
