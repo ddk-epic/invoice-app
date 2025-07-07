@@ -9,6 +9,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
 
 import { InvoiceItem } from "@/constants/types";
 import { centsToEuro } from "@/lib/utils";
@@ -20,50 +21,81 @@ interface AddItemModalProps {
 
 function AddItemModal({ products: productList, addItem }: AddItemModalProps) {
   const [isAddItemModalOpen, setIsAddItemModalOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const filteredItems = productList.filter(
+    (item) =>
+      item.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      item.category.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   return (
-    <Dialog open={isAddItemModalOpen} onOpenChange={setIsAddItemModalOpen}>
+    <Dialog
+      open={isAddItemModalOpen}
+      onOpenChange={(open) => {
+        if (!open) setTimeout(() => setSearchQuery(""), 300);
+        setIsAddItemModalOpen(open);
+      }}
+    >
       <DialogTrigger asChild>
         <Button size="sm" className="flex items-center gap-2">
           <Plus className="h-4 w-4" />
           Artikel hinzufügen
         </Button>
       </DialogTrigger>
-      <DialogContent className="max-w-2xl max-h-[95vh] overflow-y-auto">
-        <DialogHeader>
-          <DialogTitle>Zu Hinzufügende Artikel auswählen</DialogTitle>
-        </DialogHeader>
-
-        <div className="grid">
-          {productList.map((item) => (
-            <div
-              // @ts-ignore
-              key={item.id}
-              className="flex justify-between items-center min-w-[450px] p-1 border-t"
-            >
-              <div className="flex-1 ml-2">
-                <div className="flex justify-between items-start">
-                  <div>
-                    <h4 className="font-medium">{item.description}</h4>
-                    <p className="text-sm text-gray-500">{item.category}</p>
-                  </div>
-                  <div className="text-right mr-4">
-                    <p className="font-medium">{centsToEuro(item.rate)}</p>
-                    <p className="text-sm text-gray-500">{item.weight}</p>
-                  </div>
-                </div>
-              </div>
-              <Button
-                size="icon"
-                onClick={() => addItem(item)}
-                className="flex items-center rounded-full mr-2"
-              >
-                <Plus />
-              </Button>
-            </div>
-          ))}
+      <DialogContent className="max-w-2xl max-h-[95vh] flex flex-col p-0">
+        <div className="top-0 px-6 pt-6 z-10">
+          <DialogHeader className="mb-4">
+            <DialogTitle>Zu Hinzufügende Artikel auswählen</DialogTitle>
+          </DialogHeader>
+          <div className="relative">
+            <Input
+              placeholder="Artikel suchen..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-3"
+            />
+          </div>
         </div>
-        <div className="flex justify-end pt-2">
+
+        <div className="flex-1 overflow-y-auto px-6">
+          <div className="grid">
+            {filteredItems.length > 0 ? (
+              filteredItems.map((item) => (
+                <div
+                  // @ts-ignore
+                  key={item.id}
+                  className="flex justify-between items-center min-w-[450px] p-1 border-t"
+                >
+                  <div className="flex-1 ml-2">
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <h4 className="font-medium">{item.description}</h4>
+                        <p className="text-sm text-gray-500">{item.category}</p>
+                      </div>
+                      <div className="text-right mr-4">
+                        <p className="font-medium">{centsToEuro(item.rate)}</p>
+                        <p className="text-sm text-gray-500">{item.weight}</p>
+                      </div>
+                    </div>
+                  </div>
+                  <Button
+                    size="icon"
+                    onClick={() => addItem(item)}
+                    className="flex items-center rounded-full mr-2"
+                  >
+                    <Plus />
+                  </Button>
+                </div>
+              ))
+            ) : (
+              <div className="text-center py-8 text-gray-500">
+                <p>No items found matching "{searchQuery}"</p>
+              </div>
+            )}
+          </div>
+        </div>
+        <div className="flex justify-end py-4 pr-6 border-t">
           <Button
             variant="outline"
             onClick={() => setIsAddItemModalOpen(false)}
