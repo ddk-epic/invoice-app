@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-import { Plus } from "lucide-react";
+import { Plus, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -39,12 +39,12 @@ function AddItemModal({ products: productList, addItem }: AddItemModalProps) {
     >
       <DialogTrigger asChild>
         <Button size="sm" className="flex items-center gap-2">
-          <Plus className="h-4 w-4" />
+          <Plus />
           Artikel hinzufügen
         </Button>
       </DialogTrigger>
-      <DialogContent className="max-w-2xl max-h-[95vh] flex flex-col p-0">
-        <div className="top-0 px-6 pt-6 z-10">
+      <DialogContent className="max-w-2xl h-[65vh] lg:h-[95vh] flex flex-col p-0">
+        <div className="top-0 px-6 pt-6">
           <DialogHeader className="mb-4">
             <DialogTitle>Zu Hinzufügende Artikel auswählen</DialogTitle>
           </DialogHeader>
@@ -55,6 +55,13 @@ function AddItemModal({ products: productList, addItem }: AddItemModalProps) {
               onChange={(e) => setSearchQuery(e.target.value)}
               className="pl-3"
             />
+            <Button
+              variant="ghost"
+              onClick={() => setSearchQuery("")}
+              className="absolute size-7 right-1 top-1/2 transform -translate-y-1/2 text-muted-foreground"
+            >
+              <X />
+            </Button>
           </div>
         </div>
 
@@ -71,7 +78,9 @@ function AddItemModal({ products: productList, addItem }: AddItemModalProps) {
                     <div className="flex justify-between items-start">
                       <div>
                         <h4 className="font-medium">{item.description}</h4>
-                        <p className="text-sm text-gray-500">{item.category}</p>
+                        <p className="text-sm text-gray-500">
+                          {item.category.toUpperCase()}
+                        </p>
                       </div>
                       <div className="text-right mr-4">
                         <p className="font-medium">{centsToEuro(item.rate)}</p>
