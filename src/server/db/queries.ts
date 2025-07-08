@@ -21,11 +21,11 @@ export const QUERIES = {
     return db.select().from(invoiceSchema);
   },
 
-  getInvoiceById: async function (id: string) {
+  getInvoiceById: async function (invoiceId: string) {
     return db
       .select()
       .from(invoiceSchema)
-      .where(eq(invoiceSchema.id, parseInt(id)));
+      .where(eq(invoiceSchema.invoiceId, parseInt(invoiceId)));
   },
   insertInvoice: async function (invoiceData: InvoiceData) {
     const { id, createdAt, updatedAt, ...rest } = invoiceData;
@@ -93,4 +93,17 @@ export const getContactsAndProducts = async (): Promise<{
     }
   );
   return cached();
+};
+
+export const getCachedInvoiceData = async (invoiceId: string) => {
+  const cacheKey = `invoice-cache-${invoiceId}`;
+  const cached = unstable_cache(
+    async (invoiceId) => QUERIES.getInvoiceById(invoiceId),
+    [cacheKey],
+    {
+      tags: [cacheKey],
+      revalidate: 60 * 60 * 1, // 1 hour(s)
+    }
+  );
+  return cached(invoiceId);
 };
