@@ -12,7 +12,7 @@ import {
 
 import { getStatusColor } from "@/constants/constants";
 import { InvoiceData } from "@/constants/types";
-import { idPrefix, centsToEuro } from "@/lib/utils";
+import { idPrefix, centsToEuro, deShortDate } from "@/lib/utils";
 
 const InvoiceTable = ({ invoices }: { invoices: InvoiceData[] }) => {
   return (
@@ -34,14 +34,16 @@ const InvoiceTable = ({ invoices }: { invoices: InvoiceData[] }) => {
               {idPrefix(invoice.invoiceId)}
             </TableCell>
             <TableCell>{invoice.sendTo.name}</TableCell>
-            <TableCell>{centsToEuro(invoice.total)}</TableCell>
+            <TableCell className="w-16 flex justify-end">
+              {centsToEuro(invoice.total)}
+            </TableCell>
             <TableCell>
               <Badge className={getStatusColor(invoice.status)}>
                 {invoice.status.charAt(0).toUpperCase() +
                   invoice.status.slice(1)}
               </Badge>
             </TableCell>
-            <TableCell>{invoice.invoiceDate}</TableCell>
+            <TableCell>{deShortDate(new Date(invoice.createdAt))}</TableCell>
           </TableRow>
         ))}
       </TableBody>

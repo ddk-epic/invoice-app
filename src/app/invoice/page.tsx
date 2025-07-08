@@ -15,6 +15,7 @@ import { InvoiceData } from "@/constants/types";
 import { getStatusColor } from "@/constants/constants";
 
 import { QUERIES } from "@/server/db/queries";
+import { centsToEuro, deShortDate, idPrefix } from "@/lib/utils";
 
 async function InvoiceViewAll() {
   const invoiceList = (await QUERIES.getAllInvoices()) as InvoiceData[];
@@ -45,17 +46,19 @@ async function InvoiceViewAll() {
                   // @ts-ignore
                   <TableRow key={invoice.id}>
                     <TableCell className="font-medium">
-                      {invoice.invoiceId}
+                      {idPrefix(invoice.invoiceId)}
                     </TableCell>
                     <TableCell>{invoice.sendTo.name}</TableCell>
-                    <TableCell>{invoice.total}</TableCell>
+                    <TableCell>{centsToEuro(invoice.total)}</TableCell>
                     <TableCell>
                       <Badge className={getStatusColor(invoice.status)}>
                         {invoice.status.charAt(0).toUpperCase() +
                           invoice.status.slice(1)}
                       </Badge>
                     </TableCell>
-                    <TableCell>{invoice.createdAt.toDateString()}</TableCell>
+                    <TableCell>
+                      {deShortDate(new Date(invoice.createdAt))}
+                    </TableCell>
                   </TableRow>
                 ))}
               </TableBody>

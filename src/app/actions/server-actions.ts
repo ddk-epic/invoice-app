@@ -12,8 +12,8 @@ export const insertInvoiceAction = async (invoiceData: InvoiceData) => {
 
     const insertedInvoice = await QUERIES.insertInvoice(invoiceData);
     if (insertedInvoice) console.log("successfully saved to the database!");
-
     revalidatePath("/dashboard");
+    return 1;
   } catch (err) {
     console.error("Server action error:", err);
     throw new Error("Internal Server Error");
