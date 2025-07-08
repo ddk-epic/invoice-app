@@ -3,16 +3,16 @@ import { Contact, InvoiceData, InvoiceItem } from "./types";
 // Invoice status
 export const getStatusColor = (status: string) => {
   switch (status) {
-    case "paid":
-      return "bg-green-100 text-green-800 hover:bg-green-100";
-    case "pending":
-      return "bg-yellow-100 text-yellow-800 hover:bg-yellow-100";
-    case "overdue":
-      return "bg-red-100 text-red-800 hover:bg-red-100";
-    case "draft":
-      return "bg-gray-100 text-gray-800 hover:bg-gray-100";
+    case "Bezahlt":
+      return "bg-green-100 text-green-800";
+    case "Offen":
+      return "bg-yellow-100 text-yellow-800";
+    case "Überfällig":
+      return "bg-red-100 text-red-800";
+    case "Entwurf":
+      return "bg-gray-100 text-gray-800";
     default:
-      return "bg-gray-100 text-gray-800 hover:bg-gray-100";
+      return "bg-gray-100 text-gray-800";
   }
 };
 
@@ -244,7 +244,7 @@ export const invoiceTemplate: InvoiceData = {
   invoiceId: 0,
   invoiceDate: new Date().toISOString().split("T")[0],
   dueDate: new Date().toISOString().split("T")[0],
-  status: "pending",
+  status: "Entwurf",
   sender: {
     id: 1,
     type: "admin",
@@ -273,7 +273,7 @@ export const sampleInvoiceData: InvoiceData = {
   invoiceId: 21,
   invoiceDate: "2025-06-20",
   dueDate: "2025-07-05",
-  status: "pending",
+  status: "Entwurf",
   sender: {
     id: 0,
     type: "admin",

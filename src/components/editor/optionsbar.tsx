@@ -34,8 +34,22 @@ function Optionsbar(props: OptionsbarProps) {
     const result = InvoiceSchema.safeParse(invoiceData);
     if (!result.success) return console.log(result.error);
 
-    await insertInvoiceAction(invoiceData);
+    const { status, ...rest } = invoiceData;
+    const updatedInvoiceData = {
+      status: "pending",
+      ...rest,
+    };
+
+    await insertInvoiceAction(updatedInvoiceData);
     console.log("successfully saved the invoiceData!");
+  };
+
+  const handleDraft = async () => {
+    const result = InvoiceSchema.safeParse(invoiceData);
+    if (!result.success) return console.log(result.error);
+
+    await insertInvoiceAction(invoiceData);
+    console.log("successfully saved the draft!");
   };
 
   return (
@@ -110,7 +124,7 @@ function Optionsbar(props: OptionsbarProps) {
                 </Button>
                 {/* save draft */}
                 <Button
-                  onClick={handlePublish}
+                  onClick={handleDraft}
                   variant="outline"
                   className="w-full justify-start"
                 >
