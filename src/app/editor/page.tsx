@@ -1,7 +1,7 @@
 import React from "react";
 
 import A4InvoiceEditor from "@/components/editor/invoice-editor";
-import { getContactsAndProducts } from "@/server/db/queries";
+import { getContactsAndProducts } from "../actions/server-actions";
 
 async function InvoiceEditorPage() {
   const { contactList, productList } = await getContactsAndProducts();

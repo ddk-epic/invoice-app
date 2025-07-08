@@ -14,7 +14,7 @@ import InvoiceTable from "@/components/dashboard/invoice-table";
 
 import { currentUser } from "@clerk/nextjs/server";
 import Link from "next/link";
-import { getInvoicesAndContacts } from "@/server/db/queries";
+import { getInvoicesAndContacts } from "../actions/server-actions";
 
 import { InvoiceData } from "@/constants/types";
 import { invoiceStatistics } from "@/constants/constants";

@@ -4,7 +4,7 @@ import PdfViewer from "@/components/pdf/pdf-viewer";
 import PdfDocument from "@/components/pdf/pdf-document";
 
 import { notFound } from "next/navigation";
-import { getCachedInvoiceData } from "@/server/db/queries";
+import { getCachedInvoiceData } from "@/app/actions/server-actions";
 import { InvoiceData } from "@/constants/types";
 
 interface InvoiceGeneratorProps {
