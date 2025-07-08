@@ -16,8 +16,10 @@ import { Separator } from "@/components/ui/separator";
 import { PDFDownloadLink } from "@react-pdf/renderer";
 import PdfDocument from "@/components/pdf/pdf-document";
 
-import Link from "next/link";
 import { InvoiceData } from "@/constants/types";
+import { InvoiceSchema } from "@/lib/schema";
+import { insertInvoiceAction } from "@/app/actions/server-actions";
+import { redirect, RedirectType } from "next/navigation";
 
 interface OptionsbarProps {
   id: number;
@@ -27,6 +29,14 @@ interface OptionsbarProps {
 
 function Optionsbar(props: OptionsbarProps) {
   const { id: invoiceId, invoiceData, discardData } = props;
+
+  const handlePublish = async () => {
+    const result = InvoiceSchema.safeParse(invoiceData);
+    if (!result.success) return console.log(result.error);
+
+    await insertInvoiceAction(invoiceData);
+    console.log("successfully saved the invoiceData!");
+  };
 
   return (
     <div className="z-50 fixed right-0 p-8">
@@ -66,14 +76,15 @@ function Optionsbar(props: OptionsbarProps) {
               <div className="space-y-2">
                 {/* publish PDF */}
                 <Button
-                  className="w-full justify-start"
+                  onClick={() => {
+                    handlePublish;
+                    redirect(`/invoice/${invoiceId}/pdf`, RedirectType.push);
+                  }}
                   variant="outline"
-                  asChild
+                  className="w-full justify-start"
                 >
-                  <Link href={`/invoice/${invoiceId}/pdf`}>
-                    <BookCheck className="h-4 w-4 mr-1" />
-                    PDF veröffentlichen
-                  </Link>
+                  <BookCheck className="h-4 w-4 mr-1" />
+                  PDF veröffentlichen
                 </Button>
                 {/* download PDF */}
                 <Button
@@ -84,6 +95,7 @@ function Optionsbar(props: OptionsbarProps) {
                   <PDFDownloadLink
                     // @ts-ignore
                     key={Date.now()}
+                    onClick={handlePublish}
                     document={<PdfDocument data={invoiceData} />}
                     fileName={
                       invoiceData.sendTo.name.split(" ")[0] +
@@ -97,7 +109,11 @@ function Optionsbar(props: OptionsbarProps) {
                   </PDFDownloadLink>
                 </Button>
                 {/* save draft */}
-                <Button className="w-full justify-start" variant="outline">
+                <Button
+                  onClick={handlePublish}
+                  variant="outline"
+                  className="w-full justify-start"
+                >
                   <Save className="h-4 w-4 mr-1" />
                   Als Entwurf speichern
                 </Button>

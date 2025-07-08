@@ -16,7 +16,7 @@ import { currentUser } from "@clerk/nextjs/server";
 import Link from "next/link";
 import { getInvoicesAndContacts } from "@/server/db/queries";
 
-import { Contact, InvoiceData } from "@/constants/types";
+import { InvoiceData } from "@/constants/types";
 import { invoiceStatistics } from "@/constants/constants";
 
 const getLatestInvoiceId = (invoices: InvoiceData[]) => {

@@ -27,6 +27,18 @@ export const QUERIES = {
       .from(invoiceSchema)
       .where(eq(invoiceSchema.id, parseInt(id)));
   },
+  insertInvoice: async function (invoiceData: InvoiceData) {
+    const { id, createdAt, updatedAt, ...rest } = invoiceData;
+    const modifiedInvoice = {
+      ...rest,
+      sender: JSON.stringify(invoiceData.sender),
+      sendTo: JSON.stringify(invoiceData.sendTo),
+      invoiceTo: JSON.stringify(invoiceData.invoiceTo),
+      items: JSON.stringify(invoiceData.items),
+    };
+    console.log("modified invoice", modifiedInvoice);
+    return db.insert(invoiceSchema).values(modifiedInvoice);
+  },
 };
 
 // dashboard
