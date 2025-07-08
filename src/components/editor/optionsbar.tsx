@@ -89,8 +89,13 @@ function Optionsbar(props: OptionsbarProps) {
                     setIsLoading(true);
                     const res = await handlePublish();
                     if (res) {
-                      setIsLoading(false);
-                      redirect(`/invoice/${invoiceId}/pdf`, RedirectType.push);
+                      setTimeout(() => {
+                        setIsLoading(false);
+                        redirect(
+                          `/invoice/${invoiceId}/pdf`,
+                          RedirectType.push
+                        );
+                      }, 3000);
                     }
                   }}
                   variant="outline"
