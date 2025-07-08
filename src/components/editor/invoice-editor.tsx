@@ -152,8 +152,8 @@ export default function InvoiceEditor(props: InvoiceEditorProps) {
         discardData={discardData}
       />
       {isSaving && (
-        <div className="absolute right-6 bottom-6">
-          <Spinner size="large" />
+        <div className="fixed right-6 bottom-6">
+          <Spinner size="large" className="text-purple-600" />
         </div>
       )}
       <div className="max-w-4xl py-4 mx-auto">
