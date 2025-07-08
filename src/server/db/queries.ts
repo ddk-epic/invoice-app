@@ -2,7 +2,11 @@ import "server-only";
 
 import { eq } from "drizzle-orm";
 import { db } from "./index";
-import { contactsSchema, invoiceSchema, productsSchema } from "./schema";
+import {
+  contactsSchema as contactsTable,
+  invoiceSchema as invoiceTable,
+  productsSchema as productsTable,
+} from "./schema";
 
 import { unstable_cache } from "next/cache";
 import { Contact, InvoiceData, InvoiceItem } from "@/constants/types";
@@ -10,22 +14,22 @@ import { Contact, InvoiceData, InvoiceItem } from "@/constants/types";
 export const QUERIES = {
   // SELECT
   getAllContacts: async function () {
-    return db.select().from(contactsSchema);
+    return db.select().from(contactsTable);
   },
 
   getAllProducts: async function () {
-    return db.select().from(productsSchema);
+    return db.select().from(productsTable);
   },
 
   getAllInvoices: async function () {
-    return db.select().from(invoiceSchema);
+    return db.select().from(invoiceTable);
   },
 
   getInvoiceById: async function (invoiceId: string) {
     return db
       .select()
-      .from(invoiceSchema)
-      .where(eq(invoiceSchema.invoiceId, parseInt(invoiceId)));
+      .from(invoiceTable)
+      .where(eq(invoiceTable.invoiceId, invoiceId));
   },
   insertInvoice: async function (invoiceData: InvoiceData) {
     const { id, createdAt, updatedAt, ...rest } = invoiceData;
@@ -37,7 +41,7 @@ export const QUERIES = {
       items: JSON.stringify(invoiceData.items),
     };
     console.log("modified invoice", modifiedInvoice);
-    return db.insert(invoiceSchema).values(modifiedInvoice);
+    return db.insert(invoiceTable).values(modifiedInvoice);
   },
 };
 
@@ -62,7 +66,7 @@ export const getInvoicesAndContacts = async (): Promise<{
     [cacheKey],
     {
       tags: [cacheKey],
-      revalidate: 60 * 60 * 1, // 1 hour
+      revalidate: 60 * 1, // 1 minute(s)
     }
   );
   return cached();
@@ -89,7 +93,7 @@ export const getContactsAndProducts = async (): Promise<{
     [cacheKey],
     {
       tags: [cacheKey],
-      revalidate: 60 * 60 * 1, // 1 hour
+      revalidate: 60 * 1, // 1 minute(s)
     }
   );
   return cached();
@@ -102,7 +106,7 @@ export const getCachedInvoiceData = async (invoiceId: string) => {
     [cacheKey],
     {
       tags: [cacheKey],
-      revalidate: 60 * 60 * 1, // 1 hour(s)
+      revalidate: 60 * 1, // 1 minute(s)
     }
   );
   return cached(invoiceId);

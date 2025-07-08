@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 
 import { Settings, Download, Save, BookCheck, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -22,7 +22,7 @@ import { insertInvoiceAction } from "@/app/actions/server-actions";
 import { redirect, RedirectType } from "next/navigation";
 
 interface OptionsbarProps {
-  id: number;
+  id: string;
   invoiceData: InvoiceData;
   discardData: () => void;
 }
@@ -30,26 +30,21 @@ interface OptionsbarProps {
 function Optionsbar(props: OptionsbarProps) {
   const { id: invoiceId, invoiceData, discardData } = props;
 
+  const [isLoading, setIsLoading] = useState(false);
+
   const handlePublish = async () => {
     const result = InvoiceSchema.safeParse(invoiceData);
     if (!result.success) return console.log(result.error);
 
     const { status, ...rest } = invoiceData;
     const updatedInvoiceData = {
-      status: "pending",
+      status: "Offen",
       ...rest,
     };
 
-    await insertInvoiceAction(updatedInvoiceData);
+    const res = await insertInvoiceAction(updatedInvoiceData);
     console.log("successfully saved the invoiceData!");
-  };
-
-  const handleDraft = async () => {
-    const result = InvoiceSchema.safeParse(invoiceData);
-    if (!result.success) return console.log(result.error);
-
-    await insertInvoiceAction(invoiceData);
-    console.log("successfully saved the draft!");
+    return res;
   };
 
   return (
@@ -90,12 +85,17 @@ function Optionsbar(props: OptionsbarProps) {
               <div className="space-y-2">
                 {/* publish PDF */}
                 <Button
-                  onClick={() => {
-                    handlePublish;
-                    redirect(`/invoice/${invoiceId}/pdf`, RedirectType.push);
+                  onClick={async () => {
+                    setIsLoading(true);
+                    const res = await handlePublish();
+                    if (res) {
+                      setIsLoading(false);
+                      redirect(`/invoice/${invoiceId}/pdf`, RedirectType.push);
+                    }
                   }}
                   variant="outline"
                   className="w-full justify-start"
+                  disabled={isLoading}
                 >
                   <BookCheck className="h-4 w-4 mr-1" />
                   PDF veröffentlichen
@@ -117,19 +117,11 @@ function Optionsbar(props: OptionsbarProps) {
                       invoiceId +
                       ".pdf"
                     }
+                    disabled={isLoading}
                   >
                     <Download className="h-4 w-4 mr-1" />
                     PDF herunterladen
                   </PDFDownloadLink>
-                </Button>
-                {/* save draft */}
-                <Button
-                  onClick={handleDraft}
-                  variant="outline"
-                  className="w-full justify-start"
-                >
-                  <Save className="h-4 w-4 mr-1" />
-                  Als Entwurf speichern
                 </Button>
               </div>
             </div>
@@ -141,8 +133,9 @@ function Optionsbar(props: OptionsbarProps) {
                 {/* discard draft */}
                 <Button
                   onClick={discardData}
-                  className="w-full justify-start"
                   variant="outline"
+                  className="w-full justify-start"
+                  disabled={isLoading}
                 >
                   <Trash2 className="h-4 w-4 mr-1" />
                   Entwurf verwerfen

@@ -41,7 +41,7 @@ export const productsSchema = pgTable("products_table", {
 
 export const invoiceSchema = pgTable("invoice_table", {
   id: serial("id").primaryKey(),
-  invoiceId: integer().notNull(),
+  invoiceId: text("invoice_id").notNull(),
   invoiceDate: text("invoice_date").notNull(),
   dueDate: text("due_date").notNull(),
   status: text("status").notNull(),
@@ -59,6 +59,9 @@ export const invoiceSchema = pgTable("invoice_table", {
     .notNull()
     .$onUpdate(() => new Date()),
 });
+
+export type InsertContact = typeof contactsSchema.$inferInsert;
+export type SelectContact = typeof contactsSchema.$inferSelect;
 
 export type InsertProduct = typeof productsSchema.$inferInsert;
 export type SelectProduct = typeof productsSchema.$inferSelect;

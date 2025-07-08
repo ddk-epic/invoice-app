@@ -32,7 +32,7 @@ import { saveInvoiceChanges } from "@/context/local-storage";
 import { Spinner } from "../ui/spinner";
 
 interface CreatInvoiceModalProps {
-  invoiceId: number;
+  invoiceId: string;
   contacts: Contact[];
 }
 

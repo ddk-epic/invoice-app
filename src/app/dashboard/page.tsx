@@ -19,16 +19,19 @@ import { getInvoicesAndContacts } from "@/server/db/queries";
 import { InvoiceData } from "@/constants/types";
 import { invoiceStatistics } from "@/constants/constants";
 
-const getLatestInvoiceId = (invoices: InvoiceData[]) => {
-  return invoices.reduce((max, invoice) => {
-    return invoice.invoiceId > max.invoiceId ? invoice : max;
-  });
+const getLatestInvoiceId = (invoices: InvoiceData[]): number => {
+  if (invoices.length === 0) return 1;
+
+  const latestInvoice = invoices.reduce((max, invoice) =>
+    invoice.invoiceId > max.invoiceId ? invoice : max
+  );
+  return parseInt(latestInvoice.invoiceId) + 1;
 };
 
 export default async function Dashboard() {
   const user = await currentUser();
   const { invoiceList, contactList } = await getInvoicesAndContacts();
-  const latestId = getLatestInvoiceId(invoiceList).invoiceId + 1;
+  const latestId = getLatestInvoiceId(invoiceList).toString();
 
   return (
     <main className="wrapper top min-h-screen bg-gray-50">
