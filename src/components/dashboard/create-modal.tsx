@@ -29,6 +29,7 @@ import { idPrefix } from "@/lib/utils";
 
 import { redirect, RedirectType } from "next/navigation";
 import { saveInvoiceChanges } from "@/context/local-storage";
+import { Spinner } from "../ui/spinner";
 
 interface CreatInvoiceModalProps {
   invoiceId: number;
@@ -40,9 +41,11 @@ export const CreateInvoiceModal = (props: CreatInvoiceModalProps) => {
 
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [contactField, setContactField] = useState<Contact | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleCreateInvoice = (e: React.FormEvent) => {
     e.preventDefault();
+    setIsLoading(true);
 
     const invoiceData: InvoiceData = {
       ...invoiceTemplate,
@@ -53,9 +56,8 @@ export const CreateInvoiceModal = (props: CreatInvoiceModalProps) => {
 
     console.log("Creating invoice...", invoiceData);
     saveInvoiceChanges("invoice-data", invoiceData); // save to local storage
+    setIsLoading(false);
 
-    setIsCreateModalOpen(false);
-    setContactField(null);
     redirect("/editor", RedirectType.push);
   };
 
@@ -68,7 +70,13 @@ export const CreateInvoiceModal = (props: CreatInvoiceModalProps) => {
   };
 
   return (
-    <Dialog open={isCreateModalOpen} onOpenChange={setIsCreateModalOpen}>
+    <Dialog
+      open={isCreateModalOpen}
+      onOpenChange={(open) => {
+        if (!open) setTimeout(() => setContactField(null), 300);
+        setIsCreateModalOpen(open);
+      }}
+    >
       <DialogTrigger asChild>
         <Button className="bg-white text-purple-600 hover:bg-gray-100">
           <Plus className="mr-2 h-4 w-4" />
@@ -146,13 +154,18 @@ export const CreateInvoiceModal = (props: CreatInvoiceModalProps) => {
               onClick={() => (
                 setIsCreateModalOpen(false),
                 setTimeout(() => setContactField(null)),
-                500
+                300
               )}
+              disabled={isLoading}
             >
               Abbrechen
             </Button>
-            <Button type="submit" className="bg-purple-600 hover:bg-purple-700">
-              Rechnung erstellen
+            <Button
+              type="submit"
+              className="bg-purple-600 hover:bg-purple-700 flex items-center justify-center w-38"
+              disabled={isLoading}
+            >
+              {isLoading ? <Spinner size="small" /> : "Rechnung erstellen"}
             </Button>
           </div>
         </form>
