@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 
 import { Card } from "@/components/ui/card";
+import { Spinner } from "@/components/ui/spinner";
 import Total from "./total";
 import Table from "./table";
 import Optionsbar from "./optionsbar";
@@ -52,6 +53,8 @@ export default function InvoiceEditor(props: InvoiceEditorProps) {
     return () => clearTimeout(timeout);
   }, [
     invoiceData.invoiceId,
+    invoiceData.invoiceDate,
+    invoiceData.dueDate,
     JSON.stringify(invoiceData.sendTo),
     JSON.stringify(invoiceData.invoiceTo),
     JSON.stringify(invoiceData.items),
@@ -148,7 +151,11 @@ export default function InvoiceEditor(props: InvoiceEditorProps) {
         invoiceData={invoiceData}
         discardData={discardData}
       />
-
+      {isSaving && (
+        <div className="absolute right-6 bottom-6">
+          <Spinner size="large" />
+        </div>
+      )}
       <div className="max-w-4xl py-4 mx-auto">
         <Card className="wrapper min-w-2xl min-h-[1086px] md:min-h-[1584px] bg-white shadow-lg">
           <div className="py-6 px-12 h-full flex flex-col text-sm">
