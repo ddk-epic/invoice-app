@@ -109,7 +109,7 @@ function Optionsbar(props: OptionsbarProps) {
                 <Button
                   className="w-full justify-start"
                   variant="outline"
-                  asChild
+                  disabled={isLoading}
                 >
                   <PDFDownloadLink
                     // @ts-ignore
@@ -122,10 +122,11 @@ function Optionsbar(props: OptionsbarProps) {
                       invoiceId +
                       ".pdf"
                     }
-                    disabled={isLoading}
                   >
-                    <Download className="h-4 w-4 mr-1" />
-                    PDF herunterladen
+                    <span className="flex gap-2 -ml-1">
+                      <Download className="h-4 w-4 mr-1" />
+                      PDF herunterladen
+                    </span>
                   </PDFDownloadLink>
                 </Button>
               </div>
