@@ -10,6 +10,10 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { CreateInvoiceModal } from "@/components/dashboard/create-modal";
+import {
+  ContactsModal,
+  ProductsModal,
+} from "@/components/dashboard/edit-modal";
 import InvoiceTable from "@/components/dashboard/invoice-table";
 
 import { currentUser } from "@clerk/nextjs/server";
@@ -47,7 +51,7 @@ export default async function Dashboard() {
         </div>
 
         {/* Quick Actions */}
-        <div className="my-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 md:[&>*:first-child]:col-span-2 gap-4 mb-4">
           <Card className="purple-gradient text-white">
             <CardHeader>
               <CardTitle className="text-white">
@@ -60,6 +64,12 @@ export default async function Dashboard() {
             <CardContent>
               <CreateInvoiceModal invoiceId={latestId} contacts={contactList} />
             </CardContent>
+          </Card>
+
+          <Card className="h-38 gap-6 mb-0">
+            <ContactsModal />
+
+            <ProductsModal />
           </Card>
         </div>
 
