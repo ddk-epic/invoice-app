@@ -6,27 +6,30 @@ import { QUERIES } from "@/server/db/queries";
 import { revalidatePath, unstable_cache } from "next/cache";
 
 // dashboard
-export const getInvoicesAndContacts = async (): Promise<{
+export const getInvoicesContactsProducts = async (): Promise<{
   invoiceList: InvoiceData[];
   contactList: Contact[];
+  productList: InvoiceItem[];
 }> => {
   const cacheKey = "invoices-contacts";
 
   const cached = unstable_cache(
     async () => {
-      const [invoices, contacts] = await Promise.all([
+      const [invoices, contacts, products] = await Promise.all([
         QUERIES.getAllInvoices(),
         QUERIES.getAllContacts(),
+        QUERIES.getAllProducts(),
       ]);
       const invoiceList = invoices as InvoiceData[];
       const contactList = contacts as Contact[];
+      const productList = products as InvoiceItem[];
 
-      return { invoiceList, contactList };
+      return { invoiceList, contactList, productList };
     },
     [cacheKey],
     {
       tags: [cacheKey],
-      revalidate: 60 * 1, // 1 minute(s)
+      revalidate: 60 * 20, // 20 minute(s)
     }
   );
   return cached();
@@ -53,7 +56,7 @@ export const getContactsAndProducts = async (): Promise<{
     [cacheKey],
     {
       tags: [cacheKey],
-      revalidate: 60 * 1, // 1 minute(s)
+      revalidate: 60 * 20, // 20 minute(s)
     }
   );
   return cached();

@@ -12,7 +12,9 @@ import {
   DialogHeader,
 } from "@/components/ui/dialog";
 
-function ContactsModal() {
+import { Contact, InvoiceItem } from "@/constants/types";
+
+function ContactsModal({ contacts }: { contacts: Contact[] }) {
   const [isContactsModalOpen, setIsContactsModalOpen] = useState(false);
   return (
     <Dialog
@@ -48,17 +50,23 @@ function ContactsModal() {
         <div className="flex-1 overflow-y-auto px-6">
           <div className="grid">
             <div className="flex justify-between items-center min-w-[450px] p-1 border-t">
-              <div className="flex-1 ml-2">
-                <div className="flex justify-between items-start">
-                  <div>
-                    <h4 className="font-medium">description</h4>
-                    <p className="text-sm text-gray-500">category</p>
+              <div className="flex-1 ml-2 space-y-3">
+                {contacts.map((contact) => (
+                  <div
+                    // @ts-ignore
+                    key={contact.id}
+                    className="flex justify-between items-start"
+                  >
+                    <div>
+                      <h4 className="font-medium">{contact.name}</h4>
+                      <p className="text-sm text-gray-500">{contact.type}</p>
+                    </div>
+                    <div className="text-right mr-4">
+                      <p className="font-medium">{contact.address.street}</p>
+                      <p className="text-sm text-gray-500">{`${contact.address.zip} ${contact.address.city} ${contact.address.country}`}</p>
+                    </div>
                   </div>
-                  <div className="text-right mr-4">
-                    <p className="font-medium">rate</p>
-                    <p className="text-sm text-gray-500">weight</p>
-                  </div>
-                </div>
+                ))}
               </div>
             </div>
           </div>
@@ -76,7 +84,7 @@ function ContactsModal() {
   );
 }
 
-function ProductsModal() {
+function ProductsModal({ products }: { products: InvoiceItem[] }) {
   const [isProductsModalOpen, setIsProductsModalOpen] = useState(false);
   return (
     <Dialog
@@ -102,7 +110,7 @@ function ProductsModal() {
           </div>
         </Button>
       </DialogTrigger>
-      <DialogContent className="max-w-2xl h-[65vh] lg:h-[95vh] flex flex-col p-0">
+      <DialogContent className="max-w-2xl h-[65vh] flex flex-col p-0">
         <div className="top-0 px-6 pt-6">
           <DialogHeader className="mb-4">
             <DialogTitle>Artikel</DialogTitle>
@@ -111,18 +119,26 @@ function ProductsModal() {
         </div>
         <div className="flex-1 overflow-y-auto px-6">
           <div className="grid">
-            <div className="flex justify-between items-center min-w-[450px] p-1 border-t">
-              <div className="flex-1 ml-2">
-                <div className="flex justify-between items-start">
-                  <div>
-                    <h4 className="font-medium">description</h4>
-                    <p className="text-sm text-gray-500">category</p>
+            <div className="flex justify-between items-center min-w-[450px] p-1">
+              <div className="flex-1 ml-2 space-y-3">
+                {products.map((product) => (
+                  <div
+                    // @ts-ignore
+                    key={product.id}
+                    className="flex justify-between items-start"
+                  >
+                    <div>
+                      <h4 className="font-medium">{product.description}</h4>
+                      <p className="text-sm text-gray-500">
+                        {product.category.toUpperCase()}
+                      </p>
+                    </div>
+                    <div className="text-right mr-4">
+                      <p className="font-medium">{product.brand}</p>
+                      <p className="text-sm text-gray-500">{product.weight}</p>
+                    </div>
                   </div>
-                  <div className="text-right mr-4">
-                    <p className="font-medium">rate</p>
-                    <p className="text-sm text-gray-500">weight</p>
-                  </div>
-                </div>
+                ))}
               </div>
             </div>
           </div>

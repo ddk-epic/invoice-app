@@ -18,7 +18,7 @@ import InvoiceTable from "@/components/dashboard/invoice-table";
 
 import { currentUser } from "@clerk/nextjs/server";
 import Link from "next/link";
-import { getInvoicesAndContacts } from "../actions/server-actions";
+import { getInvoicesContactsProducts } from "../actions/server-actions";
 
 import { InvoiceData } from "@/constants/types";
 import { invoiceStatistics } from "@/constants/constants";
@@ -34,7 +34,8 @@ const getLatestInvoiceId = (invoices: InvoiceData[]): number => {
 
 export default async function Dashboard() {
   const user = await currentUser();
-  const { invoiceList, contactList } = await getInvoicesAndContacts();
+  const { invoiceList, contactList, productList } =
+    await getInvoicesContactsProducts();
   const latestId = getLatestInvoiceId(invoiceList).toString();
 
   return (
@@ -67,9 +68,9 @@ export default async function Dashboard() {
           </Card>
 
           <Card className="h-38 gap-6 mb-0">
-            <ContactsModal />
+            <ContactsModal contacts={contactList} />
 
-            <ProductsModal />
+            <ProductsModal products={productList} />
           </Card>
         </div>
 
