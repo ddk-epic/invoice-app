@@ -13,6 +13,7 @@
 # testing
 /coverage
 /sandbox
+seed-data.ts
 
 # next.js
 /.next/
