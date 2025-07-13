@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 
-import { Settings, Download, Save, BookCheck, Trash2 } from "lucide-react";
+import { Settings, Download, BookCheck, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Sheet,
@@ -16,19 +16,20 @@ import { Separator } from "@/components/ui/separator";
 import { PDFDownloadLink } from "@react-pdf/renderer";
 import PdfDocument from "@/components/pdf/pdf-document";
 
-import { InvoiceData } from "@/constants/types";
+import { InvoiceData, PrivateContact } from "@/constants/types";
 import { InvoiceSchema } from "@/lib/schema";
 import { insertInvoiceAction } from "@/app/actions/server-actions";
 import { redirect, RedirectType } from "next/navigation";
 
 interface OptionsbarProps {
   id: string;
+  privateContact: PrivateContact;
   invoiceData: InvoiceData;
   discardData: () => void;
 }
 
 function Optionsbar(props: OptionsbarProps) {
-  const { id: invoiceId, invoiceData, discardData } = props;
+  const { id: invoiceId, privateContact, invoiceData, discardData } = props;
 
   const [isLoading, setIsLoading] = useState(false);
 
@@ -115,7 +116,12 @@ function Optionsbar(props: OptionsbarProps) {
                     // @ts-ignore
                     key={Date.now()}
                     onClick={handlePublish}
-                    document={<PdfDocument data={invoiceData} />}
+                    document={
+                      <PdfDocument
+                        data={invoiceData}
+                        privateData={privateContact}
+                      />
+                    }
                     fileName={
                       invoiceData.sendTo.name.split(" ")[0] +
                       "_" +

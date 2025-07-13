@@ -5,6 +5,7 @@ import { db } from "./index";
 import {
   contactsSchema as contactsTable,
   invoiceSchema as invoiceTable,
+  privateSchema as privateTable,
   productsSchema as productsTable,
 } from "./schema";
 
@@ -12,6 +13,10 @@ import { InvoiceData } from "@/constants/types";
 
 export const QUERIES = {
   // SELECT
+  getPrivateContact: async function () {
+    return db.select().from(privateTable);
+  },
+
   getAllContacts: async function () {
     return db.select().from(contactsTable);
   },

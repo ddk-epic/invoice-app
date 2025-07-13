@@ -16,15 +16,16 @@ export function centsToEuro(number: number) {
   });
 }
 
-export function deShortDate(date: Date) {
-  //date
-  const [shortDate] = date
-    .toLocaleString("de", {
-      timeZone: "Europe/Berlin",
-      timeZoneName: "shortOffset",
-    })
-    .split(",") as string[];
+export function deShortDate(date: Date | string) {
+  // string
+  if (typeof date === "string") {
+    date = new Date(date);
+  }
 
-  const [day, month, year] = shortDate.split(".");
-  return `${day.padStart(2, "0")}.${month.padStart(2, "0")}.${year}`;
+  //date
+  return date.toLocaleString("de-DE", {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  });
 }

@@ -5,9 +5,14 @@ import { revalidatePath, unstable_cache } from "next/cache";
 import { InvoiceSchema } from "@/lib/schema";
 import { QUERIES } from "@/server/db/queries";
 
-import { Contact, InvoiceData, InvoiceItem } from "@/constants/types";
+import {
+  Contact,
+  InvoiceData,
+  InvoiceItem,
+  PrivateContact,
+} from "@/constants/types";
 
-const revalidationTime = 60 * 5; // 5 minute(s)
+const revalidationTime = 60 * 3; // 5 minute(s)
 
 type ParseProduct = {
   id?: number;
@@ -21,7 +26,19 @@ const parseProductJson = (productList: ParseProduct): InvoiceItem[] => {
   });
 };
 
-// dashboard
+export const getPrivateData = async () => {
+  const cacheKey = "private";
+  const cached = unstable_cache(
+    async () => QUERIES.getPrivateContact(),
+    [cacheKey],
+    {
+      tags: [cacheKey],
+      revalidate: revalidationTime,
+    }
+  );
+  return cached();
+};
+
 export const getInvoicesContactsProducts = async (): Promise<{
   invoiceList: InvoiceData[];
   contactList: Contact[];
@@ -53,6 +70,7 @@ export const getInvoicesContactsProducts = async (): Promise<{
 
 // editor
 export const getContactsAndProducts = async (): Promise<{
+  privateContact: PrivateContact;
   contactList: Contact[];
   productList: InvoiceItem[];
 }> => {
@@ -60,14 +78,16 @@ export const getContactsAndProducts = async (): Promise<{
 
   const cached = unstable_cache(
     async () => {
-      const [contacts, products] = await Promise.all([
+      const [privateData, contacts, products] = await Promise.all([
+        QUERIES.getPrivateContact(),
         QUERIES.getAllContacts(),
         QUERIES.getAllProducts(),
       ]);
+      const [privateContact] = privateData as PrivateContact[];
       const contactList = contacts as Contact[];
       const productList = parseProductJson(products);
 
-      return { contactList, productList };
+      return { privateContact, contactList, productList };
     },
     [cacheKey],
     {

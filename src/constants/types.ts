@@ -1,3 +1,9 @@
+export interface PrivateContact {
+  id?: number;
+  phone: string;
+  email: string;
+}
+
 export interface Invoice {
   id: string;
   client: string;

@@ -12,7 +12,12 @@ import InvoiceDetails from "./invoice-details";
 import SelectContactModal from "./add-contact-modal";
 
 import { empty, invoiceTemplate } from "@/constants/constants";
-import { Contact, InvoiceData, InvoiceItem } from "@/constants/types";
+import {
+  Contact,
+  InvoiceData,
+  InvoiceItem,
+  PrivateContact,
+} from "@/constants/types";
 import {
   deleteInvoiceChanges,
   getInvoiceChanges,
@@ -20,12 +25,17 @@ import {
 } from "@/context/local-storage";
 
 interface InvoiceEditorProps {
+  privateContact: PrivateContact;
   contacts: Contact[];
   products: InvoiceItem[];
 }
 
 export default function InvoiceEditor(props: InvoiceEditorProps) {
-  const { contacts: contactList, products: productList } = props;
+  const {
+    privateContact,
+    contacts: contactList,
+    products: productList,
+  } = props;
 
   const [isSendToModalOpen, setIsSendToModalOpen] = useState(false);
   const [isInvoiceToModalOpen, setIsInvoiceToModalOpen] = useState(false);
@@ -147,6 +157,7 @@ export default function InvoiceEditor(props: InvoiceEditorProps) {
     <>
       <Optionsbar
         id={invoiceData.invoiceId}
+        privateContact={privateContact}
         invoiceData={invoiceData}
         discardData={discardData}
       />

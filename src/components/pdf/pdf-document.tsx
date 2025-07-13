@@ -5,10 +5,17 @@ import Logo from "./logo";
 import { Page, Text, View, Document, StyleSheet } from "@react-pdf/renderer";
 import { Overline, UnderLine } from "./pdf-components";
 
-import { InvoiceData } from "@/constants/types";
-import { centsToEuro, idPrefix } from "@/lib/utils";
+import { InvoiceData, PrivateContact } from "@/constants/types";
+import { centsToEuro, deShortDate, idPrefix } from "@/lib/utils";
 
-function PdfDocument({ data: invoice }: { data: InvoiceData }) {
+interface PdfDocumentProps {
+  data: InvoiceData;
+  privateData: PrivateContact;
+}
+
+function PdfDocument(props: PdfDocumentProps) {
+  const { data: invoice, privateData } = props;
+  
   const total = invoice.total;
   const tax = invoice.taxRate / 100;
   const subtotal = total / (1 + tax);
@@ -73,8 +80,8 @@ function PdfDocument({ data: invoice }: { data: InvoiceData }) {
                 { paddingLeft: 127, gap: "5rem", paddingBottom: indent },
               ]}
             >
-              <Text>Mobil: 0124 12312312</Text>
-              <Text>Email: test@gmail.com</Text>
+              <Text>Mobil: {privateData.phone}</Text>
+              <Text>Email: {privateData.email}</Text>
             </View>
             <View
               style={[
@@ -92,7 +99,7 @@ function PdfDocument({ data: invoice }: { data: InvoiceData }) {
           <Overline />
           <View style={[s.inline, { gap: "5rem" }]}>
             <Text style={s.ml}>Rechnungsnummer: {invoice.invoiceId}</Text>
-            <Text>Rechnungsdatum: {invoice.invoiceDate}</Text>
+            <Text>Rechnungsdatum: {deShortDate(invoice.invoiceDate)}</Text>
           </View>
           <UnderLine />
         </View>
@@ -127,7 +134,7 @@ function PdfDocument({ data: invoice }: { data: InvoiceData }) {
         </View>
         {/* invoice date */}
         <View style={s.boxRight}>
-          <Text style={s.bold}>{invoice.invoiceDate}</Text>
+          <Text style={s.bold}>{deShortDate(invoice.invoiceDate)}</Text>
         </View>
         {/* table header */}
         <View style={s.header}>

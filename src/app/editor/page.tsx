@@ -1,14 +1,14 @@
 import React from "react";
 
-import A4InvoiceEditor from "@/components/editor/invoice-editor";
+import InvoiceEditor from "@/components/editor/invoice-editor";
 import { getContactsAndProducts } from "../actions/server-actions";
 
 async function InvoiceEditorPage() {
-  const { contactList, productList } = await getContactsAndProducts();
+  const { privateContact, contactList, productList } = await getContactsAndProducts();
 
   return (
     <main className="min-h-screen top bg-gray-100">
-      <A4InvoiceEditor contacts={contactList} products={productList} />
+      <InvoiceEditor privateContact={privateContact} contacts={contactList} products={productList} />
     </main>
   );
 }
