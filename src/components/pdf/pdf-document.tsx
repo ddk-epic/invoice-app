@@ -154,7 +154,8 @@ function PdfDocument({ data: invoice }: { data: InvoiceData }) {
             <View key={item.id} style={s.inline}>
               <Text style={[{ width: 30 }]}>{index + 1}</Text>
               <Text style={[{ width: 273 }]}>
-                {item.description} {item.brand.toUpperCase()}
+                {item.description}
+                {item.brand && " " + item.brand.toUpperCase()}
                 {item.weight && ", "}
                 {item.perBox ? item.perBox + " X " + item.weight : item.weight}
               </Text>

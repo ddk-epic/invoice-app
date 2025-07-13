@@ -34,7 +34,8 @@ function Table(props: TableProps) {
             <tr key={item.id} className="border-t">
               <td className="w-13 px-2">{index + 1}</td>
               <td className="max-w-[300px] truncate">
-                {item.description} {item.brand.toUpperCase()}
+                {item.description}
+                {item.brand && " " + item.brand.toUpperCase()}
                 {item.weight && ", "}
                 {item.perBox ? item.perBox + " X " + item.weight : item.weight}
               </td>
