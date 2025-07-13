@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 
 import { Plus, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -22,12 +22,24 @@ interface AddItemModalProps {
 function AddItemModal({ products: productList, addItem }: AddItemModalProps) {
   const [isAddItemModalOpen, setIsAddItemModalOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [filteredItems, setFilteredItems] = useState(productList);
+  const debounceTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const filteredItems = productList.filter(
-    (item) =>
-      item.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      item.category.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const query = e.target.value;
+    setSearchQuery(query);
+
+    if (debounceTimer.current) clearTimeout(debounceTimer.current);
+
+    debounceTimer.current = setTimeout(() => {
+      const filtered = productList.filter(
+        (item) =>
+          item.description.toLowerCase().includes(query.toLowerCase()) ||
+          item.category.toLowerCase().includes(query.toLowerCase())
+      );
+      setFilteredItems(filtered);
+    }, 300); // 0.3s delay
+  };
 
   return (
     <Dialog
@@ -52,7 +64,7 @@ function AddItemModal({ products: productList, addItem }: AddItemModalProps) {
             <Input
               placeholder="Artikel suchen..."
               value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
+              onChange={handleSearchChange}
               className="pl-3"
             />
             <Button
