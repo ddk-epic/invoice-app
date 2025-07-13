@@ -66,30 +66,29 @@ export default function InvoiceEditor(props: InvoiceEditorProps) {
 
   const addItem = (item: InvoiceItem) => {
     const items = invoiceData.items;
-    const existingItem = invoiceData.items.find((i) => i.id === item.id);
-    if (existingItem) {
-      const updatedItems = invoiceData.items.map((i) => {
-        if (i.id === item.id) {
-          const newQuantity = i.quantity + 1;
-          return {
-            ...i,
-            quantity: newQuantity,
-            amount: newQuantity * i.rate,
-          };
-        }
-        return i;
-      });
+    const itemIndex = items.findIndex((i) => i.id === item.id);
+
+    if (itemIndex !== -1) {
+      const updatedItem = {
+        ...items[itemIndex],
+        quantity: items[itemIndex].quantity + 1,
+        amount: (items[itemIndex].quantity + 1) * items[itemIndex].rate,
+      };
+
+      // should be better than mapping
+      const updatedItems = [
+        ...items.slice(0, itemIndex),
+        updatedItem,
+        ...items.slice(itemIndex + 1),
+      ];
       handleItems(updatedItems);
     } else {
       const newItem: InvoiceItem = {
-        id: item.id,
-        category: item.category,
-        description: item.description,
+        ...item,
         brand: item?.brand ?? "",
         weight: item?.weight ?? "",
         perBox: item?.perBox || 0,
         quantity: 1,
-        rate: item.rate,
         amount: item.rate,
       };
       handleItems([...items, newItem]);
