@@ -28,15 +28,9 @@ export const contactsSchema = pgTable("contacts_table", {
 
 export const productsSchema = pgTable("products_table", {
   id: serial("id").primaryKey(),
-  category: text("category").notNull(),
-  description: text("description").notNull(),
-  brand: text("brand").notNull(),
-  origin: text("origin"),
-  weight: text("weight"),
-  perBox: integer(),
-  quantity: integer().notNull(),
-  rate: integer().notNull(),
-  amount: integer().notNull(),
+  // with limited rows (max. 50) the data is saved in json per product category
+  categoryName: text("category_name").notNull(),
+  categoryJson: jsonb("category_json").notNull(),
 });
 
 export const invoiceSchema = pgTable("invoice_table", {

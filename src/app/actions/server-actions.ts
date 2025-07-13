@@ -1,9 +1,25 @@
 "use server";
 
-import { Contact, InvoiceData, InvoiceItem } from "@/constants/types";
+import { revalidatePath, unstable_cache } from "next/cache";
+
 import { InvoiceSchema } from "@/lib/schema";
 import { QUERIES } from "@/server/db/queries";
-import { revalidatePath, unstable_cache } from "next/cache";
+
+import { Contact, InvoiceData, InvoiceItem } from "@/constants/types";
+
+const revalidationTime = 60 * 5; // 5 minute(s)
+
+type ParseProduct = {
+  id?: number;
+  categoryName: string;
+  categoryJson: unknown;
+}[];
+
+const parseProductJson = (productList: ParseProduct): InvoiceItem[] => {
+  return productList.flatMap((product) => {
+    return (product.categoryJson as InvoiceItem[][]).flat();
+  });
+};
 
 // dashboard
 export const getInvoicesContactsProducts = async (): Promise<{
@@ -22,14 +38,14 @@ export const getInvoicesContactsProducts = async (): Promise<{
       ]);
       const invoiceList = invoices as InvoiceData[];
       const contactList = contacts as Contact[];
-      const productList = products as InvoiceItem[];
+      const productList = parseProductJson(products);
 
       return { invoiceList, contactList, productList };
     },
     [cacheKey],
     {
       tags: [cacheKey],
-      revalidate: 60 * 20, // 20 minute(s)
+      revalidate: revalidationTime,
     }
   );
   return cached();
@@ -49,14 +65,14 @@ export const getContactsAndProducts = async (): Promise<{
         QUERIES.getAllProducts(),
       ]);
       const contactList = contacts as Contact[];
-      const productList = products as unknown as InvoiceItem[];
+      const productList = parseProductJson(products);
 
       return { contactList, productList };
     },
     [cacheKey],
     {
       tags: [cacheKey],
-      revalidate: 60 * 20, // 20 minute(s)
+      revalidate: revalidationTime,
     }
   );
   return cached();
@@ -69,7 +85,7 @@ export const getCachedInvoiceData = async (invoiceId: string) => {
     [cacheKey],
     {
       tags: [cacheKey],
-      revalidate: 60 * 1, // 1 minute(s)
+      revalidate: revalidationTime,
     }
   );
   return cached(invoiceId);

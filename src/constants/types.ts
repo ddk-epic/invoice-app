@@ -15,7 +15,7 @@ export interface Contact {
     street: string;
     city: string;
     state: string;
-    zip: string;
+    zip: number;
     country: string;
   };
 }

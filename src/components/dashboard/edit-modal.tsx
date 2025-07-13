@@ -32,7 +32,7 @@ function ContactsModal({ contacts }: { contacts: Contact[] }) {
           <div className="text-start space-y-1">
             <div className="text-xl font-bold">Kontakte</div>
             <p className="text-xs text-muted-foreground font-normal">
-              24 Kontakte
+              {contacts.length} Kontakte
             </p>
           </div>
           <div>
@@ -63,7 +63,7 @@ function ContactsModal({ contacts }: { contacts: Contact[] }) {
                     </div>
                     <div className="text-right mr-4">
                       <p className="font-medium">{contact.address.street}</p>
-                      <p className="text-sm text-gray-500">{`${contact.address.zip} ${contact.address.city} ${contact.address.country}`}</p>
+                      <p className="text-sm text-gray-500">{`${contact.address.zip} ${contact.address.city}`}</p>
                     </div>
                   </div>
                 ))}
@@ -102,7 +102,7 @@ function ProductsModal({ products }: { products: InvoiceItem[] }) {
           <div className="text-start space-y-1">
             <div className="text-xl font-bold">Artikel</div>
             <p className="text-xs text-muted-foreground font-normal">
-              315 Artikel
+              {products.length} Artikel
             </p>
           </div>
           <div>
