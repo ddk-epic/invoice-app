@@ -18,6 +18,12 @@ import {
  * push:      npx drizzle-kit push
  */
 
+export const privateSchema = pgTable("private_table", {
+  id: serial("id").primaryKey(),
+  phone: text("phone").notNull(),
+  email: text("email").notNull(),
+});
+
 export const contactsSchema = pgTable("contacts_table", {
   id: serial("id").primaryKey(),
   type: text("type").notNull(),
