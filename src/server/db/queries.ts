@@ -8,8 +8,7 @@ import {
   productsSchema as productsTable,
 } from "./schema";
 
-import { unstable_cache } from "next/cache";
-import { Contact, InvoiceData, InvoiceItem } from "@/constants/types";
+import { InvoiceData } from "@/constants/types";
 
 export const QUERIES = {
   // SELECT
