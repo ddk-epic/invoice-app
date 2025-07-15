@@ -19,7 +19,7 @@ import PdfDocument from "@/components/pdf/pdf-document";
 import { InvoiceData, PrivateContact } from "@/constants/types";
 import { InvoiceSchema } from "@/lib/schema";
 import { insertInvoiceAction } from "@/app/actions/server-actions";
-import { redirect, RedirectType } from "next/navigation";
+import { redirect } from "next/navigation";
 
 interface OptionsbarProps {
   id: string;
@@ -87,17 +87,13 @@ function Optionsbar(props: OptionsbarProps) {
                 {/* publish PDF */}
                 <Button
                   onClick={async () => {
-                    setIsLoading(true);
                     const res = await handlePublish();
-                    if (res) {
-                      setTimeout(() => {
-                        setIsLoading(false);
-                        redirect(
-                          `/invoice/${invoiceId}/pdf`,
-                          RedirectType.push
-                        );
-                      }, 3000);
-                    }
+
+                    if (res !== 1) return;
+                    setIsLoading(true);
+                    setTimeout(() => {
+                      redirect(`/invoice/${invoiceId}/pdf`);
+                    }, 2000);
                   }}
                   variant="outline"
                   className="w-full justify-start"

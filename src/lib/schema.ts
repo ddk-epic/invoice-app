@@ -4,7 +4,7 @@ const AddressSchema = z.object({
   street: z.string(),
   city: z.string(),
   state: z.string(),
-  zip: z.string().nullable().optional(),
+  zip: z.number().optional(),
   country: z.string(),
 });
 
