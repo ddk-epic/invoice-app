@@ -30,6 +30,7 @@ function AddItemModal({ products: productList, addItem }: AddItemModalProps) {
 
   const loaderRef = useCallback(
     (observerDiv: HTMLDivElement | null) => {
+      console.log("Observer:", "observerDiv");
       if (!observerDiv) return;
 
       const observer = new IntersectionObserver(([entry]) => {
@@ -67,6 +68,7 @@ function AddItemModal({ products: productList, addItem }: AddItemModalProps) {
         if (!open)
           setTimeout(() => {
             setSearchQuery("");
+            setFilteredItems(productList);
             setVisibleCount(40);
           }, 300);
         setIsAddItemModalOpen(open);
@@ -137,7 +139,10 @@ function AddItemModal({ products: productList, addItem }: AddItemModalProps) {
                 <p>Keine passenden Artikel zu "{searchQuery}" gefunden.</p>
               </div>
             )}
-            <div ref={loaderRef} className="h-10" />
+            <div
+              ref={loaderRef}
+              className="h-10 bg-gradient-to-b from-white to-gray-100"
+            />
           </div>
         </div>
         <div className="flex justify-end py-4 pr-6 border-t">
