@@ -20,6 +20,7 @@ import { InvoiceData, PrivateContact } from "@/constants/types";
 import { InvoiceSchema } from "@/lib/schema";
 import { insertInvoiceAction } from "@/app/actions/server-actions";
 import { redirect } from "next/navigation";
+import { toast } from "sonner";
 
 interface OptionsbarProps {
   id: string;
@@ -30,12 +31,20 @@ interface OptionsbarProps {
 
 function Optionsbar(props: OptionsbarProps) {
   const { id: invoiceId, privateContact, invoiceData, discardData } = props;
-
   const [isLoading, setIsLoading] = useState(false);
 
-  const handlePublish = async () => {
+  const isInvoiceValid =
+    invoiceData.invoiceId &&
+    invoiceData.sendTo &&
+    invoiceData.invoiceTo &&
+    invoiceData.items.length > 0;
+
+  const insertInvoice = async () => {
     const result = InvoiceSchema.safeParse(invoiceData);
-    if (!result.success) return console.log(result.error);
+    if (!result.success) {
+      console.log(result.error);
+      return false;
+    }
 
     const { status, ...rest } = invoiceData;
     const updatedInvoiceData = {
@@ -46,6 +55,30 @@ function Optionsbar(props: OptionsbarProps) {
     const res = await insertInvoiceAction(updatedInvoiceData);
     console.log("successfully saved the invoiceData!");
     return res;
+  };
+
+  const handlePublish = async () => {
+    const res = await insertInvoice();
+    if (!res) return;
+
+    setIsLoading(true);
+    setTimeout(() => {
+      redirect(`/invoice/${invoiceId}/pdf`);
+    }, 2000);
+  };
+
+  const handleDownload = async (
+    event: React.MouseEvent<HTMLAnchorElement, MouseEvent>
+  ) => {
+    if (!isInvoiceValid) {
+      event.preventDefault(); // prevent download
+      toast.error("Bitte füllen Sie alle erforderlichen Felder aus.", {
+        duration: 5000,
+      });
+      return;
+    }
+    const res = await insertInvoice();
+    if (!res) return;
   };
 
   return (
@@ -86,15 +119,7 @@ function Optionsbar(props: OptionsbarProps) {
               <div className="space-y-2">
                 {/* publish PDF */}
                 <Button
-                  onClick={async () => {
-                    const res = await handlePublish();
-
-                    if (res !== 1) return;
-                    setIsLoading(true);
-                    setTimeout(() => {
-                      redirect(`/invoice/${invoiceId}/pdf`);
-                    }, 2000);
-                  }}
+                  onClick={handlePublish}
                   variant="outline"
                   className="w-full justify-start"
                   disabled={isLoading}
@@ -111,7 +136,7 @@ function Optionsbar(props: OptionsbarProps) {
                   <PDFDownloadLink
                     // @ts-ignore
                     key={Date.now()}
-                    onClick={handlePublish}
+                    onClick={handleDownload}
                     document={
                       <PdfDocument
                         data={invoiceData}
