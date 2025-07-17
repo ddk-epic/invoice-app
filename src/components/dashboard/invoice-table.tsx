@@ -12,7 +12,7 @@ import {
 
 import { getStatusColor } from "@/constants/constants";
 import { InvoiceData } from "@/constants/types";
-import { idPrefix, centsToEuro, deShortDate } from "@/lib/utils";
+import { idPrefix, toEuro, deShortDate } from "@/lib/utils";
 
 const InvoiceTable = ({ invoices }: { invoices: InvoiceData[] }) => {
   return (
@@ -35,7 +35,7 @@ const InvoiceTable = ({ invoices }: { invoices: InvoiceData[] }) => {
             </TableCell>
             <TableCell>{invoice.sendTo.name}</TableCell>
             <TableCell className="w-16 flex justify-end">
-              {centsToEuro(invoice.total)}
+              {toEuro(invoice.total)}
             </TableCell>
             <TableCell>
               <Badge className={getStatusColor(invoice.status)}>

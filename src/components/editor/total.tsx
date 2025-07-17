@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 
 import { InvoiceItem } from "@/constants/types";
-import { centsToEuro } from "@/lib/utils";
+import { toEuro } from "@/lib/utils";
 
 interface TotalProps {
   items: InvoiceItem[];
@@ -26,22 +26,22 @@ function Total({ items, taxRate, setTotal }: TotalProps) {
       {/* Total */}
       <div className="flex justify-end py-0.5 pr-10 space-x-2 font-bold border-y-2 border-current">
         <span>Gesamtbetrag:</span>
-        <span className="w-23 text-right">{centsToEuro(totalAmount)}</span>
+        <span className="w-23 text-right">{toEuro(totalAmount)}</span>
       </div>
       {/* SubTotal */}
       <div className="flex justify-end pt-1 pr-10">
         <div>
           <div className="flex justify-end py-1.5 space-x-2 font-bold">
             <span>Rechnungsbetrag (Netto):</span>
-            <span className="w-23 text-right">{centsToEuro(subtotal)}</span>
+            <span className="w-23 text-right">{toEuro(subtotal)}</span>
           </div>
           <div className="flex justify-end py-1.5 space-x-2 font-bold">
             <span>MwSt. von {taxRate},00 %:</span>
-            <span className="w-23 text-right">{centsToEuro(taxAmount)}</span>
+            <span className="w-23 text-right">{toEuro(taxAmount)}</span>
           </div>
           <div className="flex justify-end py-1.5 space-x-2 border-t font-bold">
             <span>Rechnungsbetrag (Brutto):</span>
-            <span className="w-23 text-right">{centsToEuro(totalAmount)}</span>
+            <span className="w-23 text-right">{toEuro(totalAmount)}</span>
           </div>
         </div>
       </div>

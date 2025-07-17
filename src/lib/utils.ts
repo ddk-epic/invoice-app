@@ -9,8 +9,8 @@ export function idPrefix(id: string) {
   return "INV-" + id.toString().padStart(5, "0");
 }
 
-export function centsToEuro(number: number) {
-  return (number / 100).toLocaleString("de-DE", {
+export function toEuro(number: number) {
+  return number.toLocaleString("de-DE", {
     currency: "EUR",
     style: "currency",
   });

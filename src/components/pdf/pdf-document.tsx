@@ -6,7 +6,7 @@ import { Page, Text, View, Document, StyleSheet } from "@react-pdf/renderer";
 import { Overline, UnderLine } from "./pdf-components";
 
 import { InvoiceData, PrivateContact } from "@/constants/types";
-import { centsToEuro, deShortDate, idPrefix } from "@/lib/utils";
+import { toEuro, deShortDate, idPrefix } from "@/lib/utils";
 
 interface PdfDocumentProps {
   data: InvoiceData;
@@ -15,7 +15,7 @@ interface PdfDocumentProps {
 
 function PdfDocument(props: PdfDocumentProps) {
   const { data: invoice, privateData } = props;
-  
+
   const total = invoice.total;
   const tax = invoice.taxRate / 100;
   const subtotal = total / (1 + tax);
@@ -170,10 +170,10 @@ function PdfDocument(props: PdfDocumentProps) {
                 {item.quantity}
               </Text>
               <Text style={[{ width: 72, textAlign: "right" }]}>
-                {centsToEuro(item.rate)}
+                {toEuro(item.rate)}
               </Text>
               <Text style={[{ width: 72, textAlign: "right" }]}>
-                {centsToEuro(item.amount)}
+                {toEuro(item.amount)}
               </Text>
             </View>
           ))}
@@ -185,7 +185,7 @@ function PdfDocument(props: PdfDocumentProps) {
             <Text style={{ width: 384 }}></Text>
             <Text style={[s.bold, { width: 88 }]}>Gesamtbetrag</Text>
             <Text style={[s.bold, { width: 50, textAlign: "right" }]}>
-              {centsToEuro(total)}
+              {toEuro(total)}
             </Text>
           </View>
           <UnderLine />
@@ -198,7 +198,7 @@ function PdfDocument(props: PdfDocumentProps) {
               Rechnungsbetrag (Netto)
             </Text>
             <Text style={[s.bold, s.boxRight, { width: 77 }]}>
-              {centsToEuro(subtotal)}
+              {toEuro(subtotal)}
             </Text>
           </View>
           <View style={[s.inline]}>
@@ -206,7 +206,7 @@ function PdfDocument(props: PdfDocumentProps) {
               MwSt. von {invoice.taxRate},00 %:
             </Text>
             <Text style={[s.bold, s.boxRight, { width: 77 }]}>
-              {centsToEuro(taxAmount)}
+              {toEuro(taxAmount)}
             </Text>
           </View>
           <View style={[s.inline]}>
@@ -214,7 +214,7 @@ function PdfDocument(props: PdfDocumentProps) {
               Rechnungsbetrag (Brutto)
             </Text>
             <Text style={[s.bold, s.boxRight, { width: 77 }]}>
-              {centsToEuro(total)}
+              {toEuro(total)}
             </Text>
           </View>
         </View>
