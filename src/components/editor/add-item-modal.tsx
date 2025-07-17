@@ -1,4 +1,6 @@
-import React, { useRef, useState } from "react";
+"use client";
+
+import React, { useCallback, useRef, useState } from "react";
 
 import { Plus, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -23,7 +25,24 @@ function AddItemModal({ products: productList, addItem }: AddItemModalProps) {
   const [isAddItemModalOpen, setIsAddItemModalOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [filteredItems, setFilteredItems] = useState(productList);
+  const [visibleCount, setVisibleCount] = useState(40);
   const debounceTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const loaderRef = useCallback(
+    (observerDiv: HTMLDivElement | null) => {
+      if (!observerDiv) return;
+
+      const observer = new IntersectionObserver(([entry]) => {
+        if (entry.isIntersecting) {
+          setVisibleCount((prev) => Math.min(prev + 20, filteredItems.length));
+        }
+      });
+      observer.observe(observerDiv);
+
+      return () => observer.disconnect();
+    },
+    [filteredItems.length]
+  );
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const query = e.target.value;
@@ -45,7 +64,11 @@ function AddItemModal({ products: productList, addItem }: AddItemModalProps) {
     <Dialog
       open={isAddItemModalOpen}
       onOpenChange={(open) => {
-        if (!open) setTimeout(() => setSearchQuery(""), 300);
+        if (!open)
+          setTimeout(() => {
+            setSearchQuery("");
+            setVisibleCount(40);
+          }, 300);
         setIsAddItemModalOpen(open);
       }}
     >
@@ -80,7 +103,7 @@ function AddItemModal({ products: productList, addItem }: AddItemModalProps) {
         <div className="flex-1 overflow-y-auto px-6">
           <div className="grid">
             {filteredItems.length > 0 ? (
-              filteredItems.map((item) => (
+              filteredItems.slice(0, visibleCount).map((item) => (
                 <div
                   // @ts-ignore
                   key={item.id}
@@ -114,6 +137,7 @@ function AddItemModal({ products: productList, addItem }: AddItemModalProps) {
                 <p>Keine passenden Artikel zu "{searchQuery}" gefunden.</p>
               </div>
             )}
+            <div ref={loaderRef} className="h-10" />
           </div>
         </div>
         <div className="flex justify-end py-4 pr-6 border-t">
