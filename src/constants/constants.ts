@@ -1,4 +1,10 @@
-import { Contact, InvoiceData, InvoiceItem } from "./types";
+import {
+  BaseContact,
+  BaseInvoiceItem,
+  Contact,
+  InvoiceData,
+  InvoiceItem,
+} from "./types";
 
 // Invoice status
 export const getStatusColor = (status: string) => {
@@ -33,6 +39,19 @@ export const invoiceStatistics = [
     comment: "+15 % gegenüber dem Vormonat",
   },
 ];
+
+export const baseContact: BaseContact = {
+  type: "",
+  name: "",
+  owner: "",
+  address: {
+    street: "",
+    city: "",
+    state: "",
+    zip: 0,
+    country: "",
+  },
+};
 
 export const empty: Contact = {
   id: 0,
@@ -98,6 +117,18 @@ export const sampleContacts: Contact[] = [
     },
   },
 ];
+
+export const baseItem: BaseInvoiceItem = {
+  category: "",
+  description: "",
+  brand: "",
+  origin: "",
+  weight: "",
+  perBox: 0,
+  quantity: 1,
+  rate: 1,
+  amount: 1,
+};
 
 export const moreSampleProducts: InvoiceItem[] = [
   {

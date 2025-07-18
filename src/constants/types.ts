@@ -12,8 +12,7 @@ export interface Invoice {
   date: string;
 }
 
-export interface Contact {
-  id: number;
+export interface BaseContact {
   type: string;
   name: string;
   owner?: string;
@@ -26,8 +25,11 @@ export interface Contact {
   };
 }
 
-export interface InvoiceItem {
+export interface Contact extends BaseContact {
   id: number;
+}
+
+export interface BaseInvoiceItem {
   category: string;
   description: string;
   brand: string;
@@ -37,6 +39,10 @@ export interface InvoiceItem {
   quantity: number;
   rate: number;
   amount: number;
+}
+
+export interface InvoiceItem extends BaseInvoiceItem {
+  id: number;
 }
 
 export interface InvoiceData {

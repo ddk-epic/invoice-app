@@ -125,7 +125,7 @@ export default function InvoiceEditor(props: InvoiceEditorProps) {
   };
 
   const updateContactById = (id: string, name: string) => {
-    const contact = contactList.find((contact) => contact.id.toString() === id);
+    const contact = contactList.find((contact) => contact.id!.toString() === id);
     if (!contact) return;
     setInvoiceData((prev) => ({ ...prev, [name]: contact }));
     setIsSendToModalOpen(false);
