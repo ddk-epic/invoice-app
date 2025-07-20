@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef, useState } from "react";
+import React, { useCallback, useRef, useState } from "react";
 
 import { ChevronRightIcon, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -92,7 +92,25 @@ function ProductsModal({ products: productList }: { products: InvoiceItem[] }) {
   const [isProductsModalOpen, setIsProductsModalOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [filteredItems, setFilteredItems] = useState(productList);
+  const [visibleCount, setVisibleCount] = useState(40);
   const [itemData, setItemData] = useState<BaseInvoiceItem>(baseItem);
+
+  const loaderRef = useCallback(
+    (observerDiv: HTMLDivElement | null) => {
+      console.log("Observer:", "observerDiv");
+      if (!observerDiv) return;
+
+      const observer = new IntersectionObserver(([entry]) => {
+        if (entry.isIntersecting) {
+          setVisibleCount((prev) => Math.min(prev + 20, filteredItems.length));
+        }
+      });
+      observer.observe(observerDiv);
+
+      return () => observer.disconnect();
+    },
+    [filteredItems.length]
+  );
 
   const debounceTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const isItemValid =
@@ -147,6 +165,7 @@ function ProductsModal({ products: productList }: { products: InvoiceItem[] }) {
             setSearchQuery("");
             setItemData(baseItem);
             setFilteredItems(productList);
+            setVisibleCount(40);
           }, 300);
         setIsProductsModalOpen(open);
       }}
@@ -192,7 +211,7 @@ function ProductsModal({ products: productList }: { products: InvoiceItem[] }) {
           <div className="flex justify-between items-center min-w-[450px] p-1">
             <div className="flex-1 ml-2 space-y-3">
               {filteredItems.length > 0 ? (
-                filteredItems.map((item) => (
+                filteredItems.slice(0, visibleCount).map((item) => (
                   <div
                     // @ts-ignore
                     key={item.id}
@@ -215,6 +234,10 @@ function ProductsModal({ products: productList }: { products: InvoiceItem[] }) {
                   <p>Keine passenden Artikel zu "{searchQuery}" gefunden.</p>
                 </div>
               )}
+              <div
+                ref={loaderRef}
+                className="h-10 bg-gradient-to-b from-white to-gray-100"
+              />
             </div>
           </div>
         </div>
