@@ -41,15 +41,15 @@ export const invoiceStatistics = [
 ];
 
 export const baseContact: BaseContact = {
-  type: "",
+  type: "client",
   name: "",
   owner: "",
   address: {
     street: "",
     city: "",
-    state: "",
+    state: "-",
     zip: 0,
-    country: "",
+    country: "Deutschland",
   },
 };
 

@@ -14,13 +14,25 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
-import { BaseInvoiceItem, Contact, InvoiceItem } from "@/constants/types";
-import { baseItem } from "@/constants/constants";
+import {
+  BaseContact,
+  BaseInvoiceItem,
+  Contact,
+  InvoiceItem,
+} from "@/constants/types";
+import { baseContact, baseItem } from "@/constants/constants";
 import { toEuro } from "@/lib/utils";
 import { insertProductAction } from "@/app/actions/server-actions";
 
 function ContactsModal({ contacts }: { contacts: Contact[] }) {
   const [isContactsModalOpen, setIsContactsModalOpen] = useState(false);
+  const [contactData, setContactData] = useState<BaseContact>(baseContact);
+
+  const updateContactData = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setContactData((prev) => ({ ...prev, [name]: value }));
+  };
+
   return (
     <Dialog
       open={isContactsModalOpen}
@@ -45,10 +57,12 @@ function ContactsModal({ contacts }: { contacts: Contact[] }) {
           </div>
         </Button>
       </DialogTrigger>
-      <DialogContent className="max-w-2xl h-[65vh] flex flex-col p-0">
+      <DialogContent className="max-w-2xl h-[90vh] flex flex-col p-0">
         <div className="top-0 px-6 pt-6">
           <DialogHeader className="mb-2">
-            <DialogTitle className="text-2xl">Kontakte</DialogTitle>
+            <DialogTitle className="text-2xl text-purple-700">
+              Kontakte
+            </DialogTitle>
           </DialogHeader>
         </div>
         <div className="overflow-y-auto px-6">
@@ -75,13 +89,73 @@ function ContactsModal({ contacts }: { contacts: Contact[] }) {
             </div>
           </div>
         </div>
-        <div className="flex justify-end py-4 pr-6 border-t">
-          <Button
-            variant="outline"
-            onClick={() => setIsContactsModalOpen(false)}
-          >
-            Abbrechen
-          </Button>
+        {/* Contact Form */}
+        <div className="pt-4 pb-7 px-8 text-sm border-t">
+          <div className="space-y-2">
+            <div className="flex space-x-6">
+              <div className="flex-grow">
+                <Label className="pb-1">Client</Label>
+                <Input
+                  id="name"
+                  name="name"
+                  type="text"
+                  placeholder="Client"
+                  value={contactData.name}
+                  onChange={(e) => updateContactData(e)}
+                />
+              </div>
+              <div className="w-40">
+                <Label className="pb-1">Besitzer</Label>
+                <Input
+                  id="owner"
+                  name="owner"
+                  type="text"
+                  placeholder="Besitzer"
+                  value={contactData.owner}
+                  onChange={(e) => updateContactData(e)}
+                  className="text-right"
+                />
+              </div>
+            </div>
+            <div className="flex space-x-6">
+              <div className="flex-grow">
+                <Label className="pb-1">Straße</Label>
+                <Input
+                  id="street"
+                  name="street"
+                  type="text"
+                  placeholder="Straße"
+                  value={contactData.address.street}
+                  onChange={(e) => updateContactData(e)}
+                />
+              </div>
+              <div className="w-40">
+                <Label className="pb-1">ZIP City</Label>
+                <Input
+                  id="city"
+                  name="city"
+                  type="text"
+                  placeholder="72764 Reutlingen"
+                  value={contactData.address.city}
+                  onChange={(e) => updateContactData(e)}
+                  className="text-right"
+                />
+              </div>
+            </div>
+            <div className="flex space-x-6">
+              <div className="flex-grow"></div>
+              <div className="w-32 pt-4.5 space-x-6">
+                <Button
+                  variant="ghost"
+                  onClick={() => {}}
+                  disabled={false}
+                  className="w-32 purple-gradient text-base text-white"
+                >
+                  Aktualisieren
+                </Button>
+              </div>
+            </div>
+          </div>
         </div>
       </DialogContent>
     </Dialog>
@@ -189,7 +263,9 @@ function ProductsModal({ products: productList }: { products: InvoiceItem[] }) {
       <DialogContent className="max-w-2xl h-[90vh] flex flex-col p-0">
         <div className="top-0 px-6 pt-6">
           <DialogHeader className="mb-4">
-            <DialogTitle className="text-purple-700">Alle Artikel</DialogTitle>
+            <DialogTitle className="text-2xl text-purple-700">
+              Alle Artikel
+            </DialogTitle>
           </DialogHeader>
           <div className="relative">
             <Input
@@ -241,6 +317,7 @@ function ProductsModal({ products: productList }: { products: InvoiceItem[] }) {
             </div>
           </div>
         </div>
+        {/* Product Form */}
         <div className="pt-4 pb-7 px-8 text-sm border-t">
           <div className="space-y-2">
             <div className="flex space-x-6">
