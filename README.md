@@ -6,7 +6,7 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 
 - [x] dashboard showing latest
 - [x] invoice pdf endpoints
-- [ ] CRUD db entries
+- [ ] CRUD actions
 
 ## TO-DO
 
@@ -25,3 +25,4 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 - [x] searchbar in add items
 - [ ] add option to add item to product list
 - [ ] add option to add contact to contact list
+- [ ] add option to update product item
