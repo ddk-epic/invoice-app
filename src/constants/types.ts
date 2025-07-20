@@ -63,3 +63,9 @@ export interface InvoiceData {
   createdAt: Date;
   updatedAt: Date;
 }
+
+export type ParseProduct = {
+  id?: number;
+  categoryName: string;
+  categoryJson: unknown;
+}[];

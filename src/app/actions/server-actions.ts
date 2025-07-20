@@ -1,29 +1,21 @@
 "use server";
 
 import { revalidatePath, unstable_cache } from "next/cache";
-
-import { InvoiceSchema } from "@/lib/schema";
 import { QUERIES } from "@/server/db/queries";
-
 import {
+  BaseInvoiceItem,
   Contact,
   InvoiceData,
   InvoiceItem,
+  ParseProduct,
   PrivateContact,
 } from "@/constants/types";
+import { InvoiceSchema, ProductSchema } from "@/lib/schema";
 
-const revalidationTime = 60 * 3; // 5 minute(s)
-
-type ParseProduct = {
-  id?: number;
-  categoryName: string;
-  categoryJson: unknown;
-}[];
+const revalidationTime = 60 * 5; // 5 minute(s)
 
 const parseProductJson = (productList: ParseProduct): InvoiceItem[] => {
-  return productList.flatMap((product) => {
-    return (product.categoryJson as InvoiceItem[][]).flat();
-  });
+  return productList[0].categoryJson as InvoiceItem[];
 };
 
 export const getPrivateData = async () => {
@@ -111,9 +103,7 @@ export const getCachedInvoiceData = async (invoiceId: string) => {
   return cached(invoiceId);
 };
 
-export const insertInvoiceAction = async (
-  invoiceData: InvoiceData
-) => {
+export const insertInvoiceAction = async (invoiceData: InvoiceData) => {
   const result = InvoiceSchema.safeParse(invoiceData);
   if (!result.success) {
     console.log(result.error);
@@ -122,6 +112,28 @@ export const insertInvoiceAction = async (
   try {
     const insertedInvoice = await QUERIES.insertInvoice(invoiceData);
     if (insertedInvoice) {
+      console.log("successfully saved to the database!");
+      revalidatePath("/dashboard");
+      return true;
+    }
+  } catch (err) {
+    console.error("Server action error:", err);
+  }
+  return false;
+};
+
+export const insertProductAction = async (
+  productList: InvoiceItem[],
+  newItem: BaseInvoiceItem
+) => {
+  const result = ProductSchema.safeParse(newItem);
+  if (!result.success) {
+    console.log(result.error);
+    return false;
+  }
+  try {
+    const insertedItem = await QUERIES.updateProduct(productList, newItem);
+    if (insertedItem) {
       console.log("successfully saved to the database!");
       revalidatePath("/dashboard");
       return true;

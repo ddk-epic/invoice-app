@@ -126,8 +126,8 @@ export const baseItem: BaseInvoiceItem = {
   weight: "",
   perBox: 0,
   quantity: 1,
-  rate: 1,
-  amount: 1,
+  rate: 0,
+  amount: 0,
 };
 
 export const moreSampleProducts: InvoiceItem[] = [

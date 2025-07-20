@@ -9,7 +9,12 @@ import {
   productsSchema as productsTable,
 } from "./schema";
 
-import { InvoiceData } from "@/constants/types";
+import {
+  BaseInvoiceItem,
+  InvoiceData,
+  InvoiceItem,
+  ParseProduct,
+} from "@/constants/types";
 
 export const QUERIES = {
   // SELECT
@@ -35,6 +40,7 @@ export const QUERIES = {
       .from(invoiceTable)
       .where(eq(invoiceTable.invoiceId, invoiceId));
   },
+
   insertInvoice: async function (invoiceData: InvoiceData) {
     const { id, createdAt, updatedAt, ...rest } = invoiceData;
     const modifiedInvoice = {
@@ -46,5 +52,28 @@ export const QUERIES = {
     };
     console.log("modified invoice", modifiedInvoice);
     return db.insert(invoiceTable).values(modifiedInvoice);
+  },
+
+  updateProduct: async function (
+    productList: InvoiceItem[],
+    newItem: BaseInvoiceItem
+  ) {
+    console.log("newItem", newItem);
+
+    productList.push({
+      id: Math.random() * 100000,
+      ...newItem,
+    });
+
+    const updatedProductList = {
+      id: 1,
+      categoryName: "all",
+      categoryJson: JSON.stringify(productList),
+    };
+
+    return db
+      .update(productsTable)
+      .set(updatedProductList)
+      .where(eq(productsTable.categoryName, "all"));
   },
 };

@@ -30,3 +30,15 @@ export const InvoiceSchema = z.object({
   createdAt: z.union([z.string(), z.date()]),
   updatedAt: z.union([z.string(), z.date()]),
 });
+
+export const ProductSchema = z.object({
+  amount: z.number(),
+  category: z.string(),
+  description: z.string(),
+  brand: z.string(),
+  origin: z.string().optional(),
+  weight: z.string().optional(),
+  perBox: z.number().optional(),
+  quantity: z.number(),
+  rate: z.number(),
+});
