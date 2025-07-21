@@ -118,7 +118,8 @@ export const sampleContacts: Contact[] = [
   },
 ];
 
-export const baseItem: BaseInvoiceItem = {
+export const baseItem: InvoiceItem = {
+  id: 0,
   category: "",
   description: "",
   brand: "",

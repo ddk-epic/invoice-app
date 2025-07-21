@@ -56,14 +56,11 @@ export const QUERIES = {
 
   updateProduct: async function (
     productList: InvoiceItem[],
-    newItem: BaseInvoiceItem
+    newItem: InvoiceItem
   ) {
     console.log("newItem", newItem);
 
-    productList.push({
-      id: Math.random() * 100000,
-      ...newItem,
-    });
+    productList.push(newItem);
 
     const updatedProductList = {
       id: 1,

@@ -125,7 +125,7 @@ export const insertInvoiceAction = async (invoiceData: InvoiceData) => {
 
 export const insertProductAction = async (
   productList: InvoiceItem[],
-  newItem: BaseInvoiceItem
+  newItem: InvoiceItem
 ) => {
   const result = ProductSchema.safeParse(newItem);
   if (!result.success) {

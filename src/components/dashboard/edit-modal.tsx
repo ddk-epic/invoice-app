@@ -201,7 +201,7 @@ function ProductsModal({ products: productList }: { products: InvoiceItem[] }) {
   const [searchQuery, setSearchQuery] = useState("");
   const [filteredItems, setFilteredItems] = useState(productList);
   const [visibleCount, setVisibleCount] = useState(40);
-  const [itemData, setItemData] = useState<BaseInvoiceItem>(baseItem);
+  const [itemData, setItemData] = useState<InvoiceItem>(baseItem);
 
   const loaderRef = useCallback(
     (observerDiv: HTMLDivElement | null) => {
@@ -229,8 +229,14 @@ function ProductsModal({ products: productList }: { products: InvoiceItem[] }) {
 
   const handleProductInsert = async (
     productList: InvoiceItem[],
-    itemData: BaseInvoiceItem
+    itemData: InvoiceItem
   ) => {
+    if (itemData.id === 0) {
+      itemData.id = Math.random() * 100000; // if new product, give new Id
+    } else {
+      productList = productList.filter((item) => item.id !== itemData.id);
+    }
+
     const { rate, amount, ...rest } = itemData;
     const newItemData = {
       rate: Number(rate),
@@ -246,6 +252,16 @@ function ProductsModal({ products: productList }: { products: InvoiceItem[] }) {
   const updateItemData = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setItemData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const getItemByIdOnClick = (selectedId: number) => {
+    console.log("Item ID:", selectedId);
+    if (!selectedId) return;
+
+    const selectedItem = filteredItems.find((item) => item.id === selectedId);
+    if (!selectedItem) return;
+
+    setItemData(selectedItem);
   };
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -325,7 +341,8 @@ function ProductsModal({ products: productList }: { products: InvoiceItem[] }) {
                   <div
                     // @ts-ignore
                     key={item.id}
-                    className="flex justify-between items-start"
+                    onClick={() => getItemByIdOnClick(item.id)}
+                    className="flex justify-between items-start rounded hover:bg-gray-100"
                   >
                     <div>
                       <h4 className="font-medium">{item.description}</h4>

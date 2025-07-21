@@ -134,9 +134,10 @@ main {
 }
 
 .cl-footer,
+.cl-userButtonPopoverFooter,
 .cl-internal-1hp5nqm,
 .cl-internal-13u79ez,
-.cl-internal-1dauvpw {
+.cl-internal-1dauvpw /*sign-in*/ {
   @apply hidden;
 }
 
