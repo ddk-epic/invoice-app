@@ -3,6 +3,7 @@
 import { revalidatePath, unstable_cache } from "next/cache";
 import { QUERIES } from "@/server/db/queries";
 import {
+  BaseContact,
   BaseInvoiceItem,
   Contact,
   InvoiceData,
@@ -10,7 +11,7 @@ import {
   ParseProduct,
   PrivateContact,
 } from "@/constants/types";
-import { InvoiceSchema, ProductSchema } from "@/lib/schema";
+import { ContactSchema, InvoiceSchema, ProductSchema } from "@/lib/schema";
 
 const revalidationTime = 60 * 5; // 5 minute(s)
 
@@ -133,6 +134,27 @@ export const insertProductAction = async (
   }
   try {
     const insertedItem = await QUERIES.updateProduct(productList, newItem);
+    if (insertedItem) {
+      console.log("successfully saved to the database!");
+      revalidatePath("/dashboard");
+      return true;
+    }
+  } catch (err) {
+    console.error("Server action error:", err);
+  }
+  return false;
+};
+
+export const insertContactAction = async (
+  newContact: BaseContact
+) => {
+  const result = ContactSchema.safeParse(newContact);
+  if (!result.success) {
+    console.log(result.error);
+    return false;
+  }
+  try {
+    const insertedItem = await QUERIES.updateContact(newContact);
     if (insertedItem) {
       console.log("successfully saved to the database!");
       revalidatePath("/dashboard");

@@ -8,8 +8,8 @@ const AddressSchema = z.object({
   country: z.string(),
 });
 
-const ContactSchema = z.object({
-  id: z.number(),
+export const ContactSchema = z.object({
+  id: z.number().optional(),
   type: z.string(),
   name: z.string(),
   owner: z.string().nullable().optional(),
@@ -17,7 +17,7 @@ const ContactSchema = z.object({
 });
 
 export const InvoiceSchema = z.object({
-  invoiceId: z.string(),
+  invoiceId: z.string().optional(),
   invoiceDate: z.string(),
   dueDate: z.string(),
   status: z.string(),

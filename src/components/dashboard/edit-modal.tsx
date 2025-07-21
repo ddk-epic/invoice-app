@@ -22,15 +22,44 @@ import {
 } from "@/constants/types";
 import { baseContact, baseItem } from "@/constants/constants";
 import { toEuro } from "@/lib/utils";
-import { insertProductAction } from "@/app/actions/server-actions";
+import {
+  insertContactAction,
+  insertProductAction,
+} from "@/app/actions/server-actions";
 
 function ContactsModal({ contacts }: { contacts: Contact[] }) {
   const [isContactsModalOpen, setIsContactsModalOpen] = useState(false);
   const [contactData, setContactData] = useState<BaseContact>(baseContact);
 
+  const handleContactInsert = async (contactData: BaseContact) => {
+    const [code, ...cityParts] = contactData.address.city.split(" ");
+    const newContactData = {
+      ...contactData,
+      address: {
+        ...contactData.address,
+        zip: Number(code),
+        city: cityParts.join(),
+      },
+    };
+
+    const res = await insertContactAction(newContactData);
+    console.log("successfully updated products!");
+    return res;
+  };
+
   const updateContactData = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setContactData((prev) => ({ ...prev, [name]: value }));
+  };
+  const updateAddressData = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setContactData((prev) => ({
+      ...prev,
+      address: {
+        ...prev.address,
+        [name]: value,
+      },
+    }));
   };
 
   return (
@@ -126,7 +155,7 @@ function ContactsModal({ contacts }: { contacts: Contact[] }) {
                   type="text"
                   placeholder="Straße"
                   value={contactData.address.street}
-                  onChange={(e) => updateContactData(e)}
+                  onChange={(e) => updateAddressData(e)}
                 />
               </div>
               <div className="w-40">
@@ -137,7 +166,7 @@ function ContactsModal({ contacts }: { contacts: Contact[] }) {
                   type="text"
                   placeholder="72764 Reutlingen"
                   value={contactData.address.city}
-                  onChange={(e) => updateContactData(e)}
+                  onChange={(e) => updateAddressData(e)}
                   className="text-right"
                 />
               </div>
@@ -147,7 +176,7 @@ function ContactsModal({ contacts }: { contacts: Contact[] }) {
               <div className="w-32 pt-4.5 space-x-6">
                 <Button
                   variant="ghost"
-                  onClick={() => {}}
+                  onClick={() => handleContactInsert(contactData)}
                   disabled={false}
                   className="w-32 purple-gradient text-base text-white"
                 >
@@ -193,7 +222,7 @@ function ProductsModal({ products: productList }: { products: InvoiceItem[] }) {
     itemData.brand !== "" &&
     itemData.rate !== 0;
 
-  const handleInsert = async (
+  const handleProductInsert = async (
     productList: InvoiceItem[],
     itemData: BaseInvoiceItem
   ) => {
@@ -410,7 +439,7 @@ function ProductsModal({ products: productList }: { products: InvoiceItem[] }) {
               <div className="w-32 pt-4.5 space-x-6">
                 <Button
                   variant="ghost"
-                  onClick={() => handleInsert(productList, itemData)}
+                  onClick={() => handleProductInsert(productList, itemData)}
                   disabled={!isItemValid}
                   className="w-32 purple-gradient text-base text-white"
                 >

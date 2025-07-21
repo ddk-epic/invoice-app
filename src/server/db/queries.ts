@@ -10,10 +10,10 @@ import {
 } from "./schema";
 
 import {
+  BaseContact,
   BaseInvoiceItem,
   InvoiceData,
   InvoiceItem,
-  ParseProduct,
 } from "@/constants/types";
 
 export const QUERIES = {
@@ -75,5 +75,10 @@ export const QUERIES = {
       .update(productsTable)
       .set(updatedProductList)
       .where(eq(productsTable.categoryName, "all"));
+  },
+
+  updateContact: async function (newContact: BaseContact) {
+    console.log("newContact", newContact);
+    return db.insert(contactsTable).values(newContact);
   },
 };
