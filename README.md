@@ -23,6 +23,6 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 - [x] connect actions to the UI
 - [x] persist editor in localStorage
 - [x] searchbar in add items
-- [ ] add option to add item to product list
-- [ ] add option to add contact to contact list
+- [x] add option to add item to product list
+- [x] add option to add contact to contact list
 - [ ] add option to update product item
