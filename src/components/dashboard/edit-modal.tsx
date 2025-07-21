@@ -31,6 +31,11 @@ function ContactsModal({ contacts }: { contacts: Contact[] }) {
   const [isContactsModalOpen, setIsContactsModalOpen] = useState(false);
   const [contactData, setContactData] = useState<BaseContact>(baseContact);
 
+  const isContactValid =
+    contactData.name !== "" &&
+    contactData.address.street !== "" &&
+    contactData.address.city !== "";
+
   const handleContactInsert = async (contactData: BaseContact) => {
     const [code, ...cityParts] = contactData.address.city.split(" ");
     const newContactData = {
@@ -177,7 +182,7 @@ function ContactsModal({ contacts }: { contacts: Contact[] }) {
                 <Button
                   variant="ghost"
                   onClick={() => handleContactInsert(contactData)}
-                  disabled={false}
+                  disabled={!isContactValid}
                   className="w-32 purple-gradient text-base text-white"
                 >
                   Aktualisieren
