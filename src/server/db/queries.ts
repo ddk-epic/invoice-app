@@ -9,12 +9,7 @@ import {
   productsSchema as productsTable,
 } from "./schema";
 
-import {
-  BaseContact,
-  BaseInvoiceItem,
-  InvoiceData,
-  InvoiceItem,
-} from "@/constants/types";
+import { BaseContact, InvoiceData, InvoiceItem } from "@/constants/types";
 
 export const QUERIES = {
   // SELECT

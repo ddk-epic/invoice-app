@@ -40,10 +40,10 @@ function SelectContactModal(props: SelectContactModalProps) {
         <DialogTrigger asChild>
           <Button
             variant="ghost"
-            className="h-[130px] w-full p-0 pb-0.5 m-0 block text-left"
+            className="m-0 block h-[130px] w-full p-0 pb-0.5 text-left"
           >
             {contact.name !== "undefined" ? (
-              <div className="flex flex-col px-2 text-sm text-gray-500 font-normal">
+              <div className="flex flex-col px-2 text-sm font-normal text-gray-500">
                 <div className="font-medium">{contact.name}</div>
                 <p>{contact.owner}</p>
                 <p>{contact.address.street}</p>
@@ -54,27 +54,27 @@ function SelectContactModal(props: SelectContactModalProps) {
                 {!contact?.owner && <p className="h-5"></p>}
               </div>
             ) : (
-              <div className="flex justify-center items-center w-full h-full space-x-2 text-base text-gray-500 border-2 border-dashed rounded-lg">
+              <div className="flex h-full w-full items-center justify-center space-x-2 rounded-lg border-2 border-dashed text-base text-gray-500">
                 <Plus className="h-4 w-4" />
                 <p>{label} hinzufügen</p>
               </div>
             )}
           </Button>
         </DialogTrigger>
-        <DialogContent className="max-w-2xl max-h-[95vh] overflow-y-auto gap-2">
+        <DialogContent className="max-h-[95vh] max-w-2xl gap-2 overflow-y-auto">
           <DialogHeader className="mb-2">
             <DialogTitle>Kontakt auswählen</DialogTitle>
           </DialogHeader>
           {contactList.map((contact) => (
             <Button
-              // @ts-ignore
+              // @ts-expect-error key is a valid React prop but missing from the element typings
               key={contact.id}
               onClick={() => updateContact(contact.id.toString(), name)}
               variant="ghost"
               className="h-[3rem]"
               asChild
             >
-              <div className="flex items-center justify-between p-3 rounded-lg border hover:bg-gray-50">
+              <div className="flex items-center justify-between rounded-lg border p-3 hover:bg-gray-50">
                 <div className="flex-1">
                   <h4 className="font-medium">{contact.name}</h4>
                   <p className="text-sm text-gray-500">{contact.owner}</p>

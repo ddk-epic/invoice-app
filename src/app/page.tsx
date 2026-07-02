@@ -36,8 +36,8 @@ export default function Home() {
     console.log("form data -->", data);
   };
   return (
-    <div className="min-h-screen flex justify-center items-center">
-      <Card className="w-full sm:w-[350px] mx-2">
+    <div className="flex min-h-screen items-center justify-center">
+      <Card className="mx-2 w-full sm:w-[350px]">
         <CardHeader>
           <CardTitle>Login</CardTitle>
           <CardDescription>
@@ -81,7 +81,7 @@ export default function Home() {
         <CardFooter>
           <Button
             type="submit"
-            className="w-full purple-gradient"
+            className="purple-gradient w-full"
             disabled={isSubmitting}
           >
             {isSubmitting ? "Logging in..." : "Login"}

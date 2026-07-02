@@ -80,7 +80,7 @@ function AddItemModal({ products: productList, addItem }: AddItemModalProps) {
           Artikel hinzufügen
         </Button>
       </DialogTrigger>
-      <DialogContent className="max-w-2xl h-[65vh] lg:h-[95vh] flex flex-col p-0">
+      <DialogContent className="flex h-[65vh] max-w-2xl flex-col p-0 lg:h-[95vh]">
         <div className="top-0 px-6 pt-6">
           <DialogHeader className="mb-4">
             <DialogTitle>Zu Hinzufügende Artikel auswählen</DialogTitle>
@@ -95,7 +95,7 @@ function AddItemModal({ products: productList, addItem }: AddItemModalProps) {
             <Button
               variant="ghost"
               onClick={() => setSearchQuery("")}
-              className="absolute size-7 right-1 top-1/2 transform -translate-y-1/2 text-muted-foreground"
+              className="text-muted-foreground absolute top-1/2 right-1 size-7 -translate-y-1/2 transform"
             >
               <X />
             </Button>
@@ -107,19 +107,19 @@ function AddItemModal({ products: productList, addItem }: AddItemModalProps) {
             {filteredItems.length > 0 ? (
               filteredItems.slice(0, visibleCount).map((item) => (
                 <div
-                  // @ts-ignore
+                  // @ts-expect-error key is a valid React prop but missing from the element typings
                   key={item.id}
-                  className="flex justify-between items-center min-w-[450px] p-1 border-t"
+                  className="flex min-w-[450px] items-center justify-between border-t p-1"
                 >
-                  <div className="flex-1 ml-2">
-                    <div className="flex justify-between items-start">
+                  <div className="ml-2 flex-1">
+                    <div className="flex items-start justify-between">
                       <div>
                         <h4 className="font-medium">{item.description}</h4>
                         <p className="text-sm text-gray-500">
                           {item.category.toUpperCase()}
                         </p>
                       </div>
-                      <div className="text-right mr-4">
+                      <div className="mr-4 text-right">
                         <p className="font-medium">{toEuro(item.rate)}</p>
                         <p className="text-sm text-gray-500">{item.weight}</p>
                       </div>
@@ -128,15 +128,17 @@ function AddItemModal({ products: productList, addItem }: AddItemModalProps) {
                   <Button
                     size="icon"
                     onClick={() => addItem(item)}
-                    className="flex items-center rounded-full mr-2"
+                    className="mr-2 flex items-center rounded-full"
                   >
                     <Plus />
                   </Button>
                 </div>
               ))
             ) : (
-              <div className="text-center py-8 text-gray-500">
-                <p>Keine passenden Artikel zu "{searchQuery}" gefunden.</p>
+              <div className="py-8 text-center text-gray-500">
+                <p>
+                  Keine passenden Artikel zu &quot;{searchQuery}&quot; gefunden.
+                </p>
               </div>
             )}
             <div
@@ -145,7 +147,7 @@ function AddItemModal({ products: productList, addItem }: AddItemModalProps) {
             />
           </div>
         </div>
-        <div className="flex justify-end py-4 pr-6 border-t">
+        <div className="flex justify-end border-t py-4 pr-6">
           <Button
             variant="outline"
             onClick={() => setIsAddItemModalOpen(false)}

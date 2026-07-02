@@ -41,7 +41,7 @@ export default function RootLayout({
     >
       <html lang="de">
         <body
-          className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen bg-gray-50`}
+          className={`${geistSans.variable} ${geistMono.variable} min-h-screen bg-gray-50 antialiased`}
         >
           <Suspense fallback={<Loading />}>
             <Navbar />

@@ -1,10 +1,4 @@
-import {
-  BaseContact,
-  BaseInvoiceItem,
-  Contact,
-  InvoiceData,
-  InvoiceItem,
-} from "./types";
+import { BaseContact, Contact, InvoiceData, InvoiceItem } from "./types";
 
 // Invoice status
 export const getStatusColor = (status: string) => {

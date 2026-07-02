@@ -83,7 +83,7 @@ export const CreateInvoiceModal = (props: CreatInvoiceModalProps) => {
           Neue Rechnung erstellen
         </Button>
       </DialogTrigger>
-      <DialogContent className="w-sm max-h-[95vh] overflow-y-auto">
+      <DialogContent className="max-h-[95vh] w-sm overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Neue Rechnung erstellen</DialogTitle>
           <DialogDescription>
@@ -107,7 +107,7 @@ export const CreateInvoiceModal = (props: CreatInvoiceModalProps) => {
               <div className="space-y-2">
                 <Label htmlFor="clientAddress">Kunde</Label>
                 <Select onValueChange={selectContactById} required>
-                  <SelectTrigger className="w-full mb-2">
+                  <SelectTrigger className="mb-2 w-full">
                     <SelectValue
                       id="clientAddress"
                       placeholder="Kontakt auswählen"
@@ -116,7 +116,7 @@ export const CreateInvoiceModal = (props: CreatInvoiceModalProps) => {
                   <SelectContent>
                     {contacts.map((contact) => (
                       <SelectItem
-                        // @ts-ignore
+                        // @ts-expect-error key is a valid React prop but missing from the element typings
                         key={contact.id}
                         value={contact.id.toString()}
                       >
@@ -127,7 +127,7 @@ export const CreateInvoiceModal = (props: CreatInvoiceModalProps) => {
                 </Select>
               </div>
               {contactField ? (
-                <Card className="flex flex-col h-[172px] p-2 text-base text-gray-500 font-normal">
+                <Card className="flex h-[172px] flex-col p-2 text-base font-normal text-gray-500">
                   <CardContent className="px-1">
                     <div className="font-medium">{contactField.name}</div>
                     <p>{contactField?.owner}</p>
@@ -139,7 +139,7 @@ export const CreateInvoiceModal = (props: CreatInvoiceModalProps) => {
                   </CardContent>
                 </Card>
               ) : (
-                <div className="flex justify-center items-center h-[172px] space-x-2 text-base text-gray-500 border-2 border-dashed rounded-lg">
+                <div className="flex h-[172px] items-center justify-center space-x-2 rounded-lg border-2 border-dashed text-base text-gray-500">
                   Kundeninformation
                 </div>
               )}
@@ -162,7 +162,7 @@ export const CreateInvoiceModal = (props: CreatInvoiceModalProps) => {
             </Button>
             <Button
               type="submit"
-              className="bg-purple-600 hover:bg-purple-700 flex items-center justify-center w-38"
+              className="flex w-38 items-center justify-center bg-purple-600 hover:bg-purple-700"
               disabled={isLoading}
             >
               {isLoading ? <Spinner size="small" /> : "Rechnung erstellen"}

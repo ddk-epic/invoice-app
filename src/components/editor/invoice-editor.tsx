@@ -45,7 +45,7 @@ export default function InvoiceEditor(props: InvoiceEditorProps) {
 
   // Load saved invoice on initial mount
   useEffect(() => {
-    let savedInvoice = getInvoiceChanges("invoice-data");
+    const savedInvoice = getInvoiceChanges("invoice-data");
     console.log("data", savedInvoice);
     if (savedInvoice) setInvoiceData(savedInvoice);
   }, []);
@@ -125,7 +125,9 @@ export default function InvoiceEditor(props: InvoiceEditorProps) {
   };
 
   const updateContactById = (id: string, name: string) => {
-    const contact = contactList.find((contact) => contact.id!.toString() === id);
+    const contact = contactList.find(
+      (contact) => contact.id!.toString() === id
+    );
     if (!contact) return;
     setInvoiceData((prev) => ({ ...prev, [name]: contact }));
     setIsSendToModalOpen(false);
@@ -166,13 +168,13 @@ export default function InvoiceEditor(props: InvoiceEditorProps) {
           <Spinner size="large" className="text-purple-600" />
         </div>
       )}
-      <div className="max-w-4xl py-4 mx-auto">
-        <Card className="wrapper min-w-2xl min-h-[1086px] md:min-h-[1584px] bg-white shadow-lg">
-          <div className="py-6 px-12 h-full flex flex-col text-sm">
+      <div className="mx-auto max-w-4xl py-4">
+        <Card className="wrapper min-h-[1086px] min-w-2xl bg-white shadow-lg md:min-h-[1584px]">
+          <div className="flex h-full flex-col px-12 py-6 text-sm">
             {/* Header */}
-            <div className="flex justify-between items-start mb-8">
+            <div className="mb-8 flex items-start justify-between">
               <div>
-                <h1 className="text-3xl font-bold text-gray-800 mb-4">
+                <h1 className="mb-4 text-3xl font-bold text-gray-800">
                   Rechnung
                 </h1>
                 <InvoiceDetails
@@ -183,7 +185,7 @@ export default function InvoiceEditor(props: InvoiceEditorProps) {
             </div>
 
             {/* Sender and Recipient */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 mb-8">
+            <div className="mb-8 grid grid-cols-1 gap-8 sm:grid-cols-2">
               <SelectContactModal
                 isModalOpen={isSendToModalOpen}
                 setIsModalOpen={setIsSendToModalOpen}
@@ -206,7 +208,7 @@ export default function InvoiceEditor(props: InvoiceEditorProps) {
 
             <div className="flex-1">
               {/* Invoice Items */}
-              <div className="flex justify-between items-center mb-4">
+              <div className="mb-4 flex items-center justify-between">
                 <h2 className="text-lg font-semibold">{/*Items*/}</h2>
                 <AddItemModal products={productList} addItem={addItem} />
               </div>
@@ -221,7 +223,7 @@ export default function InvoiceEditor(props: InvoiceEditorProps) {
               </div>
               {/* fallback */}
               {invoiceData.items.length === 0 && (
-                <div className="text-center py-4 my-2 text-gray-500 border-2 border-dashed rounded-lg">
+                <div className="my-2 rounded-lg border-2 border-dashed py-4 text-center text-gray-500">
                   <p>Noch keine Artikel hinzugefügt</p>
                 </div>
               )}

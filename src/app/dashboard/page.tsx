@@ -52,7 +52,7 @@ export default async function Dashboard() {
         </div>
 
         {/* Quick Actions */}
-        <div className="grid grid-cols-1 md:grid-cols-3 md:[&>*:first-child]:col-span-2 gap-4 mb-4">
+        <div className="mb-4 grid grid-cols-1 gap-4 md:grid-cols-3 md:[&>*:first-child]:col-span-2">
           <Card className="purple-gradient text-white">
             <CardHeader>
               <CardTitle className="text-white">
@@ -67,7 +67,7 @@ export default async function Dashboard() {
             </CardContent>
           </Card>
 
-          <Card className="h-38 gap-6 mb-0">
+          <Card className="mb-0 h-38 gap-6">
             <ContactsModal contacts={contactList} />
 
             <ProductsModal products={productList} />
@@ -75,19 +75,19 @@ export default async function Dashboard() {
         </div>
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+        <div className="mb-4 grid grid-cols-1 gap-4 md:grid-cols-3">
           {invoiceStatistics.map((item, index) => (
-            // @ts-ignore
+            // @ts-expect-error key is a valid React prop but missing from the element typings
             <Card key={index}>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">
                   {item.category}
                 </CardTitle>
-                <FileChartColumn className="h-4 w-4 text-muted-foreground" />
+                <FileChartColumn className="text-muted-foreground h-4 w-4" />
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">{item.value}</div>
-                <p className="text-xs text-muted-foreground">{item.comment}</p>
+                <p className="text-muted-foreground text-xs">{item.comment}</p>
               </CardContent>
             </Card>
           ))}

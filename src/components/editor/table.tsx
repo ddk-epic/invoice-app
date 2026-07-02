@@ -17,7 +17,7 @@ function Table(props: TableProps) {
     <table className="w-full">
       <thead className="border-y-2 border-current">
         <tr>
-          <th className="w-13 py-0.5 px-2 text-start font-medium">Nr.</th>
+          <th className="w-13 px-2 py-0.5 text-start font-medium">Nr.</th>
           <th className="max-w-[300px] py-0.5 text-left font-medium">
             Umschreibung
           </th>
@@ -30,7 +30,7 @@ function Table(props: TableProps) {
       {items.length > 0 && (
         <tbody>
           {items.map((item, index) => (
-            // @ts-ignore
+            // @ts-expect-error key is a valid React prop but missing from the element typings
             <tr key={item.id} className="border-t">
               <td className="w-13 px-2">{index + 1}</td>
               <td className="max-w-[300px] truncate">
@@ -50,7 +50,7 @@ function Table(props: TableProps) {
                       Number(e.target.value) || 0
                     )
                   }
-                  className="w-13 h-auto border-1 p-0 text-right focus-visible:ring-0"
+                  className="h-auto w-13 border-1 p-0 text-right focus-visible:ring-0"
                   min="0"
                   step="1"
                 />

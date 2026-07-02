@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { PDFViewer } from "@react-pdf/renderer";
 
-function PdfViewer(props: {document: React.JSX.Element;}) {
+function PdfViewer(props: { document: React.JSX.Element }) {
   const { document: pdfDocument } = props;
 
   const [loaded, setLoaded] = useState(false);
@@ -12,9 +12,7 @@ function PdfViewer(props: {document: React.JSX.Element;}) {
 
   return (
     <>
-      {loaded && (
-        <PDFViewer className="w-full h-full">{pdfDocument}</PDFViewer>
-      )}
+      {loaded && <PDFViewer className="h-full w-full">{pdfDocument}</PDFViewer>}
     </>
   );
 }

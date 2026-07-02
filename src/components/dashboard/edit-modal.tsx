@@ -14,12 +14,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
-import {
-  BaseContact,
-  BaseInvoiceItem,
-  Contact,
-  InvoiceItem,
-} from "@/constants/types";
+import { BaseContact, Contact, InvoiceItem } from "@/constants/types";
 import { baseContact, baseItem } from "@/constants/constants";
 import { toEuro } from "@/lib/utils";
 import {
@@ -78,11 +73,11 @@ function ContactsModal({ contacts }: { contacts: Contact[] }) {
       <DialogTrigger asChild>
         <Button
           variant="ghost"
-          className="h-16 flex-1 justify-between left-0 mx-2 -my-3"
+          className="left-0 mx-2 -my-3 h-16 flex-1 justify-between"
         >
-          <div className="text-start space-y-1">
+          <div className="space-y-1 text-start">
             <div className="text-xl font-bold">Kontakte</div>
-            <p className="text-xs text-muted-foreground font-normal">
+            <p className="text-muted-foreground text-xs font-normal">
               {contacts.length} Kontakte
             </p>
           </div>
@@ -91,7 +86,7 @@ function ContactsModal({ contacts }: { contacts: Contact[] }) {
           </div>
         </Button>
       </DialogTrigger>
-      <DialogContent className="max-w-2xl h-[90vh] flex flex-col p-0">
+      <DialogContent className="flex h-[90vh] max-w-2xl flex-col p-0">
         <div className="top-0 px-6 pt-6">
           <DialogHeader className="mb-2">
             <DialogTitle className="text-2xl text-purple-700">
@@ -101,19 +96,19 @@ function ContactsModal({ contacts }: { contacts: Contact[] }) {
         </div>
         <div className="overflow-y-auto px-6">
           <div className="grid">
-            <div className="flex justify-between items-center min-w-[450px] p-1 border-t">
-              <div className="flex-1 ml-2 space-y-3">
+            <div className="flex min-w-[450px] items-center justify-between border-t p-1">
+              <div className="ml-2 flex-1 space-y-3">
                 {contacts.map((contact) => (
                   <div
-                    // @ts-ignore
+                    // @ts-expect-error key is a valid React prop but missing from the element typings
                     key={contact.id}
-                    className="flex justify-between items-start"
+                    className="flex items-start justify-between"
                   >
                     <div>
                       <h4 className="font-medium">{contact.name}</h4>
                       <p className="text-sm text-gray-500">{contact.type}</p>
                     </div>
-                    <div className="text-right mr-4">
+                    <div className="mr-4 text-right">
                       <p className="font-medium">{contact.address.street}</p>
                       <p className="text-sm text-gray-500">{`${contact.address.zip} ${contact.address.city}`}</p>
                     </div>
@@ -124,7 +119,7 @@ function ContactsModal({ contacts }: { contacts: Contact[] }) {
           </div>
         </div>
         {/* Contact Form */}
-        <div className="pt-4 pb-7 px-8 text-sm border-t">
+        <div className="border-t px-8 pt-4 pb-7 text-sm">
           <div className="space-y-2">
             <div className="flex space-x-6">
               <div className="flex-grow">
@@ -178,12 +173,12 @@ function ContactsModal({ contacts }: { contacts: Contact[] }) {
             </div>
             <div className="flex space-x-6">
               <div className="flex-grow"></div>
-              <div className="w-32 pt-4.5 space-x-6">
+              <div className="w-32 space-x-6 pt-4.5">
                 <Button
                   variant="ghost"
                   onClick={() => handleContactInsert(contactData)}
                   disabled={!isContactValid}
-                  className="w-32 purple-gradient text-base text-white"
+                  className="purple-gradient w-32 text-base text-white"
                 >
                   Aktualisieren
                 </Button>
@@ -297,11 +292,11 @@ function ProductsModal({ products: productList }: { products: InvoiceItem[] }) {
       <DialogTrigger asChild>
         <Button
           variant="ghost"
-          className="h-16 flex-1 justify-between left-0 mx-2 -my-3"
+          className="left-0 mx-2 -my-3 h-16 flex-1 justify-between"
         >
-          <div className="text-start space-y-1">
+          <div className="space-y-1 text-start">
             <div className="text-xl font-bold">Artikel</div>
-            <p className="text-xs text-muted-foreground font-normal">
+            <p className="text-muted-foreground text-xs font-normal">
               {productList.length} Artikel
             </p>
           </div>
@@ -310,7 +305,7 @@ function ProductsModal({ products: productList }: { products: InvoiceItem[] }) {
           </div>
         </Button>
       </DialogTrigger>
-      <DialogContent className="max-w-2xl h-[90vh] flex flex-col p-0">
+      <DialogContent className="flex h-[90vh] max-w-2xl flex-col p-0">
         <div className="top-0 px-6 pt-6">
           <DialogHeader className="mb-4">
             <DialogTitle className="text-2xl text-purple-700">
@@ -327,22 +322,22 @@ function ProductsModal({ products: productList }: { products: InvoiceItem[] }) {
             <Button
               variant="ghost"
               onClick={() => setSearchQuery("")}
-              className="absolute size-7 right-1 top-1/2 transform -translate-y-1/2 text-muted-foreground"
+              className="text-muted-foreground absolute top-1/2 right-1 size-7 -translate-y-1/2 transform"
             >
               <X />
             </Button>
           </div>
         </div>
         <div className="overflow-y-auto px-6">
-          <div className="flex justify-between items-center min-w-[450px] p-1">
-            <div className="flex-1 ml-2 space-y-3">
+          <div className="flex min-w-[450px] items-center justify-between p-1">
+            <div className="ml-2 flex-1 space-y-3">
               {filteredItems.length > 0 ? (
                 filteredItems.slice(0, visibleCount).map((item) => (
                   <div
-                    // @ts-ignore
+                    // @ts-expect-error key is a valid React prop but missing from the element typings
                     key={item.id}
                     onClick={() => getItemByIdOnClick(item.id)}
-                    className="flex justify-between items-start rounded hover:bg-gray-100"
+                    className="flex items-start justify-between rounded hover:bg-gray-100"
                   >
                     <div>
                       <h4 className="font-medium">{item.description}</h4>
@@ -350,15 +345,18 @@ function ProductsModal({ products: productList }: { products: InvoiceItem[] }) {
                         {item.category.toUpperCase()}
                       </p>
                     </div>
-                    <div className="text-right mr-4">
+                    <div className="mr-4 text-right">
                       <p className="font-medium">{toEuro(item.rate)}</p>
                       <p className="text-sm text-gray-500">{item.weight}</p>
                     </div>
                   </div>
                 ))
               ) : (
-                <div className="text-center py-8 text-gray-500">
-                  <p>Keine passenden Artikel zu "{searchQuery}" gefunden.</p>
+                <div className="py-8 text-center text-gray-500">
+                  <p>
+                    Keine passenden Artikel zu &quot;{searchQuery}&quot;
+                    gefunden.
+                  </p>
                 </div>
               )}
               <div
@@ -369,7 +367,7 @@ function ProductsModal({ products: productList }: { products: InvoiceItem[] }) {
           </div>
         </div>
         {/* Product Form */}
-        <div className="pt-4 pb-7 px-8 text-sm border-t">
+        <div className="border-t px-8 pt-4 pb-7 text-sm">
           <div className="space-y-2">
             <div className="flex space-x-6">
               <div className="flex-grow">
@@ -458,12 +456,12 @@ function ProductsModal({ products: productList }: { products: InvoiceItem[] }) {
                   onChange={(e) => updateItemData(e)}
                 />
               </div>
-              <div className="w-32 pt-4.5 space-x-6">
+              <div className="w-32 space-x-6 pt-4.5">
                 <Button
                   variant="ghost"
                   onClick={() => handleProductInsert(productList, itemData)}
                   disabled={!isItemValid}
-                  className="w-32 purple-gradient text-base text-white"
+                  className="purple-gradient w-32 text-base text-white"
                 >
                   Aktualisieren
                 </Button>

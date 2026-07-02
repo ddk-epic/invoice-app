@@ -82,11 +82,11 @@ function Optionsbar(props: OptionsbarProps) {
   };
 
   return (
-    <div className="z-50 fixed right-0 p-8">
+    <div className="fixed right-0 z-50 p-8">
       <Sheet>
         {/* Actions Menu Header */}
         <SheetTrigger asChild>
-          <Button className="rounded-full h-12 w-12 shadow-lg">
+          <Button className="h-12 w-12 rounded-full shadow-lg">
             <Settings className="size-6" />
           </Button>
         </SheetTrigger>
@@ -97,11 +97,11 @@ function Optionsbar(props: OptionsbarProps) {
             </SheetTitle>
           </SheetHeader>
 
-          <div className="px-6 space-y-6">
+          <div className="space-y-6 px-6">
             {/* Details */}
             <div className="font-light">
               <h3>Details</h3>
-              <div className="flex flex-col pl-4 pt-1 space-y-1">
+              <div className="flex flex-col space-y-1 pt-1 pl-4">
                 <span>Rechnung / PDF</span>
                 <span>Author: {invoiceData.sender.name}</span>
                 <span>Empfänger: {invoiceData.sendTo.name}</span>
@@ -112,7 +112,7 @@ function Optionsbar(props: OptionsbarProps) {
 
             {/* Export & Save */}
             <div>
-              <h3 className="font-medium mb-3 flex items-center gap-2">
+              <h3 className="mb-3 flex items-center gap-2 font-medium">
                 <Download className="h-4 w-4" />
                 Exportieren & Speichern
               </h3>
@@ -124,7 +124,7 @@ function Optionsbar(props: OptionsbarProps) {
                   className="w-full justify-start"
                   disabled={isLoading}
                 >
-                  <BookCheck className="h-4 w-4 mr-1" />
+                  <BookCheck className="mr-1 h-4 w-4" />
                   PDF veröffentlichen
                 </Button>
                 {/* download PDF */}
@@ -134,7 +134,7 @@ function Optionsbar(props: OptionsbarProps) {
                   disabled={isLoading}
                 >
                   <PDFDownloadLink
-                    // @ts-ignore
+                    // @ts-expect-error key is a valid React prop but missing from react-pdf typings
                     key={Date.now()}
                     onClick={handleDownload}
                     document={
@@ -150,8 +150,8 @@ function Optionsbar(props: OptionsbarProps) {
                       ".pdf"
                     }
                   >
-                    <span className="flex gap-2 -ml-1">
-                      <Download className="h-4 w-4 mr-1" />
+                    <span className="-ml-1 flex gap-2">
+                      <Download className="mr-1 h-4 w-4" />
                       PDF herunterladen
                     </span>
                   </PDFDownloadLink>
@@ -170,7 +170,7 @@ function Optionsbar(props: OptionsbarProps) {
                   className="w-full justify-start"
                   disabled={isLoading}
                 >
-                  <Trash2 className="h-4 w-4 mr-1" />
+                  <Trash2 className="mr-1 h-4 w-4" />
                   Entwurf verwerfen
                 </Button>
               </div>

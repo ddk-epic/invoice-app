@@ -2,7 +2,7 @@ import React from "react";
 
 function Loading() {
   return (
-    <main className="wrapper top flex justify-center items-center min-h-screen w-full">
+    <main className="wrapper top flex min-h-screen w-full items-center justify-center">
       <div className="text-4xl text-gray-400">Loading...</div>
     </main>
   );

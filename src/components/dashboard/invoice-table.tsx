@@ -28,13 +28,13 @@ const InvoiceTable = ({ invoices }: { invoices: InvoiceData[] }) => {
       </TableHeader>
       <TableBody>
         {invoices.map((invoice) => (
-          // @ts-ignore
+          // @ts-expect-error key is a valid React prop but missing from the element typings
           <TableRow key={invoice.id}>
             <TableCell className="font-medium">
               {idPrefix(invoice.invoiceId)}
             </TableCell>
             <TableCell>{invoice.sendTo.name}</TableCell>
-            <TableCell className="w-16 flex justify-end">
+            <TableCell className="flex w-16 justify-end">
               {toEuro(invoice.total)}
             </TableCell>
             <TableCell>

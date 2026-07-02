@@ -13,12 +13,12 @@ import Link from "next/link";
 
 function Navbar() {
   return (
-    <nav className="fixed w-full bg-white border-b border-gray-200">
-      <div className="wrapper flex justify-between h-16">
+    <nav className="fixed w-full border-b border-gray-200 bg-white">
+      <div className="wrapper flex h-16 justify-between">
         <div className="flex items-center">
           {/* Link */}
           <Link href="/dashboard">
-            <div className="flex-shrink-0 flex items-center">
+            <div className="flex flex-shrink-0 items-center">
               <FileText className="h-8 w-8 text-purple-600" />
               <div>
                 <span className="ml-2 text-xl font-bold text-gray-900">

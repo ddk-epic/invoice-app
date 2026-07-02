@@ -4,7 +4,6 @@ import { revalidatePath, unstable_cache } from "next/cache";
 import { QUERIES } from "@/server/db/queries";
 import {
   BaseContact,
-  BaseInvoiceItem,
   Contact,
   InvoiceData,
   InvoiceItem,
@@ -145,9 +144,7 @@ export const insertProductAction = async (
   return false;
 };
 
-export const insertContactAction = async (
-  newContact: BaseContact
-) => {
+export const insertContactAction = async (newContact: BaseContact) => {
   const result = ContactSchema.safeParse(newContact);
   if (!result.success) {
     console.log(result.error);
