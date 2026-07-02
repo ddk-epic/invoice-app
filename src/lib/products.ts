@@ -78,3 +78,63 @@ export function computeGrundpreis(p: Product): Grundpreis {
   }
   return { value: round2(p.price / packs), unit: "€/Stk" };
 }
+
+// Payload for inserting/updating a catalog product. `id` present => update.
+export interface ProductInput {
+  id?: number;
+  gtin?: string | null;
+  category: string;
+  description: string;
+  brand?: string | null;
+  origin?: string | null;
+  netContent: number;
+  contentUnit: string;
+  packSize?: number | null;
+  price: number;
+}
+
+const WEIGHT_UNIT: Record<string, string> = {
+  g: "g",
+  gr: "g",
+  mg: "g",
+  kg: "kg",
+  ml: "ml",
+  l: "l",
+  ltr: "l",
+};
+
+// Parse a free-text weight ("330ml", "9,65kg", "2000 Stück") into value + unit.
+// Returns null when empty or unrecognised (caller decides the fallback).
+export function parseWeight(
+  raw: string | null | undefined
+): { value: number; unit: string } | null {
+  if (raw == null) return null;
+  let w = String(raw).trim().toLowerCase();
+  if (w === "") return null;
+  w = w.replace(",", ".").replace(/\s+/g, "");
+  const piece = w.match(/^([\d.]+)(stück|stuck|stk)$/);
+  if (piece) return { value: Number(piece[1]), unit: "Stk" };
+  const m = w.match(/^([\d.]+)(mg|kg|gr|g|ml|ltr|l)$/);
+  if (!m) return null;
+  const value = Number(m[1]);
+  const unit = WEIGHT_UNIT[m[2]];
+  if (!unit || Number.isNaN(value)) return null;
+  return { value, unit };
+}
+
+// Map the editor's InvoiceItem-shaped form back to a catalog ProductInput.
+// Unparseable/blank weight falls back to a single piece (1 Stk).
+export function invoiceItemToProductInput(item: InvoiceItem): ProductInput {
+  const parsed = parseWeight(item.weight) ?? { value: 1, unit: "Stk" };
+  return {
+    id: item.id && item.id > 0 ? item.id : undefined,
+    category: item.category,
+    description: item.description,
+    brand: item.brand || null,
+    origin: item.origin || null,
+    netContent: parsed.value,
+    contentUnit: parsed.unit,
+    packSize: item.perBox ? Number(item.perBox) : null,
+    price: Number(item.rate),
+  };
+}

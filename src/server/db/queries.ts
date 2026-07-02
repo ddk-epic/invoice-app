@@ -6,11 +6,26 @@ import {
   contactsSchema as contactsTable,
   invoiceSchema as invoiceTable,
   privateSchema as privateTable,
-  productsSchema as productsTable,
   productCatalogSchema as productCatalogTable,
 } from "./schema";
 
-import { BaseContact, InvoiceData, InvoiceItem } from "@/constants/types";
+import { BaseContact, InvoiceData } from "@/constants/types";
+import type { ProductInput } from "@/lib/products";
+
+// Map an app-level ProductInput to a DB row (numeric columns are strings in drizzle).
+function productInputToRow(p: ProductInput) {
+  return {
+    gtin: p.gtin ?? null,
+    category: p.category,
+    description: p.description,
+    brand: p.brand ?? null,
+    origin: p.origin ?? null,
+    netContent: String(p.netContent),
+    contentUnit: p.contentUnit,
+    packSize: p.packSize ?? null,
+    price: String(p.price),
+  };
+}
 
 export const QUERIES = {
   // SELECT
@@ -50,24 +65,15 @@ export const QUERIES = {
     return db.insert(invoiceTable).values(modifiedInvoice);
   },
 
-  updateProduct: async function (
-    productList: InvoiceItem[],
-    newItem: InvoiceItem
-  ) {
-    console.log("newItem", newItem);
+  insertProduct: async function (p: ProductInput) {
+    return db.insert(productCatalogTable).values(productInputToRow(p));
+  },
 
-    productList.push(newItem);
-
-    const updatedProductList = {
-      id: 1,
-      categoryName: "all",
-      categoryJson: JSON.stringify(productList),
-    };
-
+  updateProduct: async function (id: number, p: ProductInput) {
     return db
-      .update(productsTable)
-      .set(updatedProductList)
-      .where(eq(productsTable.categoryName, "all"));
+      .update(productCatalogTable)
+      .set(productInputToRow(p))
+      .where(eq(productCatalogTable.id, id));
   },
 
   updateContact: async function (newContact: BaseContact) {

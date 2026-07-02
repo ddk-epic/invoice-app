@@ -1,6 +1,6 @@
 "use server";
 
-import { revalidatePath, unstable_cache } from "next/cache";
+import { revalidatePath, revalidateTag, unstable_cache } from "next/cache";
 import { QUERIES } from "@/server/db/queries";
 import {
   BaseContact,
@@ -10,7 +10,11 @@ import {
   PrivateContact,
 } from "@/constants/types";
 import { ContactSchema, InvoiceSchema, ProductSchema } from "@/lib/schema";
-import { productToInvoiceItem, rowToProduct } from "@/lib/products";
+import {
+  productToInvoiceItem,
+  rowToProduct,
+  type ProductInput,
+} from "@/lib/products";
 
 const revalidationTime = 60 * 5; // 5 minute(s)
 
@@ -118,20 +122,19 @@ export const insertInvoiceAction = async (invoiceData: InvoiceData) => {
   return false;
 };
 
-export const insertProductAction = async (
-  productList: InvoiceItem[],
-  newItem: InvoiceItem
-) => {
-  const result = ProductSchema.safeParse(newItem);
+export const insertProductAction = async (product: ProductInput) => {
+  const result = ProductSchema.safeParse(product);
   if (!result.success) {
-    console.log(result.error);
+    console.error(result.error);
     return false;
   }
   try {
-    const insertedItem = await QUERIES.updateProduct(productList, newItem);
-    if (insertedItem) {
-      console.log("successfully saved to the database!");
-      revalidatePath("/dashboard");
+    const saved = product.id
+      ? await QUERIES.updateProduct(product.id, product)
+      : await QUERIES.insertProduct(product);
+    if (saved) {
+      revalidateTag("invoices-contacts");
+      revalidateTag("contacts-products");
       return true;
     }
   } catch (err) {

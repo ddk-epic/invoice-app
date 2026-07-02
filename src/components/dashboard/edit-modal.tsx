@@ -21,6 +21,7 @@ import {
   insertContactAction,
   insertProductAction,
 } from "@/app/actions/server-actions";
+import { invoiceItemToProductInput } from "@/lib/products";
 
 function ContactsModal({ contacts }: { contacts: Contact[] }) {
   const [isContactsModalOpen, setIsContactsModalOpen] = useState(false);
@@ -221,26 +222,9 @@ function ProductsModal({ products: productList }: { products: InvoiceItem[] }) {
     itemData.brand !== "" &&
     itemData.rate !== 0;
 
-  const handleProductInsert = async (
-    productList: InvoiceItem[],
-    itemData: InvoiceItem
-  ) => {
-    if (itemData.id === 0) {
-      itemData.id = Math.random() * 100000; // if new product, give new Id
-    } else {
-      productList = productList.filter((item) => item.id !== itemData.id);
-    }
-
-    const { rate, amount, ...rest } = itemData;
-    const newItemData = {
-      rate: Number(rate),
-      amount: Number(rate),
-      ...rest,
-    };
-
-    const res = await insertProductAction(productList, newItemData);
-    console.log("successfully updated products!");
-    return res;
+  const handleProductInsert = async (itemData: InvoiceItem) => {
+    // id > 0 => update existing catalog row; otherwise insert a new one
+    return insertProductAction(invoiceItemToProductInput(itemData));
   };
 
   const updateItemData = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -457,7 +441,7 @@ function ProductsModal({ products: productList }: { products: InvoiceItem[] }) {
               <div className="w-32 space-x-6 pt-4.5">
                 <Button
                   variant="ghost"
-                  onClick={() => handleProductInsert(productList, itemData)}
+                  onClick={() => handleProductInsert(itemData)}
                   disabled={!isItemValid}
                   className="purple-gradient w-32 text-base text-white"
                 >

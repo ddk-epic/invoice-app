@@ -32,13 +32,14 @@ export const InvoiceSchema = z.object({
 });
 
 export const ProductSchema = z.object({
-  amount: z.number(),
-  category: z.string(),
-  description: z.string(),
-  brand: z.string(),
-  origin: z.string().optional(),
-  weight: z.string().optional(),
-  perBox: z.number().optional(),
-  quantity: z.number(),
-  rate: z.number(),
+  id: z.number().optional(),
+  gtin: z.string().nullable().optional(),
+  category: z.string().min(1),
+  description: z.string().min(1),
+  brand: z.string().nullable().optional(),
+  origin: z.string().nullable().optional(),
+  netContent: z.number().positive(),
+  contentUnit: z.enum(["g", "kg", "ml", "l", "Stk"]),
+  packSize: z.number().int().positive().nullable().optional(),
+  price: z.number().nonnegative(),
 });

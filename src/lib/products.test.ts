@@ -1,10 +1,13 @@
 import { describe, it, expect } from "vitest";
 import type { SelectProductCatalog } from "@/server/db/schema";
+import type { InvoiceItem } from "@/constants/types";
 import {
   rowToProduct,
   weightLabel,
   productToInvoiceItem,
   computeGrundpreis,
+  parseWeight,
+  invoiceItemToProductInput,
   type Product,
 } from "./products";
 
@@ -110,5 +113,56 @@ describe("computeGrundpreis (PAngV, ref 1kg / 1l)", () => {
         product({ contentUnit: "Stk", netContent: 1, price: 2.5 })
       )
     ).toEqual({ value: 2.5, unit: "€/Stk" });
+  });
+});
+
+describe("parseWeight", () => {
+  it("parses value + unit variants", () => {
+    expect(parseWeight("330ml")).toEqual({ value: 330, unit: "ml" });
+    expect(parseWeight("9,65kg")).toEqual({ value: 9.65, unit: "kg" });
+    expect(parseWeight("500gr")).toEqual({ value: 500, unit: "g" });
+    expect(parseWeight("25 kg")).toEqual({ value: 25, unit: "kg" });
+    expect(parseWeight("2000 Stück")).toEqual({ value: 2000, unit: "Stk" });
+  });
+  it("returns null for blank/unparseable", () => {
+    expect(parseWeight("")).toBeNull();
+    expect(parseWeight(null)).toBeNull();
+    expect(parseWeight("fair")).toBeNull();
+    expect(parseWeight("10")).toBeNull();
+  });
+});
+
+describe("invoiceItemToProductInput", () => {
+  const item = (over: Partial<InvoiceItem> = {}): InvoiceItem => ({
+    id: 0,
+    category: "beverage",
+    description: "Bier",
+    brand: "Tsingtao",
+    origin: "",
+    weight: "330ml",
+    perBox: 24,
+    quantity: 1,
+    rate: 30,
+    amount: 30,
+    ...over,
+  });
+  it("maps form fields and parses weight", () => {
+    const p = invoiceItemToProductInput(item());
+    expect(p.netContent).toBe(330);
+    expect(p.contentUnit).toBe("ml");
+    expect(p.packSize).toBe(24);
+    expect(p.price).toBe(30);
+    expect(p.id).toBeUndefined(); // id 0 => insert
+  });
+  it("keeps id > 0 for updates", () => {
+    expect(invoiceItemToProductInput(item({ id: 7 })).id).toBe(7);
+  });
+  it("falls back to 1 Stk on blank weight", () => {
+    const p = invoiceItemToProductInput(item({ weight: "" }));
+    expect(p.netContent).toBe(1);
+    expect(p.contentUnit).toBe("Stk");
+  });
+  it("null pack size when perBox is 0", () => {
+    expect(invoiceItemToProductInput(item({ perBox: 0 })).packSize).toBeNull();
   });
 });
