@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
 
 import { Card } from "@/components/ui/card";
 import { Spinner } from "@/components/ui/spinner";
@@ -11,7 +12,7 @@ import AddItemModal from "./add-item-modal";
 import InvoiceDetails from "./invoice-details";
 import SelectContactModal from "./add-contact-modal";
 
-import { empty, invoiceTemplate } from "@/constants/constants";
+import { invoiceTemplate } from "@/constants/constants";
 import {
   Contact,
   InvoiceData,
@@ -19,10 +20,9 @@ import {
   PrivateContact,
 } from "@/constants/types";
 import {
-  deleteInvoiceChanges,
-  getInvoiceChanges,
-  saveInvoiceChanges,
-} from "@/context/local-storage";
+  discardDraftAction,
+  updateDraftAction,
+} from "@/app/actions/server-actions";
 
 interface InvoiceEditorProps {
   privateContact: PrivateContact;
@@ -47,32 +47,54 @@ export default function InvoiceEditor(props: InvoiceEditorProps) {
     initialInvoice ?? invoiceTemplate
   );
 
-  // Legacy path: when not seeded from the DB, resume from localStorage.
+  const router = useRouter();
+  const draftId = invoiceData.id;
+
+  // Always-fresh handle to state for timers/listeners (no re-subscribe on edits).
+  const latestRef = useRef(invoiceData);
+  latestRef.current = invoiceData;
+
+  // Snapshot of what's persisted; a differing snapshot means the draft is dirty.
+  const lastSavedRef = useRef(
+    JSON.stringify(initialInvoice ?? invoiceTemplate)
+  );
+
+  const saveDraft = useCallback(
+    async (showSpinner: boolean) => {
+      if (!draftId) return;
+      const current = latestRef.current;
+      const snapshot = JSON.stringify(current);
+      if (snapshot === lastSavedRef.current) return; // not dirty
+      if (showSpinner) setIsSaving(true);
+      const ok = await updateDraftAction(draftId, current);
+      if (ok) lastSavedRef.current = snapshot;
+      if (showSpinner) setIsSaving(false);
+    },
+    [draftId]
+  );
+
+  // Periodic, dirty-only autosave.
   useEffect(() => {
-    if (initialInvoice) return;
-    const savedInvoice = getInvoiceChanges("invoice-data");
-    if (savedInvoice) setInvoiceData(savedInvoice);
-  }, [initialInvoice]);
+    if (!draftId) return;
+    const interval = setInterval(() => saveDraft(true), 10000);
+    return () => clearInterval(interval);
+  }, [draftId, saveDraft]);
 
-  // Save to localStorage after 2s of no input
+  // Safety net: flush on tab-hide and on leaving the editor.
   useEffect(() => {
-    setIsSaving(true);
-
-    const timeout = setTimeout(() => {
-      saveInvoiceChanges("invoice-data", invoiceData);
-      setIsSaving(false);
-    }, 2000); // 2 seconds
-
-    // debounce: clear timeout if data changes before 2s
-    return () => clearTimeout(timeout);
-  }, [
-    invoiceData.invoiceId,
-    invoiceData.invoiceDate,
-    invoiceData.dueDate,
-    JSON.stringify(invoiceData.sendTo),
-    JSON.stringify(invoiceData.invoiceTo),
-    JSON.stringify(invoiceData.items),
-  ]);
+    if (!draftId) return;
+    const flush = () => saveDraft(false);
+    const onVisibility = () => {
+      if (document.visibilityState === "hidden") flush();
+    };
+    document.addEventListener("visibilitychange", onVisibility);
+    window.addEventListener("pagehide", flush);
+    return () => {
+      document.removeEventListener("visibilitychange", onVisibility);
+      window.removeEventListener("pagehide", flush);
+      flush();
+    };
+  }, [draftId, saveDraft]);
 
   const handleItems = (items: InvoiceItem[]) => {
     setInvoiceData((prev) => ({ ...prev, items }));
@@ -147,16 +169,9 @@ export default function InvoiceEditor(props: InvoiceEditorProps) {
     setInvoiceData((prev) => ({ ...prev, total: value }));
   };
 
-  const discardData = () => {
-    console.log("deleting current data...");
-    deleteInvoiceChanges("invoice-data");
-    setInvoiceData((prev) => ({
-      ...prev,
-      dueDate: "",
-      sendTo: empty,
-      invoiceTo: empty,
-      items: [],
-    }));
+  const discardData = async () => {
+    if (draftId) await discardDraftAction(draftId);
+    router.push("/dashboard");
   };
 
   return (
