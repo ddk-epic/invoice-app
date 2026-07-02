@@ -10,7 +10,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
-import { getStatusColor } from "@/constants/constants";
+import { getStatusColor, statusLabel } from "@/constants/constants";
 import { InvoiceData } from "@/constants/types";
 import { idPrefix, toEuro, deShortDate } from "@/lib/utils";
 
@@ -38,8 +38,7 @@ const InvoiceTable = ({ invoices }: { invoices: InvoiceData[] }) => {
             </TableCell>
             <TableCell>
               <Badge className={getStatusColor(invoice.status)}>
-                {invoice.status.charAt(0).toUpperCase() +
-                  invoice.status.slice(1)}
+                {statusLabel[invoice.status]}
               </Badge>
             </TableCell>
             <TableCell>{deShortDate(new Date(invoice.createdAt))}</TableCell>

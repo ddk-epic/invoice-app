@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/table";
 
 import { InvoiceData } from "@/constants/types";
-import { getStatusColor } from "@/constants/constants";
+import { getStatusColor, statusLabel } from "@/constants/constants";
 
 import { QUERIES } from "@/server/db/queries";
 import { toEuro, deShortDate, idPrefix } from "@/lib/utils";
@@ -51,8 +51,7 @@ async function InvoiceViewAll() {
                     <TableCell>{toEuro(invoice.total)}</TableCell>
                     <TableCell>
                       <Badge className={getStatusColor(invoice.status)}>
-                        {invoice.status.charAt(0).toUpperCase() +
-                          invoice.status.slice(1)}
+                        {statusLabel[invoice.status]}
                       </Badge>
                     </TableCell>
                     <TableCell>

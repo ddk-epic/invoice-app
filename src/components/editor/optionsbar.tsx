@@ -48,7 +48,7 @@ function Optionsbar(props: OptionsbarProps) {
 
     const { status, ...rest } = invoiceData;
     const updatedInvoiceData = {
-      status: "Offen",
+      status: "open" as const,
       ...rest,
     };
 

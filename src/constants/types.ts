@@ -1,3 +1,5 @@
+export type InvoiceStatus = "draft" | "open" | "paid" | "overdue";
+
 export interface PrivateContact {
   id?: number;
   phone: string;
@@ -50,7 +52,7 @@ export interface InvoiceData {
   invoiceId: string;
   invoiceDate: string;
   dueDate: string;
-  status: string;
+  status: InvoiceStatus;
 
   sender: Contact;
   sendTo: Contact;

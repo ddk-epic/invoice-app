@@ -20,7 +20,7 @@ export const InvoiceSchema = z.object({
   invoiceId: z.string().optional(),
   invoiceDate: z.string(),
   dueDate: z.string(),
-  status: z.string(),
+  status: z.enum(["draft", "open", "paid", "overdue"]),
   sender: ContactSchema,
   sendTo: ContactSchema,
   invoiceTo: ContactSchema,
