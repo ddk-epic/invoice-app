@@ -56,12 +56,12 @@ function Optionsbar(props: OptionsbarProps) {
     if (!invoiceData.id) return;
     const saved = await saveDraft();
     if (!saved) return;
-    const submitted = await submitDraftAction(invoiceData.id);
-    if (!submitted) return;
+    const assignedId = await submitDraftAction(invoiceData.id);
+    if (!assignedId) return;
 
     setIsLoading(true);
     setTimeout(() => {
-      redirect(`/invoice/${invoiceId}/pdf`);
+      redirect(`/invoice/${assignedId}/pdf`);
     }, 2000);
   };
 

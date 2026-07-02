@@ -136,14 +136,15 @@ export const updateDraftAction = async (id: number, draft: InvoiceData) => {
   }
 };
 
-export const submitDraftAction = async (id: number) => {
+// Promote a draft to an issued invoice; returns the assigned number or null.
+export const submitDraftAction = async (id: number): Promise<string | null> => {
   try {
-    await QUERIES.submitDraft(id);
+    const row = await QUERIES.submitDraft(id);
     revalidateTag("invoices-contacts");
-    return true;
+    return row.invoiceId;
   } catch (err) {
     console.error("Server action error:", err);
-    return false;
+    return null;
   }
 };
 

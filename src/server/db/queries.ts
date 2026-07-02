@@ -1,6 +1,6 @@
 import "server-only";
 
-import { eq } from "drizzle-orm";
+import { eq, sql } from "drizzle-orm";
 import { db } from "./index";
 import {
   contactsSchema as contactsTable,
@@ -88,11 +88,19 @@ export const QUERIES = {
       .where(eq(invoiceTable.id, id));
   },
 
+  // Assign the next sequential issued number and flip to open, atomically.
+  // The SET subquery sees the pre-update table, so this still-draft row is excluded.
   submitDraft: async function (id: number) {
-    return db
+    const [row] = await db
       .update(invoiceTable)
-      .set({ status: "open" })
-      .where(eq(invoiceTable.id, id));
+      .set({
+        invoiceId: sql`(SELECT COALESCE(MAX((invoice_id)::int), 0) + 1
+                        FROM invoice_table WHERE status <> 'draft')`,
+        status: "open",
+      })
+      .where(eq(invoiceTable.id, id))
+      .returning({ invoiceId: invoiceTable.invoiceId });
+    return row;
   },
 
   deleteDraftById: async function (id: number) {
