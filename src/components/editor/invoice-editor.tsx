@@ -28,6 +28,7 @@ interface InvoiceEditorProps {
   privateContact: PrivateContact;
   contacts: Contact[];
   products: InvoiceItem[];
+  invoiceData?: InvoiceData;
 }
 
 export default function InvoiceEditor(props: InvoiceEditorProps) {
@@ -35,20 +36,23 @@ export default function InvoiceEditor(props: InvoiceEditorProps) {
     privateContact,
     contacts: contactList,
     products: productList,
+    invoiceData: initialInvoice,
   } = props;
 
   const [isSendToModalOpen, setIsSendToModalOpen] = useState(false);
   const [isInvoiceToModalOpen, setIsInvoiceToModalOpen] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
 
-  const [invoiceData, setInvoiceData] = useState<InvoiceData>(invoiceTemplate);
+  const [invoiceData, setInvoiceData] = useState<InvoiceData>(
+    initialInvoice ?? invoiceTemplate
+  );
 
-  // Load saved invoice on initial mount
+  // Legacy path: when not seeded from the DB, resume from localStorage.
   useEffect(() => {
+    if (initialInvoice) return;
     const savedInvoice = getInvoiceChanges("invoice-data");
-    console.log("data", savedInvoice);
     if (savedInvoice) setInvoiceData(savedInvoice);
-  }, []);
+  }, [initialInvoice]);
 
   // Save to localStorage after 2s of no input
   useEffect(() => {
