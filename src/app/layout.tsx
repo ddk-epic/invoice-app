@@ -33,6 +33,8 @@ export default function RootLayout({
     <ClerkProvider
       publishableKey={process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY}
       afterSignOutUrl={"/sign-in"}
+      signInForceRedirectUrl={"/dashboard"}
+      signUpForceRedirectUrl={"/dashboard"}
       appearance={{
         elements: {
           formButtonPrimary: "purple-gradient",
