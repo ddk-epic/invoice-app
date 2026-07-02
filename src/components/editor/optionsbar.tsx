@@ -18,7 +18,10 @@ import PdfDocument from "@/components/pdf/pdf-document";
 
 import { InvoiceData, PrivateContact } from "@/constants/types";
 import { InvoiceSchema } from "@/lib/schema";
-import { insertInvoiceAction } from "@/app/actions/server-actions";
+import {
+  submitDraftAction,
+  updateDraftAction,
+} from "@/app/actions/server-actions";
 import { redirect } from "next/navigation";
 import { toast } from "sonner";
 
@@ -39,27 +42,22 @@ function Optionsbar(props: OptionsbarProps) {
     invoiceData.invoiceTo &&
     invoiceData.items.length > 0;
 
-  const insertInvoice = async () => {
+  const saveDraft = async () => {
+    if (!invoiceData.id) return false;
     const result = InvoiceSchema.safeParse(invoiceData);
     if (!result.success) {
-      console.log(result.error);
+      console.error(result.error);
       return false;
     }
-
-    const { status, ...rest } = invoiceData;
-    const updatedInvoiceData = {
-      status: "open" as const,
-      ...rest,
-    };
-
-    const res = await insertInvoiceAction(updatedInvoiceData);
-    console.log("successfully saved the invoiceData!");
-    return res;
+    return updateDraftAction(invoiceData.id, invoiceData);
   };
 
   const handlePublish = async () => {
-    const res = await insertInvoice();
-    if (!res) return;
+    if (!invoiceData.id) return;
+    const saved = await saveDraft();
+    if (!saved) return;
+    const submitted = await submitDraftAction(invoiceData.id);
+    if (!submitted) return;
 
     setIsLoading(true);
     setTimeout(() => {
@@ -77,8 +75,7 @@ function Optionsbar(props: OptionsbarProps) {
       });
       return;
     }
-    const res = await insertInvoice();
-    if (!res) return;
+    await saveDraft();
   };
 
   return (
