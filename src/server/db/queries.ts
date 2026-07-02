@@ -27,6 +27,23 @@ function productInputToRow(p: ProductInput) {
   };
 }
 
+// jsonb columns take objects directly - drizzle serializes them; do NOT
+// pre-stringify (that double-encodes).
+function invoiceDataToRow(inv: InvoiceData) {
+  return {
+    invoiceId: inv.invoiceId,
+    invoiceDate: inv.invoiceDate,
+    dueDate: inv.dueDate,
+    status: inv.status,
+    sender: inv.sender,
+    sendTo: inv.sendTo,
+    invoiceTo: inv.invoiceTo,
+    items: inv.items,
+    total: inv.total,
+    taxRate: inv.taxRate,
+  };
+}
+
 export const QUERIES = {
   // SELECT
   getPrivateContact: async function () {
@@ -62,6 +79,36 @@ export const QUERIES = {
       items: JSON.stringify(invoiceData.items),
     };
     return db.insert(invoiceTable).values(modifiedInvoice);
+  },
+
+  getDraftById: async function (id: number) {
+    return db.select().from(invoiceTable).where(eq(invoiceTable.id, id));
+  },
+
+  insertDraft: async function (inv: InvoiceData) {
+    const [row] = await db
+      .insert(invoiceTable)
+      .values(invoiceDataToRow(inv))
+      .returning({ id: invoiceTable.id });
+    return row;
+  },
+
+  updateDraftById: async function (id: number, inv: InvoiceData) {
+    return db
+      .update(invoiceTable)
+      .set(invoiceDataToRow(inv))
+      .where(eq(invoiceTable.id, id));
+  },
+
+  submitDraft: async function (id: number) {
+    return db
+      .update(invoiceTable)
+      .set({ status: "open" })
+      .where(eq(invoiceTable.id, id));
+  },
+
+  deleteDraftById: async function (id: number) {
+    return db.delete(invoiceTable).where(eq(invoiceTable.id, id));
   },
 
   insertProduct: async function (p: ProductInput) {

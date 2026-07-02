@@ -121,6 +121,61 @@ export const insertInvoiceAction = async (invoiceData: InvoiceData) => {
   return false;
 };
 
+export const createDraftAction = async (
+  draft: InvoiceData
+): Promise<number | null> => {
+  const result = InvoiceSchema.safeParse(draft);
+  if (!result.success) {
+    console.error(result.error);
+    return null;
+  }
+  try {
+    const row = await QUERIES.insertDraft(draft);
+    revalidateTag("invoices-contacts");
+    return row.id;
+  } catch (err) {
+    console.error("Server action error:", err);
+    return null;
+  }
+};
+
+export const updateDraftAction = async (id: number, draft: InvoiceData) => {
+  const result = InvoiceSchema.safeParse(draft);
+  if (!result.success) {
+    console.error(result.error);
+    return false;
+  }
+  try {
+    await QUERIES.updateDraftById(id, draft);
+    return true;
+  } catch (err) {
+    console.error("Server action error:", err);
+    return false;
+  }
+};
+
+export const submitDraftAction = async (id: number) => {
+  try {
+    await QUERIES.submitDraft(id);
+    revalidateTag("invoices-contacts");
+    return true;
+  } catch (err) {
+    console.error("Server action error:", err);
+    return false;
+  }
+};
+
+export const discardDraftAction = async (id: number) => {
+  try {
+    await QUERIES.deleteDraftById(id);
+    revalidateTag("invoices-contacts");
+    return true;
+  } catch (err) {
+    console.error("Server action error:", err);
+    return false;
+  }
+};
+
 export const insertProductAction = async (product: ProductInput) => {
   const result = ProductSchema.safeParse(product);
   if (!result.success) {
