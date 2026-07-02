@@ -69,18 +69,6 @@ export const QUERIES = {
       .where(eq(invoiceTable.invoiceId, invoiceId));
   },
 
-  insertInvoice: async function (invoiceData: InvoiceData) {
-    const { id, createdAt, updatedAt, ...rest } = invoiceData;
-    const modifiedInvoice = {
-      ...rest,
-      sender: JSON.stringify(invoiceData.sender),
-      sendTo: JSON.stringify(invoiceData.sendTo),
-      invoiceTo: JSON.stringify(invoiceData.invoiceTo),
-      items: JSON.stringify(invoiceData.items),
-    };
-    return db.insert(invoiceTable).values(modifiedInvoice);
-  },
-
   getDraftById: async function (id: number) {
     return db.select().from(invoiceTable).where(eq(invoiceTable.id, id));
   },

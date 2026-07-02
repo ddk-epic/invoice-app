@@ -1,4 +1,5 @@
 import React from "react";
+import Link from "next/link";
 
 import { Badge } from "@/components/ui/badge";
 import {
@@ -30,7 +31,16 @@ const InvoiceTable = ({ invoices }: { invoices: InvoiceData[] }) => {
         {invoices.map((invoice) => (
           <TableRow key={invoice.id}>
             <TableCell className="font-medium">
-              {idPrefix(invoice.invoiceId)}
+              {invoice.status === "draft" ? (
+                <Link
+                  href={`/editor/${invoice.id}`}
+                  className="text-purple-600 hover:underline"
+                >
+                  {idPrefix(invoice.invoiceId)}
+                </Link>
+              ) : (
+                idPrefix(invoice.invoiceId)
+              )}
             </TableCell>
             <TableCell>{invoice.sendTo.name}</TableCell>
             <TableCell className="flex w-16 justify-end">

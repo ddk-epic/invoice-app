@@ -103,24 +103,6 @@ export const getCachedInvoiceData = async (invoiceId: string) => {
   return cached(invoiceId);
 };
 
-export const insertInvoiceAction = async (invoiceData: InvoiceData) => {
-  const result = InvoiceSchema.safeParse(invoiceData);
-  if (!result.success) {
-    console.error(result.error);
-    return false;
-  }
-  try {
-    const insertedInvoice = await QUERIES.insertInvoice(invoiceData);
-    if (insertedInvoice) {
-      revalidatePath("/dashboard");
-      return true;
-    }
-  } catch (err) {
-    console.error("Server action error:", err);
-  }
-  return false;
-};
-
 export const createDraftAction = async (
   draft: InvoiceData
 ): Promise<number | null> => {
