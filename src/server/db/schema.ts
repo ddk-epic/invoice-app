@@ -66,9 +66,9 @@ export const invoiceSchema = pgTable("invoice_table", {
   sendTo: jsonb("send_to").notNull(),
   invoiceTo: jsonb("invoice_to").notNull(),
 
-  items: jsonb().notNull(),
-  total: integer().notNull(),
-  taxRate: integer().notNull(),
+  items: jsonb("items").notNull(),
+  total: integer("total").notNull(),
+  taxRate: integer("tax_rate").notNull(),
 
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at")
