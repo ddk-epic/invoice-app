@@ -1,6 +1,7 @@
 import {
   integer,
   jsonb,
+  numeric,
   pgTable,
   serial,
   text,
@@ -39,6 +40,21 @@ export const productsSchema = pgTable("products_table", {
   categoryJson: jsonb("category_json").notNull(),
 });
 
+// Normalized catalog: one row per product (replaces the productsSchema JSON blob).
+// GS1/PAngV-aligned shape; Grundpreis is computed at read time, not stored.
+export const productCatalogSchema = pgTable("products", {
+  id: serial("id").primaryKey(),
+  gtin: text("gtin"),
+  category: text("category").notNull(),
+  description: text("description").notNull(),
+  brand: text("brand"),
+  origin: text("origin"),
+  netContent: numeric("net_content", { precision: 10, scale: 3 }).notNull(),
+  contentUnit: text("content_unit").notNull(),
+  packSize: integer("pack_size"),
+  price: numeric("price", { precision: 10, scale: 2 }).notNull(),
+});
+
 export const invoiceSchema = pgTable("invoice_table", {
   id: serial("id").primaryKey(),
   invoiceId: text("invoice_id").notNull(),
@@ -65,6 +81,9 @@ export type SelectContact = typeof contactsSchema.$inferSelect;
 
 export type InsertProduct = typeof productsSchema.$inferInsert;
 export type SelectProduct = typeof productsSchema.$inferSelect;
+
+export type InsertProductCatalog = typeof productCatalogSchema.$inferInsert;
+export type SelectProductCatalog = typeof productCatalogSchema.$inferSelect;
 
 export type InsertInvoice = typeof invoiceSchema.$inferInsert;
 export type SelectInvoice = typeof invoiceSchema.$inferSelect;
