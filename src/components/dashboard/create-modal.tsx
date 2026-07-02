@@ -28,7 +28,7 @@ import { Contact, InvoiceData } from "@/constants/types";
 import { idPrefix } from "@/lib/utils";
 
 import { redirect, RedirectType } from "next/navigation";
-import { saveInvoiceChanges } from "@/context/local-storage";
+import { createDraftAction } from "@/app/actions/server-actions";
 import { Spinner } from "../ui/spinner";
 
 interface CreatInvoiceModalProps {
@@ -43,22 +43,22 @@ export const CreateInvoiceModal = (props: CreatInvoiceModalProps) => {
   const [contactField, setContactField] = useState<Contact | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleCreateInvoice = (e: React.FormEvent) => {
+  const handleCreateInvoice = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
 
-    const invoiceData: InvoiceData = {
+    const draft: InvoiceData = {
       ...invoiceTemplate,
       invoiceId,
       sendTo: contactField!,
       invoiceTo: contactField!,
     };
 
-    console.log("Creating invoice...", invoiceData);
-    saveInvoiceChanges("invoice-data", invoiceData); // save to local storage
+    const draftId = await createDraftAction(draft);
     setIsLoading(false);
+    if (draftId == null) return;
 
-    redirect("/editor", RedirectType.push);
+    redirect(`/editor/${draftId}`, RedirectType.push);
   };
 
   const selectContactById = (contactId: string) => {
