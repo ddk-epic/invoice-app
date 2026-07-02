@@ -77,7 +77,6 @@ export default async function Dashboard() {
         {/* Stats Cards */}
         <div className="mb-4 grid grid-cols-1 gap-4 md:grid-cols-3">
           {invoiceStatistics.map((item, index) => (
-            // @ts-expect-error key is a valid React prop but missing from the element typings
             <Card key={index}>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">

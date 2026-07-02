@@ -107,7 +107,6 @@ function AddItemModal({ products: productList, addItem }: AddItemModalProps) {
             {filteredItems.length > 0 ? (
               filteredItems.slice(0, visibleCount).map((item) => (
                 <div
-                  // @ts-expect-error key is a valid React prop but missing from the element typings
                   key={item.id}
                   className="flex min-w-[450px] items-center justify-between border-t p-1"
                 >

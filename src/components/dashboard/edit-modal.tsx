@@ -100,7 +100,6 @@ function ContactsModal({ contacts }: { contacts: Contact[] }) {
               <div className="ml-2 flex-1 space-y-3">
                 {contacts.map((contact) => (
                   <div
-                    // @ts-expect-error key is a valid React prop but missing from the element typings
                     key={contact.id}
                     className="flex items-start justify-between"
                   >
@@ -334,7 +333,6 @@ function ProductsModal({ products: productList }: { products: InvoiceItem[] }) {
               {filteredItems.length > 0 ? (
                 filteredItems.slice(0, visibleCount).map((item) => (
                   <div
-                    // @ts-expect-error key is a valid React prop but missing from the element typings
                     key={item.id}
                     onClick={() => getItemByIdOnClick(item.id)}
                     className="flex items-start justify-between rounded hover:bg-gray-100"

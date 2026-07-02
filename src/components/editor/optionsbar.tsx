@@ -134,7 +134,6 @@ function Optionsbar(props: OptionsbarProps) {
                   disabled={isLoading}
                 >
                   <PDFDownloadLink
-                    // @ts-expect-error key is a valid React prop but missing from react-pdf typings
                     key={Date.now()}
                     onClick={handleDownload}
                     document={

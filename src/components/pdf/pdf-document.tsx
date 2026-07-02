@@ -157,7 +157,6 @@ function PdfDocument(props: PdfDocumentProps) {
         {/* table items */}
         <View style={s.ml}>
           {invoice.items.map((item, index) => (
-            // @ts-expect-error key is a valid React prop but missing from react-pdf typings
             <View key={item.id} style={s.inline}>
               <Text style={[{ width: 30 }]}>{index + 1}</Text>
               <Text style={[{ width: 273 }]}>

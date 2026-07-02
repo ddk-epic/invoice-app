@@ -30,7 +30,6 @@ function Table(props: TableProps) {
       {items.length > 0 && (
         <tbody>
           {items.map((item, index) => (
-            // @ts-expect-error key is a valid React prop but missing from the element typings
             <tr key={item.id} className="border-t">
               <td className="w-13 px-2">{index + 1}</td>
               <td className="max-w-[300px] truncate">

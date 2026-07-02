@@ -116,7 +116,6 @@ export const CreateInvoiceModal = (props: CreatInvoiceModalProps) => {
                   <SelectContent>
                     {contacts.map((contact) => (
                       <SelectItem
-                        // @ts-expect-error key is a valid React prop but missing from the element typings
                         key={contact.id}
                         value={contact.id.toString()}
                       >

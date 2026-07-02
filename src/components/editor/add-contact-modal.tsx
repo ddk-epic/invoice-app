@@ -67,7 +67,6 @@ function SelectContactModal(props: SelectContactModalProps) {
           </DialogHeader>
           {contactList.map((contact) => (
             <Button
-              // @ts-expect-error key is a valid React prop but missing from the element typings
               key={contact.id}
               onClick={() => updateContact(contact.id.toString(), name)}
               variant="ghost"
