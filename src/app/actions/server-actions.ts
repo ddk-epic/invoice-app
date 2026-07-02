@@ -7,16 +7,12 @@ import {
   Contact,
   InvoiceData,
   InvoiceItem,
-  ParseProduct,
   PrivateContact,
 } from "@/constants/types";
 import { ContactSchema, InvoiceSchema, ProductSchema } from "@/lib/schema";
+import { productToInvoiceItem, rowToProduct } from "@/lib/products";
 
 const revalidationTime = 60 * 5; // 5 minute(s)
-
-const parseProductJson = (productList: ParseProduct): InvoiceItem[] => {
-  return productList[0].categoryJson as InvoiceItem[];
-};
 
 export const getPrivateData = async () => {
   const cacheKey = "private";
@@ -47,7 +43,7 @@ export const getInvoicesContactsProducts = async (): Promise<{
       ]);
       const invoiceList = invoices as InvoiceData[];
       const contactList = contacts as Contact[];
-      const productList = parseProductJson(products);
+      const productList = products.map(rowToProduct).map(productToInvoiceItem);
 
       return { invoiceList, contactList, productList };
     },
@@ -77,7 +73,7 @@ export const getContactsAndProducts = async (): Promise<{
       ]);
       const [privateContact] = privateData as PrivateContact[];
       const contactList = contacts as Contact[];
-      const productList = parseProductJson(products);
+      const productList = products.map(rowToProduct).map(productToInvoiceItem);
 
       return { privateContact, contactList, productList };
     },

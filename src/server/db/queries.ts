@@ -7,6 +7,7 @@ import {
   invoiceSchema as invoiceTable,
   privateSchema as privateTable,
   productsSchema as productsTable,
+  productCatalogSchema as productCatalogTable,
 } from "./schema";
 
 import { BaseContact, InvoiceData, InvoiceItem } from "@/constants/types";
@@ -22,7 +23,7 @@ export const QUERIES = {
   },
 
   getAllProducts: async function () {
-    return db.select().from(productsTable);
+    return db.select().from(productCatalogTable);
   },
 
   getAllInvoices: async function () {
