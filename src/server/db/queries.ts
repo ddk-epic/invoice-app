@@ -61,7 +61,6 @@ export const QUERIES = {
       invoiceTo: JSON.stringify(invoiceData.invoiceTo),
       items: JSON.stringify(invoiceData.items),
     };
-    console.log("modified invoice", modifiedInvoice);
     return db.insert(invoiceTable).values(modifiedInvoice);
   },
 
@@ -77,7 +76,6 @@ export const QUERIES = {
   },
 
   updateContact: async function (newContact: BaseContact) {
-    console.log("newContact", newContact);
     return db.insert(contactsTable).values(newContact);
   },
 };
