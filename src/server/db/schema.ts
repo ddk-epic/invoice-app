@@ -1,3 +1,4 @@
+import { sql } from "drizzle-orm";
 import {
   integer,
   jsonb,
@@ -6,6 +7,7 @@ import {
   serial,
   text,
   timestamp,
+  uniqueIndex,
 } from "drizzle-orm/pg-core";
 
 /**
@@ -55,26 +57,35 @@ export const productCatalogSchema = pgTable("products", {
   price: numeric("price", { precision: 10, scale: 2 }).notNull(),
 });
 
-export const invoiceSchema = pgTable("invoice_table", {
-  id: serial("id").primaryKey(),
-  invoiceId: text("invoice_id").notNull(),
-  invoiceDate: text("invoice_date").notNull(),
-  dueDate: text("due_date").notNull(),
-  status: text("status").notNull(),
+export const invoiceSchema = pgTable(
+  "invoice_table",
+  {
+    id: serial("id").primaryKey(),
+    invoiceId: text("invoice_id").notNull(),
+    invoiceDate: text("invoice_date").notNull(),
+    dueDate: text("due_date").notNull(),
+    status: text("status").notNull(),
 
-  sender: jsonb("sender").notNull(),
-  sendTo: jsonb("send_to").notNull(),
-  invoiceTo: jsonb("invoice_to").notNull(),
+    sender: jsonb("sender").notNull(),
+    sendTo: jsonb("send_to").notNull(),
+    invoiceTo: jsonb("invoice_to").notNull(),
 
-  items: jsonb("items").notNull(),
-  total: integer("total").notNull(),
-  taxRate: integer("tax_rate").notNull(),
+    items: jsonb("items").notNull(),
+    total: integer("total").notNull(),
+    taxRate: integer("tax_rate").notNull(),
 
-  createdAt: timestamp("created_at").notNull().defaultNow(),
-  updatedAt: timestamp("updated_at")
-    .notNull()
-    .$onUpdate(() => new Date()),
-});
+    createdAt: timestamp("created_at").notNull().defaultNow(),
+    updatedAt: timestamp("updated_at")
+      .notNull()
+      .$onUpdate(() => new Date()),
+  },
+  // Issued invoices must have unique numbers; drafts share a blank number.
+  (table) => [
+    uniqueIndex("invoice_issued_number_uniq")
+      .on(table.invoiceId)
+      .where(sql`status <> 'draft'`),
+  ]
+);
 
 export type InsertContact = typeof contactsSchema.$inferInsert;
 export type SelectContact = typeof contactsSchema.$inferSelect;
