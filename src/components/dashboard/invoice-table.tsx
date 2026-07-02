@@ -36,7 +36,7 @@ const InvoiceTable = ({ invoices }: { invoices: InvoiceData[] }) => {
                   href={`/editor/${invoice.id}`}
                   className="text-purple-600 hover:underline"
                 >
-                  {idPrefix(invoice.invoiceId)}
+                  {invoice.invoiceId ? idPrefix(invoice.invoiceId) : "Entwurf"}
                 </Link>
               ) : (
                 idPrefix(invoice.invoiceId)

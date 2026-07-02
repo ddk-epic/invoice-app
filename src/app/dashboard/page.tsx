@@ -20,23 +20,12 @@ import { currentUser } from "@clerk/nextjs/server";
 import Link from "next/link";
 import { getInvoicesContactsProducts } from "../actions/server-actions";
 
-import { InvoiceData } from "@/constants/types";
 import { invoiceStatistics } from "@/constants/constants";
-
-const getLatestInvoiceId = (invoices: InvoiceData[]): number => {
-  if (invoices.length === 0) return 1;
-
-  const latestInvoice = invoices.reduce((max, invoice) =>
-    invoice.invoiceId > max.invoiceId ? invoice : max
-  );
-  return parseInt(latestInvoice.invoiceId) + 1;
-};
 
 export default async function Dashboard() {
   const user = await currentUser();
   const { invoiceList, contactList, productList } =
     await getInvoicesContactsProducts();
-  const latestId = getLatestInvoiceId(invoiceList).toString();
 
   return (
     <main className="wrapper top min-h-screen bg-gray-50">
@@ -63,7 +52,7 @@ export default async function Dashboard() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <CreateInvoiceModal invoiceId={latestId} contacts={contactList} />
+              <CreateInvoiceModal contacts={contactList} />
             </CardContent>
           </Card>
 

@@ -275,7 +275,7 @@ export const moreSampleProducts: InvoiceItem[] = [
 ];
 
 export const invoiceTemplate: InvoiceData = {
-  invoiceId: "0",
+  invoiceId: "",
   invoiceDate: new Date().toISOString().split("T")[0],
   dueDate: new Date().toISOString().split("T")[0],
   status: "draft",

@@ -25,19 +25,17 @@ import {
 
 import { invoiceTemplate } from "@/constants/constants";
 import { Contact, InvoiceData } from "@/constants/types";
-import { idPrefix } from "@/lib/utils";
 
 import { redirect, RedirectType } from "next/navigation";
 import { createDraftAction } from "@/app/actions/server-actions";
 import { Spinner } from "../ui/spinner";
 
 interface CreatInvoiceModalProps {
-  invoiceId: string;
   contacts: Contact[];
 }
 
 export const CreateInvoiceModal = (props: CreatInvoiceModalProps) => {
-  const { invoiceId, contacts } = props;
+  const { contacts } = props;
 
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [contactField, setContactField] = useState<Contact | null>(null);
@@ -49,7 +47,6 @@ export const CreateInvoiceModal = (props: CreatInvoiceModalProps) => {
 
     const draft: InvoiceData = {
       ...invoiceTemplate,
-      invoiceId,
       sendTo: contactField!,
       invoiceTo: contactField!,
     };
@@ -100,7 +97,7 @@ export const CreateInvoiceModal = (props: CreatInvoiceModalProps) => {
                   className="font-semibold"
                   id="invoiceNumber"
                   type="string"
-                  placeholder={idPrefix(invoiceId)}
+                  placeholder="(wird vergeben)"
                   disabled
                 />
               </div>

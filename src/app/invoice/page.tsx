@@ -45,7 +45,9 @@ async function InvoiceViewAll() {
                 {invoiceList.map((invoice) => (
                   <TableRow key={invoice.id}>
                     <TableCell className="font-medium">
-                      {idPrefix(invoice.invoiceId)}
+                      {invoice.invoiceId
+                        ? idPrefix(invoice.invoiceId)
+                        : "Entwurf"}
                     </TableCell>
                     <TableCell>{invoice.sendTo.name}</TableCell>
                     <TableCell>{toEuro(invoice.total)}</TableCell>

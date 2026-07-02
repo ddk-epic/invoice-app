@@ -19,7 +19,8 @@ function InvoiceDetails({ invoiceData, updateDetails }: InvoiceDetailsProps) {
           id="invoice-number"
           name="invoiceId"
           value={invoiceData.invoiceId}
-          onChange={(e) => updateDetails(e)}
+          readOnly
+          placeholder="(wird vergeben)"
           className="h-8 w-30 md:w-36"
         />
       </div>
