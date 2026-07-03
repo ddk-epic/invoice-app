@@ -75,9 +75,9 @@ export const CreateInvoiceModal = (props: CreatInvoiceModalProps) => {
       }}
     >
       <DialogTrigger asChild>
-        <Button className="bg-white text-purple-600 hover:bg-gray-100">
-          <Plus className="mr-1 h-4 w-4" />
-          Neue Rechnung erstellen
+        <Button className="ml-1 inline-flex items-center gap-1.5 rounded-md bg-teal-600 px-3.5 py-2 text-sm font-semibold text-white hover:bg-teal-700">
+          <Plus className="size-4" />
+          Neue Rechnung
         </Button>
       </DialogTrigger>
       <DialogContent className="max-h-[95vh] w-sm overflow-y-auto">

@@ -148,6 +148,17 @@ export const submitDraftAction = async (id: number): Promise<string | null> => {
   }
 };
 
+export const markPaidAction = async (id: number) => {
+  try {
+    await QUERIES.markPaidById(id);
+    revalidateTag("invoices-contacts");
+    return true;
+  } catch (err) {
+    console.error("Server action error:", err);
+    return false;
+  }
+};
+
 export const discardDraftAction = async (id: number) => {
   try {
     await QUERIES.deleteDraftById(id);

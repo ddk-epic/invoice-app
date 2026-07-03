@@ -1,6 +1,6 @@
 import "server-only";
 
-import { eq, sql } from "drizzle-orm";
+import { and, eq, sql } from "drizzle-orm";
 import { db } from "./index";
 import {
   contactsSchema as contactsTable,
@@ -105,6 +105,15 @@ export const QUERIES = {
 
   deleteDraftById: async function (id: number) {
     return db.delete(invoiceTable).where(eq(invoiceTable.id, id));
+  },
+
+  // overdue is derived at read time; a late invoice is still stored 'open'.
+  // Match on status so only issued invoices settle, never drafts.
+  markPaidById: async function (id: number) {
+    return db
+      .update(invoiceTable)
+      .set({ status: "paid" })
+      .where(and(eq(invoiceTable.id, id), eq(invoiceTable.status, "open")));
   },
 
   insertProduct: async function (p: ProductInput) {

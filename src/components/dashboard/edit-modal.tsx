@@ -2,7 +2,7 @@
 
 import React, { useCallback, useRef, useState } from "react";
 
-import { ChevronRightIcon, X } from "lucide-react";
+import { X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -74,17 +74,9 @@ function ContactsModal({ contacts }: { contacts: Contact[] }) {
       <DialogTrigger asChild>
         <Button
           variant="ghost"
-          className="left-0 mx-2 -my-3 h-16 flex-1 justify-between"
+          className="rounded-md px-2.5 py-1.5 text-sm font-normal text-slate-500 hover:bg-slate-100"
         >
-          <div className="space-y-1 text-start">
-            <div className="text-xl font-bold">Kontakte</div>
-            <p className="text-muted-foreground text-xs font-normal">
-              {contacts.length} Kontakte
-            </p>
-          </div>
-          <div>
-            <ChevronRightIcon />
-          </div>
+          Kontakte
         </Button>
       </DialogTrigger>
       <DialogContent className="flex h-[90vh] max-w-2xl flex-col p-0">
@@ -275,17 +267,9 @@ function ProductsModal({ products: productList }: { products: InvoiceItem[] }) {
       <DialogTrigger asChild>
         <Button
           variant="ghost"
-          className="left-0 mx-2 -my-3 h-16 flex-1 justify-between"
+          className="rounded-md px-2.5 py-1.5 text-sm font-normal text-slate-500 hover:bg-slate-100"
         >
-          <div className="space-y-1 text-start">
-            <div className="text-xl font-bold">Artikel</div>
-            <p className="text-muted-foreground text-xs font-normal">
-              {productList.length} Artikel
-            </p>
-          </div>
-          <div>
-            <ChevronRightIcon />
-          </div>
+          Artikel
         </Button>
       </DialogTrigger>
       <DialogContent className="flex h-[90vh] max-w-2xl flex-col p-0">

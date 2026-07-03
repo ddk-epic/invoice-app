@@ -24,23 +24,11 @@ const statusColor: Record<InvoiceStatus, string> = {
 export const getStatusColor = (status: InvoiceStatus) =>
   statusColor[status] ?? "bg-gray-100 text-gray-800";
 
-export const invoiceStatistics = [
-  {
-    category: "Gesamte Rechnungen",
-    value: "24",
-    comment: "+2 seit letztem Monat",
-  },
-  {
-    category: "Ausstehender Betrag",
-    value: "12,450 €",
-    comment: "3 ausstehende Rechnungen",
-  },
-  {
-    category: "Diesen Monat",
-    value: "8,750 €",
-    comment: "+15 % gegenüber dem Vormonat",
-  },
-];
+export const bucketLabel: Record<"draft" | "overdue" | "open", string> = {
+  draft: "Entwürfe",
+  overdue: "Überfällig",
+  open: "Offen",
+};
 
 export const baseContact: BaseContact = {
   type: "client",
