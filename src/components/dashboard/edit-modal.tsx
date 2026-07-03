@@ -1,8 +1,9 @@
 "use client";
 
 import React, { useCallback, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
 
-import { X } from "lucide-react";
+import { Plus, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -14,14 +15,14 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
-import { BaseContact, Contact, InvoiceItem } from "@/constants/types";
+import type { BaseContact, Contact, InvoiceItem } from "@/constants/types";
 import { baseContact, baseItem } from "@/constants/constants";
-import { toEuro } from "@/lib/utils";
+import { toEuro, cn } from "@/lib/utils";
+import { invoiceItemToProductInput } from "@/lib/products";
 import {
   insertContactAction,
   insertProductAction,
 } from "@/app/actions/server-actions";
-import { invoiceItemToProductInput } from "@/lib/products";
 
 function ContactsModal({ contacts }: { contacts: Contact[] }) {
   const [isContactsModalOpen, setIsContactsModalOpen] = useState(false);
@@ -184,15 +185,20 @@ function ContactsModal({ contacts }: { contacts: Contact[] }) {
 }
 
 function ProductsModal({ products: productList }: { products: InvoiceItem[] }) {
+  const router = useRouter();
   const [isProductsModalOpen, setIsProductsModalOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [filteredItems, setFilteredItems] = useState(productList);
   const [visibleCount, setVisibleCount] = useState(40);
   const [itemData, setItemData] = useState<InvoiceItem>(baseItem);
 
+  // Which product surface is open in the bottom sheet: none, a fresh product,
+  // or an existing one being edited. `sheet !== null` dims the catalog.
+  const [sheet, setSheet] = useState<null | "new" | "edit">(null);
+  const dim = sheet !== null;
+
   const loaderRef = useCallback(
     (observerDiv: HTMLDivElement | null) => {
-      console.log("Observer:", "observerDiv");
       if (!observerDiv) return;
 
       const observer = new IntersectionObserver(([entry]) => {
@@ -214,24 +220,28 @@ function ProductsModal({ products: productList }: { products: InvoiceItem[] }) {
     itemData.brand !== "" &&
     itemData.rate !== 0;
 
-  const handleProductInsert = async (itemData: InvoiceItem) => {
+  const openNewProduct = () => {
+    setItemData(baseItem);
+    setSheet("new");
+  };
+
+  const openEditProduct = (item: InvoiceItem) => {
+    setItemData(item);
+    setSheet("edit");
+  };
+
+  const closeSheet = () => setSheet(null);
+
+  const handleProductInsert = async () => {
     // id > 0 => update existing catalog row; otherwise insert a new one
-    return insertProductAction(invoiceItemToProductInput(itemData));
+    await insertProductAction(invoiceItemToProductInput(itemData));
+    closeSheet();
+    router.refresh();
   };
 
   const updateItemData = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setItemData((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const getItemByIdOnClick = (selectedId: number) => {
-    console.log("Item ID:", selectedId);
-    if (!selectedId) return;
-
-    const selectedItem = filteredItems.find((item) => item.id === selectedId);
-    if (!selectedItem) return;
-
-    setItemData(selectedItem);
   };
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -260,6 +270,7 @@ function ProductsModal({ products: productList }: { products: InvoiceItem[] }) {
             setItemData(baseItem);
             setFilteredItems(productList);
             setVisibleCount(40);
+            setSheet(null);
           }, 300);
         setIsProductsModalOpen(open);
       }}
@@ -272,12 +283,23 @@ function ProductsModal({ products: productList }: { products: InvoiceItem[] }) {
           Artikel
         </Button>
       </DialogTrigger>
-      <DialogContent className="flex h-[90vh] max-w-2xl flex-col p-0">
-        <div className="top-0 px-6 pt-6">
-          <DialogHeader className="mb-4">
-            <DialogTitle className="text-2xl text-purple-700">
+      <DialogContent
+        showCloseButton={!dim}
+        className={cn(
+          "flex h-[90vh] max-w-2xl flex-col overflow-hidden rounded-xl p-0 transition-none",
+          dim && "border-black/50"
+        )}
+      >
+        <div className="px-6 pt-6">
+          <DialogHeader className="mb-4 flex-row items-center justify-between">
+            <DialogTitle className="text-2xl text-teal-700">
               Alle Artikel
             </DialogTitle>
+            {!dim && (
+              <Button size="sm" onClick={openNewProduct} className="mr-6 gap-1">
+                <Plus className="size-4" /> Neuer Artikel
+              </Button>
+            )}
           </DialogHeader>
           <div className="relative">
             <Input
@@ -295,28 +317,36 @@ function ProductsModal({ products: productList }: { products: InvoiceItem[] }) {
             </Button>
           </div>
         </div>
-        <div className="overflow-y-auto px-6">
-          <div className="flex min-w-[450px] items-center justify-between p-1">
-            <div className="ml-2 flex-1 space-y-3">
+
+        {/* Catalog */}
+        <div className="relative flex-1 overflow-hidden">
+          <div className="h-full overflow-y-auto px-6 py-2">
+            <div className="space-y-1">
               {filteredItems.length > 0 ? (
-                filteredItems.slice(0, visibleCount).map((item) => (
-                  <div
-                    key={item.id}
-                    onClick={() => getItemByIdOnClick(item.id)}
-                    className="flex items-start justify-between rounded hover:bg-gray-100"
-                  >
-                    <div>
-                      <h4 className="font-medium">{item.description}</h4>
-                      <p className="text-sm text-gray-500">
-                        {item.category.toUpperCase()}
-                      </p>
+                filteredItems.slice(0, visibleCount).map((item) => {
+                  const lifted = sheet === "edit" && itemData.id === item.id;
+                  return (
+                    <div
+                      key={item.id}
+                      onClick={() => !dim && openEditProduct(item)}
+                      className={cn(
+                        "relative flex cursor-pointer items-start justify-between rounded px-2 py-1.5 hover:bg-gray-100",
+                        lifted && "z-30 bg-white shadow-lg ring-2 ring-teal-400"
+                      )}
+                    >
+                      <div>
+                        <h4 className="font-medium">{item.description}</h4>
+                        <p className="text-sm text-gray-500">
+                          {item.category.toUpperCase()}
+                        </p>
+                      </div>
+                      <div className="mr-2 text-right">
+                        <p className="font-medium">{toEuro(item.rate)}</p>
+                        <p className="text-sm text-gray-500">{item.weight}</p>
+                      </div>
                     </div>
-                    <div className="mr-4 text-right">
-                      <p className="font-medium">{toEuro(item.rate)}</p>
-                      <p className="text-sm text-gray-500">{item.weight}</p>
-                    </div>
-                  </div>
-                ))
+                  );
+                })
               ) : (
                 <div className="py-8 text-center text-gray-500">
                   <p>
@@ -332,109 +362,137 @@ function ProductsModal({ products: productList }: { products: InvoiceItem[] }) {
             </div>
           </div>
         </div>
-        {/* Product Form */}
-        <div className="border-t px-8 pt-4 pb-7 text-sm">
-          <div className="space-y-2">
-            <div className="flex space-x-6">
-              <div className="flex-grow">
-                <Label className="pb-1">Beschreibung</Label>
-                <Input
-                  id="description"
-                  name="description"
-                  type="text"
-                  placeholder="Beschreibung"
-                  value={itemData.description}
-                  onChange={(e) => updateItemData(e)}
-                />
-              </div>
-              <div className="w-32">
-                <Label className="pb-1">Preis</Label>
-                <Input
-                  id="rate"
-                  name="rate"
-                  type="text"
-                  placeholder="Preis"
-                  value={itemData.rate.toString()}
-                  onChange={(e) => updateItemData(e)}
-                  className="text-right"
-                />
-              </div>
+
+        {/* Scrim over the whole modal */}
+        {dim && (
+          <div
+            onClick={closeSheet}
+            className="absolute inset-0 z-20 bg-black/50"
+          />
+        )}
+
+        {/* Bottom sheet */}
+        {dim && (
+          <div className="absolute inset-x-0 bottom-0 z-40 rounded-t-xl border-t bg-white shadow-2xl">
+            <div className="flex items-center justify-between px-8 pt-4">
+              <h3 className="font-medium text-gray-700">
+                {sheet === "new"
+                  ? "Neuer Artikel"
+                  : `Bearbeiten: ${itemData.description}`}
+              </h3>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={closeSheet}
+                className="size-7"
+              >
+                <X className="size-4" />
+              </Button>
             </div>
-            <div className="flex space-x-6">
-              <div className="flex-grow">
-                <Label className="pb-1">Kategorie</Label>
-                <Input
-                  id="category"
-                  name="category"
-                  type="text"
-                  placeholder="Kategorie"
-                  value={itemData.category}
-                  onChange={(e) => updateItemData(e)}
-                />
-              </div>
-              <div className="w-32">
-                <Label className="pb-1">Gewicht / Volumen</Label>
-                <Input
-                  id="weight"
-                  name="weight"
-                  type="text"
-                  placeholder="Gewicht / Vol..."
-                  value={itemData.weight}
-                  onChange={(e) => updateItemData(e)}
-                  className="text-right"
-                />
-              </div>
-            </div>
-            <div className="flex space-x-6">
-              <div className="flex-grow">
-                <Label className="pb-1">Marke</Label>
-                <Input
-                  id="brand"
-                  name="brand"
-                  type="text"
-                  placeholder="Marke"
-                  value={itemData.brand}
-                  onChange={(e) => updateItemData(e)}
-                />
-              </div>
-              <div className="w-32">
-                <Label className="pb-1">Boxanzahl</Label>
-                <Input
-                  id="box"
-                  name="box"
-                  type="text"
-                  placeholder="Boxanzahl"
-                  value={itemData.perBox}
-                  onChange={(e) => updateItemData(e)}
-                  className="text-right"
-                />
-              </div>
-            </div>
-            <div className="flex space-x-6">
-              <div className="flex-grow">
-                <Label className="pb-1">Herkunft</Label>
-                <Input
-                  id="origin"
-                  name="origin"
-                  type="text"
-                  placeholder="Herkunft"
-                  value={itemData.origin}
-                  onChange={(e) => updateItemData(e)}
-                />
-              </div>
-              <div className="w-32 space-x-6 pt-4.5">
-                <Button
-                  variant="ghost"
-                  onClick={() => handleProductInsert(itemData)}
-                  disabled={!isItemValid}
-                  className="purple-gradient w-32 text-base text-white"
-                >
-                  Aktualisieren
-                </Button>
+            <div className="px-8 pt-2 pb-6 text-sm">
+              <div className="space-y-2">
+                <div className="flex space-x-6">
+                  <div className="flex-grow">
+                    <Label className="pb-1">Beschreibung</Label>
+                    <Input
+                      id="description"
+                      name="description"
+                      type="text"
+                      placeholder="Beschreibung"
+                      value={itemData.description}
+                      onChange={(e) => updateItemData(e)}
+                    />
+                  </div>
+                  <div className="w-32">
+                    <Label className="pb-1">Preis</Label>
+                    <Input
+                      id="rate"
+                      name="rate"
+                      type="text"
+                      placeholder="Preis"
+                      value={itemData.rate.toString()}
+                      onChange={(e) => updateItemData(e)}
+                      className="text-right"
+                    />
+                  </div>
+                </div>
+                <div className="flex space-x-6">
+                  <div className="flex-grow">
+                    <Label className="pb-1">Kategorie</Label>
+                    <Input
+                      id="category"
+                      name="category"
+                      type="text"
+                      placeholder="Kategorie"
+                      value={itemData.category}
+                      onChange={(e) => updateItemData(e)}
+                    />
+                  </div>
+                  <div className="w-32">
+                    <Label className="pb-1">Gewicht / Volumen</Label>
+                    <Input
+                      id="weight"
+                      name="weight"
+                      type="text"
+                      placeholder="Gewicht / Vol..."
+                      value={itemData.weight}
+                      onChange={(e) => updateItemData(e)}
+                      className="text-right"
+                    />
+                  </div>
+                </div>
+                <div className="flex space-x-6">
+                  <div className="flex-grow">
+                    <Label className="pb-1">Marke</Label>
+                    <Input
+                      id="brand"
+                      name="brand"
+                      type="text"
+                      placeholder="Marke"
+                      value={itemData.brand}
+                      onChange={(e) => updateItemData(e)}
+                    />
+                  </div>
+                  <div className="w-32">
+                    <Label className="pb-1">Boxanzahl</Label>
+                    <Input
+                      id="box"
+                      name="box"
+                      type="text"
+                      placeholder="Boxanzahl"
+                      value={itemData.perBox}
+                      onChange={(e) => updateItemData(e)}
+                      className="text-right"
+                    />
+                  </div>
+                </div>
+                <div className="flex space-x-6">
+                  <div className="flex-grow">
+                    <Label className="pb-1">Herkunft</Label>
+                    <Input
+                      id="origin"
+                      name="origin"
+                      type="text"
+                      placeholder="Herkunft"
+                      value={itemData.origin}
+                      onChange={(e) => updateItemData(e)}
+                    />
+                  </div>
+                  <div className="flex w-32 items-end pt-4.5">
+                    <Button
+                      variant="ghost"
+                      onClick={handleProductInsert}
+                      disabled={!isItemValid}
+                      className="w-32 bg-gradient-to-r from-teal-500 to-teal-600 text-base text-white"
+                    >
+                      {sheet === "new" ? "Anlegen" : "Aktualisieren"}
+                    </Button>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
-        </div>
+        )}
       </DialogContent>
     </Dialog>
   );
