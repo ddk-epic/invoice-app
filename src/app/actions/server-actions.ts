@@ -51,8 +51,8 @@ export const getInvoicesContactsProducts = async (): Promise<{
     QUERIES.getAllContacts(),
     QUERIES.getAllProducts(),
   ]);
-  const invoiceList = invoices as InvoiceData[];
-  const contactList = contacts as Contact[];
+  const invoiceList = invoices;
+  const contactList = contacts;
   const productList = products.map(rowToProduct).map(productToInvoiceItem);
 
   return { invoiceList, contactList, productList };
@@ -69,8 +69,8 @@ export const getContactsAndProducts = async (): Promise<{
     QUERIES.getAllContacts(),
     QUERIES.getAllProducts(),
   ]);
-  const [privateContact] = privateData as PrivateContact[];
-  const contactList = contacts as Contact[];
+  const [privateContact] = privateData;
+  const contactList = contacts;
   const productList = products.map(rowToProduct).map(productToInvoiceItem);
 
   return { privateContact, contactList, productList };

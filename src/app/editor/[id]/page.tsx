@@ -20,7 +20,7 @@ async function DraftEditorPage({ params }: EditorPageProps) {
       QUERIES.getDraftById(draftId),
       getContactsAndProducts(),
     ]);
-  const draft = rows[0] as InvoiceData | undefined;
+  const draft: InvoiceData | undefined = rows[0];
   if (!draft) notFound();
 
   return (

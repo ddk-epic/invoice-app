@@ -6,7 +6,6 @@ import PdfDocument from "@/components/pdf/pdf-document";
 import { getInvoiceData, getPrivateData } from "@/app/actions/server-actions";
 
 import { notFound } from "next/navigation";
-import { InvoiceData, PrivateContact } from "@/constants/types";
 
 interface InvoiceGeneratorProps {
   params: Promise<{ invoiceId: string }>;
@@ -14,8 +13,8 @@ interface InvoiceGeneratorProps {
 
 async function InvoiceGenerator(props: InvoiceGeneratorProps) {
   const { invoiceId } = await props.params;
-  const privateData = (await getPrivateData())[0] as PrivateContact;
-  const invoice = (await getInvoiceData(invoiceId))[0] as InvoiceData;
+  const privateData = (await getPrivateData())[0];
+  const invoice = (await getInvoiceData(invoiceId))[0];
 
   if (!invoice) notFound();
 

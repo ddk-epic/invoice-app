@@ -1,7 +1,6 @@
 import { currentUser } from "@clerk/nextjs/server";
 
 import { getInvoicesContactsProducts } from "../actions/server-actions";
-import { InvoiceData } from "@/constants/types";
 import {
   buildQueue,
   buildRecentlyPaid,
@@ -23,8 +22,8 @@ export default async function Dashboard() {
     getInvoicesContactsProducts(),
   ]);
 
-  const items = buildQueue(invoiceList as InvoiceData[]);
-  const recentlyPaid = buildRecentlyPaid(invoiceList as InvoiceData[]);
+  const items = buildQueue(invoiceList);
+  const recentlyPaid = buildRecentlyPaid(invoiceList);
   const groups = groupByDerived(items);
   const outstanding = sumAmount([...groups.overdue, ...groups.open]);
 

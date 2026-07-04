@@ -11,14 +11,13 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
-import { InvoiceData } from "@/constants/types";
 import { getStatusColor, statusLabel } from "@/constants/constants";
 
 import { QUERIES } from "@/server/db/queries";
 import { toEuro, deShortDate, idPrefix } from "@/lib/utils";
 
 async function InvoiceViewAll() {
-  const invoiceList = (await QUERIES.getAllInvoices()) as InvoiceData[];
+  const invoiceList = await QUERIES.getAllInvoices();
   return (
     <main className="wrapper top min-h-screen bg-gray-50">
       <div className="px-4 py-6 sm:px-0">

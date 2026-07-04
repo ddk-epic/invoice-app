@@ -7,10 +7,26 @@ import {
   invoiceSchema as invoiceTable,
   privateSchema as privateTable,
   productCatalogSchema as productCatalogTable,
+  type SelectContact,
 } from "./schema";
 
-import { BaseContact, InvoiceData } from "@/constants/types";
+import {
+  BaseContact,
+  Contact,
+  InvoiceData,
+  PrivateContact,
+} from "@/constants/types";
 import type { ProductInput } from "@/lib/products";
+
+function rowToContact(row: SelectContact): Contact {
+  return {
+    id: row.id,
+    type: row.type,
+    name: row.name,
+    owner: row.owner ?? undefined,
+    address: row.address,
+  };
+}
 
 // Map an app-level ProductInput to a DB row (numeric columns are strings in drizzle).
 function productInputToRow(p: ProductInput) {
@@ -46,30 +62,31 @@ function invoiceDataToRow(inv: InvoiceData) {
 
 export const QUERIES = {
   // SELECT
-  getPrivateContact: async function () {
+  getPrivateContact: async function (): Promise<PrivateContact[]> {
     return db.select().from(privateTable);
   },
 
-  getAllContacts: async function () {
-    return db.select().from(contactsTable);
+  getAllContacts: async function (): Promise<Contact[]> {
+    const rows = await db.select().from(contactsTable);
+    return rows.map(rowToContact);
   },
 
   getAllProducts: async function () {
     return db.select().from(productCatalogTable);
   },
 
-  getAllInvoices: async function () {
+  getAllInvoices: async function (): Promise<InvoiceData[]> {
     return db.select().from(invoiceTable);
   },
 
-  getInvoiceById: async function (invoiceId: string) {
+  getInvoiceById: async function (invoiceId: string): Promise<InvoiceData[]> {
     return db
       .select()
       .from(invoiceTable)
       .where(eq(invoiceTable.invoiceId, invoiceId));
   },
 
-  getDraftById: async function (id: number) {
+  getDraftById: async function (id: number): Promise<InvoiceData[]> {
     return db.select().from(invoiceTable).where(eq(invoiceTable.id, id));
   },
 
