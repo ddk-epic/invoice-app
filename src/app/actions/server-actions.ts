@@ -1,6 +1,5 @@
 "use server";
 
-import { revalidatePath, revalidateTag, unstable_cache } from "next/cache";
 import { QUERIES } from "@/server/db/queries";
 import {
   BaseContact,
@@ -16,19 +15,8 @@ import {
   type ProductInput,
 } from "@/lib/products";
 
-const revalidationTime = 60 * 5; // 5 minute(s)
-
 export const getPrivateData = async () => {
-  const cacheKey = "private";
-  const cached = unstable_cache(
-    async () => QUERIES.getPrivateContact(),
-    [cacheKey],
-    {
-      tags: [cacheKey],
-      revalidate: revalidationTime,
-    }
-  );
-  return cached();
+  return QUERIES.getPrivateContact();
 };
 
 export const getInvoicesContactsProducts = async (): Promise<{
@@ -36,28 +24,16 @@ export const getInvoicesContactsProducts = async (): Promise<{
   contactList: Contact[];
   productList: InvoiceItem[];
 }> => {
-  const cacheKey = "invoices-contacts";
+  const [invoices, contacts, products] = await Promise.all([
+    QUERIES.getAllInvoices(),
+    QUERIES.getAllContacts(),
+    QUERIES.getAllProducts(),
+  ]);
+  const invoiceList = invoices as InvoiceData[];
+  const contactList = contacts as Contact[];
+  const productList = products.map(rowToProduct).map(productToInvoiceItem);
 
-  const cached = unstable_cache(
-    async () => {
-      const [invoices, contacts, products] = await Promise.all([
-        QUERIES.getAllInvoices(),
-        QUERIES.getAllContacts(),
-        QUERIES.getAllProducts(),
-      ]);
-      const invoiceList = invoices as InvoiceData[];
-      const contactList = contacts as Contact[];
-      const productList = products.map(rowToProduct).map(productToInvoiceItem);
-
-      return { invoiceList, contactList, productList };
-    },
-    [cacheKey],
-    {
-      tags: [cacheKey],
-      revalidate: revalidationTime,
-    }
-  );
-  return cached();
+  return { invoiceList, contactList, productList };
 };
 
 // editor
@@ -66,41 +42,20 @@ export const getContactsAndProducts = async (): Promise<{
   contactList: Contact[];
   productList: InvoiceItem[];
 }> => {
-  const cacheKey = "contacts-products";
+  const [privateData, contacts, products] = await Promise.all([
+    QUERIES.getPrivateContact(),
+    QUERIES.getAllContacts(),
+    QUERIES.getAllProducts(),
+  ]);
+  const [privateContact] = privateData as PrivateContact[];
+  const contactList = contacts as Contact[];
+  const productList = products.map(rowToProduct).map(productToInvoiceItem);
 
-  const cached = unstable_cache(
-    async () => {
-      const [privateData, contacts, products] = await Promise.all([
-        QUERIES.getPrivateContact(),
-        QUERIES.getAllContacts(),
-        QUERIES.getAllProducts(),
-      ]);
-      const [privateContact] = privateData as PrivateContact[];
-      const contactList = contacts as Contact[];
-      const productList = products.map(rowToProduct).map(productToInvoiceItem);
-
-      return { privateContact, contactList, productList };
-    },
-    [cacheKey],
-    {
-      tags: [cacheKey],
-      revalidate: revalidationTime,
-    }
-  );
-  return cached();
+  return { privateContact, contactList, productList };
 };
 
-export const getCachedInvoiceData = async (invoiceId: string) => {
-  const cacheKey = `invoice-cache-${invoiceId}`;
-  const cached = unstable_cache(
-    async (invoiceId) => QUERIES.getInvoiceById(invoiceId),
-    [cacheKey],
-    {
-      tags: [cacheKey],
-      revalidate: revalidationTime,
-    }
-  );
-  return cached(invoiceId);
+export const getInvoiceData = async (invoiceId: string) => {
+  return QUERIES.getInvoiceById(invoiceId);
 };
 
 export const createDraftAction = async (
@@ -113,7 +68,6 @@ export const createDraftAction = async (
   }
   try {
     const row = await QUERIES.insertDraft(draft);
-    revalidateTag("invoices-contacts");
     return row.id;
   } catch (err) {
     console.error("Server action error:", err);
@@ -140,7 +94,6 @@ export const updateDraftAction = async (id: number, draft: InvoiceData) => {
 export const submitDraftAction = async (id: number): Promise<string | null> => {
   try {
     const row = await QUERIES.submitDraft(id);
-    revalidateTag("invoices-contacts");
     return row.invoiceId;
   } catch (err) {
     console.error("Server action error:", err);
@@ -151,7 +104,6 @@ export const submitDraftAction = async (id: number): Promise<string | null> => {
 export const markPaidAction = async (id: number) => {
   try {
     await QUERIES.markPaidById(id);
-    revalidateTag("invoices-contacts");
     return true;
   } catch (err) {
     console.error("Server action error:", err);
@@ -162,7 +114,6 @@ export const markPaidAction = async (id: number) => {
 export const discardDraftAction = async (id: number) => {
   try {
     await QUERIES.deleteDraftById(id);
-    revalidateTag("invoices-contacts");
     return true;
   } catch (err) {
     console.error("Server action error:", err);
@@ -181,8 +132,6 @@ export const insertProductAction = async (product: ProductInput) => {
       ? await QUERIES.updateProduct(product.id, product)
       : await QUERIES.insertProduct(product);
     if (saved) {
-      revalidateTag("invoices-contacts");
-      revalidateTag("contacts-products");
       return true;
     }
   } catch (err) {
@@ -200,7 +149,6 @@ export const insertContactAction = async (newContact: BaseContact) => {
   try {
     const insertedItem = await QUERIES.insertContact(newContact);
     if (insertedItem) {
-      revalidatePath("/dashboard");
       return true;
     }
   } catch (err) {
@@ -218,7 +166,6 @@ export const updateContactAction = async (id: number, contact: BaseContact) => {
   try {
     const updated = await QUERIES.updateContact(id, contact);
     if (updated.rowCount > 0) {
-      revalidatePath("/dashboard");
       return true;
     }
   } catch (err) {
