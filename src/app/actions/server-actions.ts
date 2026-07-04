@@ -1,5 +1,6 @@
 "use server";
 
+import type { ZodTypeAny } from "zod";
 import { QUERIES } from "@/server/db/queries";
 import {
   BaseContact,
@@ -7,6 +8,7 @@ import {
   InvoiceData,
   InvoiceItem,
   PrivateContact,
+  WriteResult,
 } from "@/constants/types";
 import { ContactSchema, InvoiceSchema, ProductSchema } from "@/lib/schema";
 import {
@@ -14,6 +16,26 @@ import {
   rowToProduct,
   type ProductInput,
 } from "@/lib/products";
+
+async function validateWrite(
+  schema: ZodTypeAny,
+  data: unknown,
+  fn: () => Promise<unknown>
+): Promise<WriteResult> {
+  const parsed = schema.safeParse(data);
+  if (!parsed.success) {
+    console.error(parsed.error);
+    return { ok: false, error: "validation" };
+  }
+  try {
+    const result = await fn();
+    if (result === false) return { ok: false, error: "db" };
+    return { ok: true };
+  } catch (err) {
+    console.error("Server action error:", err);
+    return { ok: false, error: "db" };
+  }
+}
 
 export const getPrivateData = async () => {
   return QUERIES.getPrivateContact();
@@ -75,20 +97,11 @@ export const createDraftAction = async (
   }
 };
 
-export const updateDraftAction = async (id: number, draft: InvoiceData) => {
-  const result = InvoiceSchema.safeParse(draft);
-  if (!result.success) {
-    console.error(result.error);
-    return false;
-  }
-  try {
-    await QUERIES.updateDraftById(id, draft);
-    return true;
-  } catch (err) {
-    console.error("Server action error:", err);
-    return false;
-  }
-};
+export const updateDraftAction = async (
+  id: number,
+  draft: InvoiceData
+): Promise<WriteResult> =>
+  validateWrite(InvoiceSchema, draft, () => QUERIES.updateDraftById(id, draft));
 
 // Promote a draft to an issued invoice; returns the assigned number or null.
 export const submitDraftAction = async (id: number): Promise<string | null> => {
@@ -121,55 +134,28 @@ export const discardDraftAction = async (id: number) => {
   }
 };
 
-export const insertProductAction = async (product: ProductInput) => {
-  const result = ProductSchema.safeParse(product);
-  if (!result.success) {
-    console.error(result.error);
-    return false;
-  }
-  try {
-    const saved = product.id
-      ? await QUERIES.updateProduct(product.id, product)
-      : await QUERIES.insertProduct(product);
-    if (saved) {
-      return true;
-    }
-  } catch (err) {
-    console.error("Server action error:", err);
-  }
-  return false;
-};
+export const insertProductAction = async (
+  product: ProductInput
+): Promise<WriteResult> =>
+  validateWrite(ProductSchema, product, () =>
+    product.id
+      ? QUERIES.updateProduct(product.id, product)
+      : QUERIES.insertProduct(product)
+  );
 
-export const insertContactAction = async (newContact: BaseContact) => {
-  const result = ContactSchema.safeParse(newContact);
-  if (!result.success) {
-    console.error(result.error);
-    return false;
-  }
-  try {
-    const insertedItem = await QUERIES.insertContact(newContact);
-    if (insertedItem) {
-      return true;
-    }
-  } catch (err) {
-    console.error("Server action error:", err);
-  }
-  return false;
-};
+export const insertContactAction = async (
+  newContact: BaseContact
+): Promise<WriteResult> =>
+  validateWrite(ContactSchema, newContact, () =>
+    QUERIES.insertContact(newContact)
+  );
 
-export const updateContactAction = async (id: number, contact: BaseContact) => {
-  const result = ContactSchema.safeParse(contact);
-  if (!result.success) {
-    console.error(result.error);
-    return false;
-  }
-  try {
-    const updated = await QUERIES.updateContact(id, contact);
-    if (updated.rowCount > 0) {
-      return true;
-    }
-  } catch (err) {
-    console.error("Server action error:", err);
-  }
-  return false;
-};
+export const updateContactAction = async (
+  id: number,
+  contact: BaseContact
+): Promise<WriteResult> =>
+  validateWrite(
+    ContactSchema,
+    contact,
+    async () => (await QUERIES.updateContact(id, contact)).rowCount > 0
+  );

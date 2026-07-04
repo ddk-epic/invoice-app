@@ -1,5 +1,8 @@
 export type InvoiceStatus = "draft" | "open" | "paid" | "overdue";
 
+export type WriteResult =
+  { ok: true } | { ok: false; error: "validation" | "db" };
+
 export interface PrivateContact {
   id?: number;
   phone: string;

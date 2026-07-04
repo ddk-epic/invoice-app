@@ -17,7 +17,6 @@ import { PDFDownloadLink } from "@react-pdf/renderer";
 import PdfDocument from "@/components/pdf/pdf-document";
 
 import { InvoiceData, PrivateContact } from "@/constants/types";
-import { InvoiceSchema } from "@/lib/schema";
 import {
   submitDraftAction,
   updateDraftAction,
@@ -44,12 +43,15 @@ function Optionsbar(props: OptionsbarProps) {
 
   const saveDraft = async () => {
     if (!invoiceData.id) return false;
-    const result = InvoiceSchema.safeParse(invoiceData);
-    if (!result.success) {
-      console.error(result.error);
-      return false;
+    const res = await updateDraftAction(invoiceData.id, invoiceData);
+    if (!res.ok) {
+      toast.error(
+        res.error === "validation"
+          ? "Bitte füllen Sie alle erforderlichen Felder aus."
+          : "Entwurf konnte nicht gespeichert werden."
+      );
     }
-    return updateDraftAction(invoiceData.id, invoiceData);
+    return res.ok;
   };
 
   const handlePublish = async () => {

@@ -75,8 +75,8 @@ export default function InvoiceEditor(props: InvoiceEditorProps) {
       const snapshot = JSON.stringify(current);
       if (snapshot === lastSavedRef.current) return; // not dirty
       if (showSpinner) setIsSaving(true);
-      const ok = await updateDraftAction(draftId, current);
-      if (ok) lastSavedRef.current = snapshot;
+      const res = await updateDraftAction(draftId, current);
+      if (res.ok) lastSavedRef.current = snapshot;
       if (showSpinner) setIsSaving(false);
     },
     [draftId]
