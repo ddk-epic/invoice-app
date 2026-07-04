@@ -133,7 +133,8 @@ function Optionsbar(props: OptionsbarProps) {
                   disabled={isLoading}
                 >
                   <PDFDownloadLink
-                    key={Date.now()}
+                    // Remount when the invoice changes so the link regenerates the PDF.
+                    key={JSON.stringify(invoiceData)}
                     onClick={handleDownload}
                     document={
                       <PdfDocument

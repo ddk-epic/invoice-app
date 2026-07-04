@@ -60,7 +60,9 @@ export default function InvoiceEditor(props: InvoiceEditorProps) {
 
   // Always-fresh state for timers/listeners.
   const latestRef = useRef(invoiceData);
-  latestRef.current = invoiceData;
+  useEffect(() => {
+    latestRef.current = invoiceData;
+  });
 
   // Snapshot of what's persisted; a differing snapshot means the draft is dirty.
   const lastSavedRef = useRef(JSON.stringify(initialWithComputedTotal));

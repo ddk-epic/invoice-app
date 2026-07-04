@@ -1,13 +1,7 @@
 import { FileText } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-import {
-  SignedOut,
-  SignInButton,
-  SignUpButton,
-  SignedIn,
-  UserButton,
-} from "@clerk/nextjs";
+import { Show, SignInButton, SignUpButton, UserButton } from "@clerk/nextjs";
 
 import Link from "next/link";
 
@@ -30,17 +24,17 @@ function Navbar() {
         </div>
 
         <div className="flex items-center space-x-1">
-          <SignedOut>
+          <Show when="signed-out">
             <SignInButton mode="modal">
               <Button variant="ghost">Sign-In</Button>
             </SignInButton>
             <SignUpButton mode="modal">
               <Button className="purple-gradient">Sign-Up</Button>
             </SignUpButton>
-          </SignedOut>
-          <SignedIn>
+          </Show>
+          <Show when="signed-in">
             <UserButton />
-          </SignedIn>
+          </Show>
         </div>
       </div>
     </nav>

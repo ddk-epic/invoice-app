@@ -1,20 +1,18 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
-import { PDFViewer } from "@react-pdf/renderer";
+import React from "react";
+import dynamic from "next/dynamic";
+
+// @react-pdf's viewer cannot render during SSR; load it on the client only.
+const PDFViewer = dynamic(
+  () => import("@react-pdf/renderer").then((m) => m.PDFViewer),
+  { ssr: false }
+);
 
 function PdfViewer(props: { document: React.JSX.Element }) {
   const { document: pdfDocument } = props;
 
-  const [loaded, setLoaded] = useState(false);
-
-  useEffect(() => setLoaded(true), []);
-
-  return (
-    <>
-      {loaded && <PDFViewer className="h-full w-full">{pdfDocument}</PDFViewer>}
-    </>
-  );
+  return <PDFViewer className="h-full w-full">{pdfDocument}</PDFViewer>;
 }
 
 export default PdfViewer;
