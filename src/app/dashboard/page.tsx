@@ -2,11 +2,11 @@ import { currentUser } from "@clerk/nextjs/server";
 
 import { getInvoicesContactsProducts } from "../actions/server-actions";
 import {
-  buildQueue,
+  buildWorkItems,
   buildRecentlyPaid,
   groupByDerived,
   sumAmount,
-} from "@/lib/invoice-queue";
+} from "@/lib/work-items";
 import { toEuro } from "@/lib/utils";
 
 import { CreateInvoiceModal } from "@/components/dashboard/create-modal";
@@ -14,7 +14,7 @@ import {
   ContactsModal,
   ProductsModal,
 } from "@/components/dashboard/edit-modal";
-import { OpenWorkQueue } from "@/components/dashboard/open-work-queue";
+import { OpenWork } from "@/components/dashboard/open-work";
 
 export default async function Dashboard() {
   const [user, { invoiceList, contactList, productList }] = await Promise.all([
@@ -22,7 +22,7 @@ export default async function Dashboard() {
     getInvoicesContactsProducts(),
   ]);
 
-  const items = buildQueue(invoiceList);
+  const items = buildWorkItems(invoiceList);
   const recentlyPaid = buildRecentlyPaid(invoiceList);
   const groups = groupByDerived(items);
   const outstanding = sumAmount([...groups.overdue, ...groups.open]);
@@ -48,7 +48,7 @@ export default async function Dashboard() {
           </div>
         </div>
 
-        <OpenWorkQueue items={items} recentlyPaid={recentlyPaid} />
+        <OpenWork items={items} recentlyPaid={recentlyPaid} />
       </div>
     </main>
   );

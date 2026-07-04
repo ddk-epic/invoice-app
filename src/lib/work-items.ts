@@ -1,12 +1,12 @@
 // overdue is derived here (open + past due), never stored; the DB keeps only
-// draft/open/paid. Paid invoices are excluded from the active queue.
+// draft/open/paid. Paid invoices are excluded from the active work items.
 
 import { InvoiceData } from "@/constants/types";
 import { idPrefix } from "@/lib/utils";
 
 export type Derived = "overdue" | "draft" | "open" | "paid";
 
-export interface QueueItem {
+export interface WorkItem {
   id: number;
   invoiceId: string; // raw number, for the PDF route
   number: string | null; // idPrefix(invoiceId), or null while a draft
@@ -32,7 +32,7 @@ function deriveActive(inv: InvoiceData, today: Date): Derived | null {
   return new Date(inv.dueDate).getTime() < today.getTime() ? "overdue" : "open";
 }
 
-function toItem(inv: InvoiceData, derived: Derived, today: Date): QueueItem {
+function toItem(inv: InvoiceData, derived: Derived, today: Date): WorkItem {
   const due = new Date(inv.dueDate);
   return {
     id: inv.id ?? 0,
@@ -60,18 +60,18 @@ function startOfDay(now: Date) {
   return new Date(now.getFullYear(), now.getMonth(), now.getDate());
 }
 
-export function buildQueue(
+export function buildWorkItems(
   invoices: InvoiceData[],
   now = new Date()
-): QueueItem[] {
+): WorkItem[] {
   const today = startOfDay(now);
 
   const items = invoices
-    .map((inv): QueueItem | null => {
+    .map((inv): WorkItem | null => {
       const derived = deriveActive(inv, today);
       return derived ? toItem(inv, derived, today) : null;
     })
-    .filter((x): x is QueueItem => x !== null);
+    .filter((x): x is WorkItem => x !== null);
 
   return items.sort(
     (a, b) =>
@@ -85,7 +85,7 @@ export function buildRecentlyPaid(
   invoices: InvoiceData[],
   now = new Date(),
   days = 7
-): QueueItem[] {
+): WorkItem[] {
   const today = startOfDay(now);
   const cutoff = now.getTime() - days * MS_PER_DAY;
 
@@ -98,7 +98,7 @@ export function buildRecentlyPaid(
     .sort((a, b) => b.updatedAt.getTime() - a.updatedAt.getTime());
 }
 
-export function groupByDerived(items: QueueItem[]) {
+export function groupByDerived(items: WorkItem[]) {
   return {
     draft: items.filter((i) => i.derived === "draft"),
     overdue: items.filter((i) => i.derived === "overdue"),
@@ -106,6 +106,6 @@ export function groupByDerived(items: QueueItem[]) {
   };
 }
 
-export function sumAmount(items: QueueItem[]) {
+export function sumAmount(items: WorkItem[]) {
   return items.reduce((acc, i) => acc + i.amount, 0);
 }

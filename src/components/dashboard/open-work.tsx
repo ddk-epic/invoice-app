@@ -7,12 +7,7 @@ import { toast } from "sonner";
 import { Check, Pencil, Trash2 } from "lucide-react";
 
 import { toEuro, deShortDate } from "@/lib/utils";
-import {
-  Derived,
-  QueueItem,
-  groupByDerived,
-  sumAmount,
-} from "@/lib/invoice-queue";
+import { Derived, WorkItem, groupByDerived, sumAmount } from "@/lib/work-items";
 import { bucketLabel, statusLabel } from "@/constants/constants";
 import {
   markPaidAction,
@@ -46,7 +41,7 @@ function PaidBadge() {
   );
 }
 
-function Row({ item }: { item: QueueItem }) {
+function Row({ item }: { item: WorkItem }) {
   const router = useRouter();
   const [pending, startTransition] = useTransition();
   const [settled, setSettled] = useState(false); // optimistic paid confirmation
@@ -162,7 +157,7 @@ function Row({ item }: { item: QueueItem }) {
   );
 }
 
-function Section({ label, items }: { label: string; items: QueueItem[] }) {
+function Section({ label, items }: { label: string; items: WorkItem[] }) {
   return (
     <section className="overflow-hidden rounded-xl border border-slate-200 shadow-sm">
       <div className="flex items-baseline gap-2 border-b border-slate-200 bg-slate-100 px-4 py-2">
@@ -181,12 +176,12 @@ function Section({ label, items }: { label: string; items: QueueItem[] }) {
   );
 }
 
-export function OpenWorkQueue({
+export function OpenWork({
   items,
   recentlyPaid,
 }: {
-  items: QueueItem[];
-  recentlyPaid: QueueItem[];
+  items: WorkItem[];
+  recentlyPaid: WorkItem[];
 }) {
   const groups = groupByDerived(items);
   const order: Exclude<Derived, "paid">[] = ["draft", "overdue", "open"];
