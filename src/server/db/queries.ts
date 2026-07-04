@@ -125,15 +125,23 @@ export const QUERIES = {
       );
   },
 
-  getInvoiceById: async function (invoiceId: string): Promise<InvoiceData[]> {
-    return db
+  getInvoiceById: async function (
+    invoiceId: string
+  ): Promise<InvoiceData | undefined> {
+    const [row] = await db
       .select()
       .from(invoiceTable)
-      .where(eq(invoiceTable.invoiceId, invoiceId));
+      .where(eq(invoiceTable.invoiceId, invoiceId))
+      .limit(1);
+    return row;
   },
 
-  getDraftById: async function (id: number): Promise<InvoiceData[]> {
-    return db.select().from(invoiceTable).where(eq(invoiceTable.id, id));
+  getDraftById: async function (id: number): Promise<InvoiceData | undefined> {
+    const [row] = await db
+      .select()
+      .from(invoiceTable)
+      .where(eq(invoiceTable.id, id));
+    return row;
   },
 
   insertDraft: async function (inv: InvoiceData) {

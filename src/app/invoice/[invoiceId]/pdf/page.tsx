@@ -14,7 +14,7 @@ interface InvoiceGeneratorProps {
 async function InvoiceGenerator(props: InvoiceGeneratorProps) {
   const { invoiceId } = await props.params;
   const privateData = (await getPrivateData())[0];
-  const invoice = (await getInvoiceData(invoiceId))[0];
+  const invoice = await getInvoiceData(invoiceId);
 
   if (!invoice) notFound();
 
