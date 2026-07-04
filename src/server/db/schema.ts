@@ -42,14 +42,7 @@ export const contactsSchema = pgTable("contacts_table", {
   address: jsonb("address").$type<Address>().notNull(),
 });
 
-export const productsSchema = pgTable("products_table", {
-  id: serial("id").primaryKey(),
-  // with limited rows (max. 50) the data is saved in json per product category
-  categoryName: text("category_name").notNull(),
-  categoryJson: jsonb("category_json").notNull(),
-});
-
-// Normalized catalog: one row per product (replaces the productsSchema JSON blob).
+// Normalized catalog: one row per product.
 // GS1/PAngV-aligned shape; Grundpreis is computed at read time, not stored.
 export const productCatalogSchema = pgTable("products", {
   id: serial("id").primaryKey(),
@@ -96,9 +89,6 @@ export const invoiceSchema = pgTable(
 
 export type InsertContact = typeof contactsSchema.$inferInsert;
 export type SelectContact = typeof contactsSchema.$inferSelect;
-
-export type InsertProduct = typeof productsSchema.$inferInsert;
-export type SelectProduct = typeof productsSchema.$inferSelect;
 
 export type InsertProductCatalog = typeof productCatalogSchema.$inferInsert;
 export type SelectProductCatalog = typeof productCatalogSchema.$inferSelect;
