@@ -23,6 +23,7 @@ import {
   discardDraftAction,
   updateDraftAction,
 } from "@/app/actions/server-actions";
+import { computeInvoiceTotal } from "@/lib/invoice";
 
 interface InvoiceEditorProps {
   privateContact: PrivateContact;
@@ -43,26 +44,34 @@ export default function InvoiceEditor(props: InvoiceEditorProps) {
   const [isInvoiceToModalOpen, setIsInvoiceToModalOpen] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
 
+  const initialInvoiceData = initialInvoice ?? invoiceTemplate;
+  // Seed total from items so a stale stored total isn't flagged dirty on open.
+  const initialWithComputedTotal = {
+    ...initialInvoiceData,
+    total: computeInvoiceTotal(initialInvoiceData.items),
+  };
+
   const [invoiceData, setInvoiceData] = useState<InvoiceData>(
-    initialInvoice ?? invoiceTemplate
+    initialWithComputedTotal
   );
 
   const router = useRouter();
   const draftId = invoiceData.id;
 
-  // Always-fresh handle to state for timers/listeners (no re-subscribe on edits).
+  // Always-fresh state for timers/listeners.
   const latestRef = useRef(invoiceData);
   latestRef.current = invoiceData;
 
   // Snapshot of what's persisted; a differing snapshot means the draft is dirty.
-  const lastSavedRef = useRef(
-    JSON.stringify(initialInvoice ?? invoiceTemplate)
-  );
+  const lastSavedRef = useRef(JSON.stringify(initialWithComputedTotal));
 
   const saveDraft = useCallback(
     async (showSpinner: boolean) => {
       if (!draftId) return;
-      const current = latestRef.current;
+      const current = {
+        ...latestRef.current,
+        total: computeInvoiceTotal(latestRef.current.items),
+      };
       const snapshot = JSON.stringify(current);
       if (snapshot === lastSavedRef.current) return; // not dirty
       if (showSpinner) setIsSaving(true);
@@ -73,14 +82,14 @@ export default function InvoiceEditor(props: InvoiceEditorProps) {
     [draftId]
   );
 
-  // Periodic, dirty-only autosave.
+  // Periodic autosave.
   useEffect(() => {
     if (!draftId) return;
     const interval = setInterval(() => saveDraft(true), 10000);
     return () => clearInterval(interval);
   }, [draftId, saveDraft]);
 
-  // Safety net: flush on tab-hide and on leaving the editor.
+  // Safety clean-up
   useEffect(() => {
     if (!draftId) return;
     const flush = () => saveDraft(false);
@@ -165,10 +174,6 @@ export default function InvoiceEditor(props: InvoiceEditorProps) {
     setInvoiceData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const updateTotal = (value: number) => {
-    setInvoiceData((prev) => ({ ...prev, total: value }));
-  };
-
   const discardData = async () => {
     if (draftId) await discardDraftAction(draftId);
     router.push("/dashboard");
@@ -248,12 +253,7 @@ export default function InvoiceEditor(props: InvoiceEditorProps) {
               )}
 
               {/* Total */}
-              <Total
-                items={invoiceData.items}
-                taxRate={invoiceData.taxRate}
-                total={invoiceData.total}
-                setTotal={updateTotal}
-              />
+              <Total items={invoiceData.items} taxRate={invoiceData.taxRate} />
             </div>
           </div>
         </Card>

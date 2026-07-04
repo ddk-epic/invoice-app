@@ -1,25 +1,20 @@
-import React, { useEffect } from "react";
+import React from "react";
 
 import { InvoiceItem } from "@/constants/types";
 import { toEuro } from "@/lib/utils";
+import { computeInvoiceTotal } from "@/lib/invoice";
 
 interface TotalProps {
   items: InvoiceItem[];
   taxRate: number;
-  total: number;
-  setTotal: (total: number) => void;
 }
 
-function Total({ items, taxRate, setTotal }: TotalProps) {
-  const totalAmount = items.reduce((sum, item) => sum + item.amount, 0);
+function Total({ items, taxRate }: TotalProps) {
+  const totalAmount = computeInvoiceTotal(items);
 
   const tax = taxRate / 100;
   const subtotal = totalAmount / (1 + tax);
   const taxAmount = totalAmount - subtotal;
-
-  useEffect(() => {
-    setTotal(totalAmount);
-  }, [totalAmount]);
 
   return (
     <>
