@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useCallback, useRef, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 
 import { Plus, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -24,13 +24,31 @@ interface AddItemModalProps {
 function AddItemModal({ products: productList, addItem }: AddItemModalProps) {
   const [isAddItemModalOpen, setIsAddItemModalOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const [filteredItems, setFilteredItems] = useState(productList);
+  const [debouncedQuery, setDebouncedQuery] = useState("");
   const [visibleCount, setVisibleCount] = useState(40);
-  const debounceTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedQuery(searchQuery);
+      setVisibleCount(40);
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
+
+  const filteredItems = useMemo(
+    () =>
+      productList.filter(
+        (item) =>
+          item.description
+            .toLowerCase()
+            .includes(debouncedQuery.toLowerCase()) ||
+          item.category.toLowerCase().includes(debouncedQuery.toLowerCase())
+      ),
+    [productList, debouncedQuery]
+  );
 
   const loaderRef = useCallback(
     (observerDiv: HTMLDivElement | null) => {
-      console.log("Observer:", "observerDiv");
       if (!observerDiv) return;
 
       const observer = new IntersectionObserver(([entry]) => {
@@ -46,19 +64,7 @@ function AddItemModal({ products: productList, addItem }: AddItemModalProps) {
   );
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const query = e.target.value;
-    setSearchQuery(query);
-
-    if (debounceTimer.current) clearTimeout(debounceTimer.current);
-
-    debounceTimer.current = setTimeout(() => {
-      const filtered = productList.filter(
-        (item) =>
-          item.description.toLowerCase().includes(query.toLowerCase()) ||
-          item.category.toLowerCase().includes(query.toLowerCase())
-      );
-      setFilteredItems(filtered);
-    }, 300); // 0.3s delay
+    setSearchQuery(e.target.value);
   };
 
   return (
@@ -68,8 +74,6 @@ function AddItemModal({ products: productList, addItem }: AddItemModalProps) {
         if (!open)
           setTimeout(() => {
             setSearchQuery("");
-            setFilteredItems(productList);
-            setVisibleCount(40);
           }, 300);
         setIsAddItemModalOpen(open);
       }}
