@@ -127,7 +127,14 @@ export const QUERIES = {
       .where(eq(productCatalogTable.id, id));
   },
 
-  updateContact: async function (newContact: BaseContact) {
+  insertContact: async function (newContact: BaseContact) {
     return db.insert(contactsTable).values(newContact);
+  },
+
+  updateContact: async function (id: number, contact: BaseContact) {
+    return db
+      .update(contactsTable)
+      .set(contact)
+      .where(eq(contactsTable.id, id));
   },
 };

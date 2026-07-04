@@ -22,6 +22,7 @@ import { invoiceItemToProductInput } from "@/lib/products";
 import {
   insertContactAction,
   insertProductAction,
+  updateContactAction,
 } from "@/app/actions/server-actions";
 
 function ContactsModal({ contacts }: { contacts: Contact[] }) {
@@ -62,7 +63,7 @@ function ContactsModal({ contacts }: { contacts: Contact[] }) {
 
   const closeSheet = () => setSheet(null);
 
-  const handleContactInsert = async () => {
+  const handleContactSubmit = async () => {
     const [code, ...cityParts] = contactData.address.city.split(" ");
     const newContactData = {
       ...contactData,
@@ -73,7 +74,11 @@ function ContactsModal({ contacts }: { contacts: Contact[] }) {
       },
     };
 
-    await insertContactAction(newContactData);
+    if (sheet === "edit" && selectedId !== null) {
+      await updateContactAction(selectedId, newContactData);
+    } else {
+      await insertContactAction(newContactData);
+    }
     closeSheet();
     router.refresh();
   };
@@ -246,7 +251,7 @@ function ContactsModal({ contacts }: { contacts: Contact[] }) {
                   <div className="flex w-32 items-end pt-4.5">
                     <Button
                       variant="ghost"
-                      onClick={handleContactInsert}
+                      onClick={handleContactSubmit}
                       disabled={!isContactValid}
                       className="w-32 bg-gradient-to-r from-teal-500 to-teal-600 text-base text-white"
                     >

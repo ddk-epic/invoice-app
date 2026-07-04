@@ -198,8 +198,26 @@ export const insertContactAction = async (newContact: BaseContact) => {
     return false;
   }
   try {
-    const insertedItem = await QUERIES.updateContact(newContact);
+    const insertedItem = await QUERIES.insertContact(newContact);
     if (insertedItem) {
+      revalidatePath("/dashboard");
+      return true;
+    }
+  } catch (err) {
+    console.error("Server action error:", err);
+  }
+  return false;
+};
+
+export const updateContactAction = async (id: number, contact: BaseContact) => {
+  const result = ContactSchema.safeParse(contact);
+  if (!result.success) {
+    console.error(result.error);
+    return false;
+  }
+  try {
+    const updated = await QUERIES.updateContact(id, contact);
+    if (updated.rowCount > 0) {
       revalidatePath("/dashboard");
       return true;
     }
