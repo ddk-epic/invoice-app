@@ -7,6 +7,7 @@ import {
   Contact,
   InvoiceData,
   InvoiceItem,
+  LatestInvoice,
   PrivateContact,
   WriteResult,
 } from "@/constants/types";
@@ -42,12 +43,12 @@ export const getPrivateData = async () => {
 };
 
 export const getInvoicesContactsProducts = async (): Promise<{
-  invoiceList: InvoiceData[];
+  invoiceList: LatestInvoice[];
   contactList: Contact[];
   productList: InvoiceItem[];
 }> => {
   const [invoices, contacts, products] = await Promise.all([
-    QUERIES.getAllInvoices(),
+    QUERIES.getLatestInvoices(),
     QUERIES.getAllContacts(),
     QUERIES.getAllProducts(),
   ]);

@@ -52,6 +52,19 @@ export interface InvoiceItem extends BaseInvoiceItem {
   id: number;
 }
 
+// Thin invoice slice for the dashboard: what getLatestInvoices returns.
+// `status` is only ever a stored value here (overdue is derived downstream).
+export interface LatestInvoice {
+  id: number;
+  invoiceId: string;
+  status: InvoiceStatus;
+  invoiceDate: string;
+  dueDate: string;
+  updatedAt: Date;
+  total: number;
+  client: string;
+}
+
 export interface InvoiceData {
   id?: number;
   invoiceId: string;

@@ -1,6 +1,6 @@
 import "server-only";
 
-import { and, eq, sql } from "drizzle-orm";
+import { and, eq, gte, ne, or, sql } from "drizzle-orm";
 import { db } from "./index";
 import {
   contactsSchema as contactsTable,
@@ -14,6 +14,7 @@ import {
   BaseContact,
   Contact,
   InvoiceData,
+  LatestInvoice,
   PrivateContact,
 } from "@/constants/types";
 import type { ProductInput } from "@/lib/products";
@@ -77,6 +78,39 @@ export const QUERIES = {
 
   getAllInvoices: async function (): Promise<InvoiceData[]> {
     return db.select().from(invoiceTable);
+  },
+
+  // Dashboard slice: all unpaid work (any age) plus invoices settled in the
+  // last 7 days. Projects only the columns the work-item builders read - the
+  // jsonb contact/items blobs never leave the DB; `client` is the sender name
+  // pulled from the send_to snapshot.
+  //
+  // The window filters on updated_at, which equals the settle time only because
+  // markPaidById is the sole write to a paid row and paid rows are never touched
+  // again. If a second write path to paid appears, add a dedicated paid_at
+  // column - this assumption is load-bearing.
+  //
+  // The window uses the DB clock (now()); buildRecentlyPaid re-filters with the
+  // app clock. The sub-second difference between the two is accepted.
+  getLatestInvoices: async function (): Promise<LatestInvoice[]> {
+    return db
+      .select({
+        id: invoiceTable.id,
+        invoiceId: invoiceTable.invoiceId,
+        status: invoiceTable.status,
+        invoiceDate: invoiceTable.invoiceDate,
+        dueDate: invoiceTable.dueDate,
+        updatedAt: invoiceTable.updatedAt,
+        total: invoiceTable.total,
+        client: sql<string>`coalesce(${invoiceTable.sendTo} ->> 'name', '—')`,
+      })
+      .from(invoiceTable)
+      .where(
+        or(
+          ne(invoiceTable.status, "paid"),
+          gte(invoiceTable.updatedAt, sql`now() - interval '7 days'`)
+        )
+      );
   },
 
   getInvoiceById: async function (invoiceId: string): Promise<InvoiceData[]> {

@@ -1,7 +1,7 @@
 // overdue is derived here (open + past due), never stored; the DB keeps only
 // draft/open/paid. Paid invoices are excluded from the active work items.
 
-import { InvoiceData } from "@/constants/types";
+import { LatestInvoice } from "@/constants/types";
 import { idPrefix } from "@/lib/utils";
 
 export type Derived = "overdue" | "draft" | "open" | "paid";
@@ -26,19 +26,19 @@ function daysBetween(from: Date, to: Date) {
 }
 
 // paid is excluded here; see buildRecentlyPaid.
-function deriveActive(inv: InvoiceData, today: Date): Derived | null {
+function deriveActive(inv: LatestInvoice, today: Date): Derived | null {
   if (inv.status === "draft") return "draft";
   if (inv.status === "paid") return null;
   return new Date(inv.dueDate).getTime() < today.getTime() ? "overdue" : "open";
 }
 
-function toItem(inv: InvoiceData, derived: Derived, today: Date): WorkItem {
+function toItem(inv: LatestInvoice, derived: Derived, today: Date): WorkItem {
   const due = new Date(inv.dueDate);
   return {
-    id: inv.id ?? 0,
+    id: inv.id,
     invoiceId: inv.invoiceId,
     number: inv.invoiceId ? idPrefix(inv.invoiceId) : null,
-    client: inv.sendTo?.name ?? "—",
+    client: inv.client,
     amount: inv.total,
     derived,
     dueDate: due,
@@ -61,7 +61,7 @@ function startOfDay(now: Date) {
 }
 
 export function buildWorkItems(
-  invoices: InvoiceData[],
+  invoices: LatestInvoice[],
   now = new Date()
 ): WorkItem[] {
   const today = startOfDay(now);
@@ -82,7 +82,7 @@ export function buildWorkItems(
 
 // Settled invoices from the last `days` days
 export function buildRecentlyPaid(
-  invoices: InvoiceData[],
+  invoices: LatestInvoice[],
   now = new Date(),
   days = 7
 ): WorkItem[] {
