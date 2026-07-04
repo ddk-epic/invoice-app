@@ -9,12 +9,14 @@ export interface PrivateContact {
   email: string;
 }
 
+// Thin invoice row for the /invoice list.
 export interface Invoice {
-  id: string;
+  id: number;
+  invoiceId: string;
+  status: InvoiceStatus;
+  total: number;
+  createdAt: Date;
   client: string;
-  amount: string;
-  status: string;
-  date: string;
 }
 
 export interface Address {

@@ -1,6 +1,6 @@
 import "server-only";
 
-import { and, eq, gte, ne, or, sql } from "drizzle-orm";
+import { and, desc, eq, gte, ne, or, sql } from "drizzle-orm";
 import { db } from "./index";
 import {
   contactsSchema as contactsTable,
@@ -13,6 +13,7 @@ import {
 import {
   BaseContact,
   Contact,
+  Invoice,
   InvoiceData,
   LatestInvoice,
   PrivateContact,
@@ -76,8 +77,19 @@ export const QUERIES = {
     return db.select().from(productCatalogTable);
   },
 
-  getAllInvoices: async function (): Promise<InvoiceData[]> {
-    return db.select().from(invoiceTable);
+  // Full invoice history for the /invoice list.
+  getAllInvoices: async function (): Promise<Invoice[]> {
+    return db
+      .select({
+        id: invoiceTable.id,
+        invoiceId: invoiceTable.invoiceId,
+        status: invoiceTable.status,
+        total: invoiceTable.total,
+        createdAt: invoiceTable.createdAt,
+        client: sql<string>`coalesce(${invoiceTable.sendTo} ->> 'name', '—')`,
+      })
+      .from(invoiceTable)
+      .orderBy(desc(invoiceTable.createdAt));
   },
 
   // Dashboard slice: all unpaid work (any age) plus invoices settled in the

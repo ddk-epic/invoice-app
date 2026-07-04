@@ -48,16 +48,14 @@ async function InvoiceViewAll() {
                         ? idPrefix(invoice.invoiceId)
                         : "Entwurf"}
                     </TableCell>
-                    <TableCell>{invoice.sendTo.name}</TableCell>
+                    <TableCell>{invoice.client}</TableCell>
                     <TableCell>{toEuro(invoice.total)}</TableCell>
                     <TableCell>
                       <Badge className={getStatusColor(invoice.status)}>
                         {statusLabel[invoice.status]}
                       </Badge>
                     </TableCell>
-                    <TableCell>
-                      {deShortDate(new Date(invoice.createdAt))}
-                    </TableCell>
+                    <TableCell>{deShortDate(invoice.createdAt)}</TableCell>
                   </TableRow>
                 ))}
               </TableBody>
