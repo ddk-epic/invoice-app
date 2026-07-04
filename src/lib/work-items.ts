@@ -98,7 +98,7 @@ export function buildRecentlyPaid(
     .sort((a, b) => b.updatedAt.getTime() - a.updatedAt.getTime());
 }
 
-export function groupByDerived(items: WorkItem[]) {
+export function toSections(items: WorkItem[]) {
   return {
     draft: items.filter((i) => i.derived === "draft"),
     overdue: items.filter((i) => i.derived === "overdue"),

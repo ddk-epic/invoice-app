@@ -24,7 +24,7 @@ const statusColor: Record<InvoiceStatus, string> = {
 export const getStatusColor = (status: InvoiceStatus) =>
   statusColor[status] ?? "bg-gray-100 text-gray-800";
 
-export const bucketLabel: Record<"draft" | "overdue" | "open", string> = {
+export const sectionLabel: Record<"draft" | "overdue" | "open", string> = {
   draft: "Entwürfe",
   overdue: "Überfällig",
   open: "Offen",

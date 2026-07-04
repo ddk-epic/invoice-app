@@ -7,8 +7,8 @@ import { toast } from "sonner";
 import { Check, Pencil, Trash2 } from "lucide-react";
 
 import { toEuro, deShortDate } from "@/lib/utils";
-import { Derived, WorkItem, groupByDerived, sumAmount } from "@/lib/work-items";
-import { bucketLabel, statusLabel } from "@/constants/constants";
+import { Derived, WorkItem, toSections, sumAmount } from "@/lib/work-items";
+import { sectionLabel, statusLabel } from "@/constants/constants";
 import {
   markPaidAction,
   discardDraftAction,
@@ -183,7 +183,7 @@ export function OpenWork({
   items: WorkItem[];
   recentlyPaid: WorkItem[];
 }) {
-  const groups = groupByDerived(items);
+  const sections = toSections(items);
   const order: Exclude<Derived, "paid">[] = ["draft", "overdue", "open"];
 
   if (items.length === 0 && recentlyPaid.length === 0) {
@@ -197,8 +197,8 @@ export function OpenWork({
   return (
     <div className="space-y-6">
       {order.map((key) =>
-        groups[key].length > 0 ? (
-          <Section key={key} label={bucketLabel[key]} items={groups[key]} />
+        sections[key].length > 0 ? (
+          <Section key={key} label={sectionLabel[key]} items={sections[key]} />
         ) : null
       )}
       {recentlyPaid.length > 0 && (
