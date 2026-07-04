@@ -1,21 +1,50 @@
 import z from "zod";
 
-const AddressSchema = z.object({
+import type {
+  Address,
+  BaseContact,
+  Contact,
+  InvoiceItem,
+} from "@/constants/types";
+import type { ProductInput } from "@/lib/products";
+
+const AddressSchema: z.ZodType<Address> = z.object({
   street: z.string(),
   city: z.string(),
   state: z.string(),
-  zip: z.number().optional(),
+  zip: z.number(),
   country: z.string(),
 });
 
-export const ContactSchema = z.object({
-  id: z.number().optional(),
+export const BaseContactSchema: z.ZodType<BaseContact> = z.object({
   type: z.string(),
   name: z.string(),
-  owner: z.string().nullable().optional(),
+  owner: z.string().optional(),
   address: AddressSchema,
 });
 
+const ContactSchema: z.ZodType<Contact> = z.object({
+  id: z.number(),
+  type: z.string(),
+  name: z.string(),
+  owner: z.string().optional(),
+  address: AddressSchema,
+});
+
+const InvoiceItemSchema: z.ZodType<InvoiceItem> = z.object({
+  id: z.number(),
+  category: z.string(),
+  description: z.string(),
+  brand: z.string(),
+  origin: z.string().optional(),
+  weight: z.string().optional(),
+  perBox: z.number().optional(),
+  quantity: z.number(),
+  rate: z.number(),
+  amount: z.number(),
+});
+
+// Write payload; not pinned to InvoiceData (invoiceId is set on submit, dates may be strings).
 export const InvoiceSchema = z.object({
   invoiceId: z.string().optional(),
   invoiceDate: z.string(),
@@ -24,14 +53,14 @@ export const InvoiceSchema = z.object({
   sender: ContactSchema,
   sendTo: ContactSchema,
   invoiceTo: ContactSchema,
-  items: z.array(z.unknown()),
+  items: z.array(InvoiceItemSchema),
   total: z.number(),
   taxRate: z.number(),
   createdAt: z.union([z.string(), z.date()]),
   updatedAt: z.union([z.string(), z.date()]),
 });
 
-export const ProductSchema = z.object({
+export const ProductSchema: z.ZodType<ProductInput> = z.object({
   id: z.number().optional(),
   gtin: z.string().nullable().optional(),
   category: z.string().min(1),

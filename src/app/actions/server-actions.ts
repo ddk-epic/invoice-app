@@ -10,7 +10,7 @@ import {
   PrivateContact,
   WriteResult,
 } from "@/constants/types";
-import { ContactSchema, InvoiceSchema, ProductSchema } from "@/lib/schema";
+import { BaseContactSchema, InvoiceSchema, ProductSchema } from "@/lib/schema";
 import {
   productToInvoiceItem,
   rowToProduct,
@@ -148,7 +148,7 @@ export const insertProductAction = async (
 export const insertContactAction = async (
   newContact: BaseContact
 ): Promise<WriteResult> =>
-  validateWrite("insertContactAction", ContactSchema, newContact, () =>
+  validateWrite("insertContactAction", BaseContactSchema, newContact, () =>
     QUERIES.insertContact(newContact)
   );
 
@@ -158,7 +158,7 @@ export const updateContactAction = async (
 ): Promise<WriteResult> =>
   validateWrite(
     "updateContactAction",
-    ContactSchema,
+    BaseContactSchema,
     contact,
     async () => (await QUERIES.updateContact(id, contact)).rowCount > 0
   );
