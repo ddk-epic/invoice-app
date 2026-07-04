@@ -140,9 +140,9 @@ export default function InvoiceEditor(props: InvoiceEditorProps) {
     }
   };
 
-  const updateItemQty = (id: string, quantity: number) => {
+  const updateItemQty = (id: number, quantity: number) => {
     const updatedItems = invoiceData.items.map((i) => {
-      if (i.id.toString() === id) {
+      if (i.id === id) {
         const updatedItem = {
           ...i,
           quantity,
@@ -155,14 +155,12 @@ export default function InvoiceEditor(props: InvoiceEditorProps) {
     handleItems(updatedItems);
   };
 
-  const removeItem = (id: string) => {
-    handleItems(invoiceData.items.filter((item) => item.id.toString() !== id));
+  const removeItem = (id: number) => {
+    handleItems(invoiceData.items.filter((item) => item.id !== id));
   };
 
-  const updateContactById = (id: string, name: string) => {
-    const contact = contactList.find(
-      (contact) => contact.id!.toString() === id
-    );
+  const updateContactById = (id: number, name: string) => {
+    const contact = contactList.find((contact) => contact.id === id);
     if (!contact) return;
     setInvoiceData((prev) => ({ ...prev, [name]: contact }));
     setIsSendToModalOpen(false);

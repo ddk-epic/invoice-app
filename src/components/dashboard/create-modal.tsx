@@ -60,7 +60,7 @@ export const CreateInvoiceModal = (props: CreatInvoiceModalProps) => {
 
   const selectContactById = (contactId: string) => {
     const selectedContact = contacts.find(
-      (contact) => contact.id.toString() === contactId
+      (contact) => contact.id === Number(contactId)
     );
     if (!selectedContact) return;
     setContactField(selectedContact);

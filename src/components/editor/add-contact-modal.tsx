@@ -18,7 +18,7 @@ interface SelectContactModalProps {
   label: string;
   contact: Contact;
   name: string;
-  updateContact: (id: string, name: string) => void;
+  updateContact: (id: number, name: string) => void;
   contactList: Contact[];
 }
 
@@ -68,7 +68,7 @@ function SelectContactModal(props: SelectContactModalProps) {
           {contactList.map((contact) => (
             <Button
               key={contact.id}
-              onClick={() => updateContact(contact.id.toString(), name)}
+              onClick={() => updateContact(contact.id, name)}
               variant="ghost"
               className="h-[3rem]"
               asChild

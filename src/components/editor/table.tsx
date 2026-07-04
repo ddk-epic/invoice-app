@@ -7,8 +7,8 @@ import { toEuro } from "@/lib/utils";
 
 interface TableProps {
   items: InvoiceItem[];
-  updateItemQty: (id: string, value: number) => void;
-  removeItem: (id: string) => void;
+  updateItemQty: (id: number, value: number) => void;
+  removeItem: (id: number) => void;
 }
 
 function Table(props: TableProps) {
@@ -44,10 +44,7 @@ function Table(props: TableProps) {
                   type="number"
                   value={item.quantity}
                   onChange={(e) =>
-                    updateItemQty(
-                      item.id.toString(),
-                      Number(e.target.value) || 0
-                    )
+                    updateItemQty(item.id, Number(e.target.value) || 0)
                   }
                   className="h-auto w-13 border-1 p-0 text-right focus-visible:ring-0"
                   min="0"
@@ -62,7 +59,7 @@ function Table(props: TableProps) {
                 <Button
                   variant="ghost"
                   size="sm"
-                  onClick={() => removeItem(item.id.toString())}
+                  onClick={() => removeItem(item.id)}
                   className="h-8 w-8 p-0 text-red-400 hover:text-red-600"
                 >
                   <Trash2 className="h-4 w-4" />
