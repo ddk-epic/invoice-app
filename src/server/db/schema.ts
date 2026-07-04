@@ -10,6 +10,13 @@ import {
   uniqueIndex,
 } from "drizzle-orm/pg-core";
 
+import type {
+  Address,
+  Contact,
+  InvoiceItem,
+  InvoiceStatus,
+} from "@/constants/types";
+
 /**
  * This is an example of how to use the multi-project schema feature of Drizzle ORM. Use the same
  * database instance for multiple projects.
@@ -32,7 +39,7 @@ export const contactsSchema = pgTable("contacts_table", {
   type: text("type").notNull(),
   name: text("name").notNull(),
   owner: text("owner"),
-  address: jsonb("address").notNull(),
+  address: jsonb("address").$type<Address>().notNull(),
 });
 
 export const productsSchema = pgTable("products_table", {
@@ -64,13 +71,13 @@ export const invoiceSchema = pgTable(
     invoiceId: text("invoice_id").notNull(),
     invoiceDate: text("invoice_date").notNull(),
     dueDate: text("due_date").notNull(),
-    status: text("status").notNull(),
+    status: text("status").$type<InvoiceStatus>().notNull(),
 
-    sender: jsonb("sender").notNull(),
-    sendTo: jsonb("send_to").notNull(),
-    invoiceTo: jsonb("invoice_to").notNull(),
+    sender: jsonb("sender").$type<Contact>().notNull(),
+    sendTo: jsonb("send_to").$type<Contact>().notNull(),
+    invoiceTo: jsonb("invoice_to").$type<Contact>().notNull(),
 
-    items: jsonb("items").notNull(),
+    items: jsonb("items").$type<InvoiceItem[]>().notNull(),
     total: integer("total").notNull(),
     taxRate: integer("tax_rate").notNull(),
 
