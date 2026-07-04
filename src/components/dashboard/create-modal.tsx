@@ -27,6 +27,7 @@ import { invoiceTemplate } from "@/constants/constants";
 import { Contact, InvoiceData } from "@/constants/types";
 
 import { redirect, RedirectType } from "next/navigation";
+import { toast } from "sonner";
 import { createDraftAction } from "@/app/actions/server-actions";
 import { Spinner } from "../ui/spinner";
 
@@ -53,7 +54,10 @@ export const CreateInvoiceModal = (props: CreatInvoiceModalProps) => {
 
     const draftId = await createDraftAction(draft);
     setIsLoading(false);
-    if (draftId == null) return;
+    if (draftId == null) {
+      toast.error("Rechnung konnte nicht erstellt werden.");
+      return;
+    }
 
     redirect(`/editor/${draftId}`, RedirectType.push);
   };

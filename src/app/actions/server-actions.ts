@@ -18,13 +18,13 @@ import {
 } from "@/lib/products";
 
 async function validateWrite(
+  label: string,
   schema: ZodTypeAny,
   data: unknown,
   fn: () => Promise<unknown>
 ): Promise<WriteResult> {
   const parsed = schema.safeParse(data);
   if (!parsed.success) {
-    console.error(parsed.error);
     return { ok: false, error: "validation" };
   }
   try {
@@ -32,7 +32,7 @@ async function validateWrite(
     if (result === false) return { ok: false, error: "db" };
     return { ok: true };
   } catch (err) {
-    console.error("Server action error:", err);
+    console.error(`${label} failed:`, err);
     return { ok: false, error: "db" };
   }
 }
@@ -85,14 +85,14 @@ export const createDraftAction = async (
 ): Promise<number | null> => {
   const result = InvoiceSchema.safeParse(draft);
   if (!result.success) {
-    console.error(result.error);
+    console.error("createDraftAction: invalid draft:", result.error);
     return null;
   }
   try {
     const row = await QUERIES.insertDraft(draft);
     return row.id;
   } catch (err) {
-    console.error("Server action error:", err);
+    console.error("createDraftAction failed:", err);
     return null;
   }
 };
@@ -101,7 +101,9 @@ export const updateDraftAction = async (
   id: number,
   draft: InvoiceData
 ): Promise<WriteResult> =>
-  validateWrite(InvoiceSchema, draft, () => QUERIES.updateDraftById(id, draft));
+  validateWrite("updateDraftAction", InvoiceSchema, draft, () =>
+    QUERIES.updateDraftById(id, draft)
+  );
 
 // Promote a draft to an issued invoice; returns the assigned number or null.
 export const submitDraftAction = async (id: number): Promise<string | null> => {
@@ -109,7 +111,7 @@ export const submitDraftAction = async (id: number): Promise<string | null> => {
     const row = await QUERIES.submitDraft(id);
     return row.invoiceId;
   } catch (err) {
-    console.error("Server action error:", err);
+    console.error("submitDraftAction failed:", err);
     return null;
   }
 };
@@ -119,7 +121,7 @@ export const markPaidAction = async (id: number) => {
     await QUERIES.markPaidById(id);
     return true;
   } catch (err) {
-    console.error("Server action error:", err);
+    console.error("markPaidAction failed:", err);
     return false;
   }
 };
@@ -129,7 +131,7 @@ export const discardDraftAction = async (id: number) => {
     await QUERIES.deleteDraftById(id);
     return true;
   } catch (err) {
-    console.error("Server action error:", err);
+    console.error("discardDraftAction failed:", err);
     return false;
   }
 };
@@ -137,7 +139,7 @@ export const discardDraftAction = async (id: number) => {
 export const insertProductAction = async (
   product: ProductInput
 ): Promise<WriteResult> =>
-  validateWrite(ProductSchema, product, () =>
+  validateWrite("insertProductAction", ProductSchema, product, () =>
     product.id
       ? QUERIES.updateProduct(product.id, product)
       : QUERIES.insertProduct(product)
@@ -146,7 +148,7 @@ export const insertProductAction = async (
 export const insertContactAction = async (
   newContact: BaseContact
 ): Promise<WriteResult> =>
-  validateWrite(ContactSchema, newContact, () =>
+  validateWrite("insertContactAction", ContactSchema, newContact, () =>
     QUERIES.insertContact(newContact)
   );
 
@@ -155,6 +157,7 @@ export const updateContactAction = async (
   contact: BaseContact
 ): Promise<WriteResult> =>
   validateWrite(
+    "updateContactAction",
     ContactSchema,
     contact,
     async () => (await QUERIES.updateContact(id, contact)).rowCount > 0
