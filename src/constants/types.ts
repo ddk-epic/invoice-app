@@ -17,17 +17,19 @@ export interface Invoice {
   date: string;
 }
 
+export interface Address {
+  street: string;
+  city: string;
+  state: string;
+  zip: number;
+  country: string;
+}
+
 export interface BaseContact {
   type: string;
   name: string;
   owner?: string;
-  address: {
-    street: string;
-    city: string;
-    state: string;
-    zip: number;
-    country: string;
-  };
+  address: Address;
 }
 
 export interface Contact extends BaseContact {
