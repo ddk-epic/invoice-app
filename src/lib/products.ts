@@ -55,14 +55,14 @@ export function productToInvoiceItem(p: Product): InvoiceItem {
   };
 }
 
-export interface Grundpreis {
+export interface BasePrice {
   value: number;
   unit: string; // "€/kg" | "€/l" | "€/Stk"
 }
 
-// Grundpreis per PAngV: reference 1 kg (mass) / 1 l (volume), per piece for Stk.
+// PAngV Grundpreis: reference 1 kg (mass) / 1 l (volume), per piece for Stk.
 // Total content of a sellable unit = net_content × pack_size.
-export function computeGrundpreis(p: Product): Grundpreis {
+export function computeBasePrice(p: Product): BasePrice {
   const packs = p.packSize && p.packSize > 0 ? p.packSize : 1;
   const round2 = (n: number) => Math.round(n * 100) / 100;
 
@@ -77,6 +77,18 @@ export function computeGrundpreis(p: Product): Grundpreis {
     return { value: round2(p.price / l), unit: "€/l" };
   }
   return { value: round2(p.price / packs), unit: "€/Stk" };
+}
+
+// German-formatted Grundpreis label ("3,03 €/kg"). Null for piece goods (Stk),
+// which PAngV doesn't require and where €/Stk just restates the price.
+export function formatBasePrice(p: Product): string | null {
+  if (p.contentUnit === "Stk") return null;
+  const { value, unit } = computeBasePrice(p);
+  const formatted = value.toLocaleString("de-DE", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  });
+  return `${formatted} ${unit}`;
 }
 
 // Payload for inserting/updating a catalog product. `id` present => update.

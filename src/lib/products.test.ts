@@ -5,7 +5,8 @@ import {
   rowToProduct,
   weightLabel,
   productToInvoiceItem,
-  computeGrundpreis,
+  computeBasePrice,
+  formatBasePrice,
   parseWeight,
   invoiceItemToProductInput,
   type Product,
@@ -77,10 +78,10 @@ describe("productToInvoiceItem", () => {
   });
 });
 
-describe("computeGrundpreis (PAngV, ref 1kg / 1l)", () => {
+describe("computeBasePrice (PAngV, ref 1kg / 1l)", () => {
   it("single bottle -> per litre", () => {
     expect(
-      computeGrundpreis(
+      computeBasePrice(
         product({ netContent: 330, contentUnit: "ml", price: 1.25 })
       )
     ).toEqual({ value: 3.79, unit: "€/l" });
@@ -88,31 +89,49 @@ describe("computeGrundpreis (PAngV, ref 1kg / 1l)", () => {
   it("case row divides by net_content × pack_size (matches the single)", () => {
     // 24 × 330ml = 7.92 l ; 30 / 7.92 = 3.79 €/l
     expect(
-      computeGrundpreis(
+      computeBasePrice(
         product({ netContent: 330, contentUnit: "ml", packSize: 24, price: 30 })
       )
     ).toEqual({ value: 3.79, unit: "€/l" });
   });
   it("grams normalise to €/kg", () => {
     expect(
-      computeGrundpreis(
-        product({ netContent: 500, contentUnit: "g", price: 5 })
-      )
+      computeBasePrice(product({ netContent: 500, contentUnit: "g", price: 5 }))
     ).toEqual({ value: 10, unit: "€/kg" });
   });
   it("kg passes through", () => {
     expect(
-      computeGrundpreis(
+      computeBasePrice(
         product({ netContent: 20.5, contentUnit: "kg", price: 276.75 })
       )
     ).toEqual({ value: 13.5, unit: "€/kg" });
   });
   it("piece items are priced per Stk", () => {
     expect(
-      computeGrundpreis(
+      computeBasePrice(
         product({ contentUnit: "Stk", netContent: 1, price: 2.5 })
       )
     ).toEqual({ value: 2.5, unit: "€/Stk" });
+  });
+});
+
+describe("formatBasePrice", () => {
+  it("formats mass/volume as a German label", () => {
+    expect(
+      formatBasePrice(product({ netContent: 500, contentUnit: "g", price: 5 }))
+    ).toBe("10,00 €/kg");
+    expect(
+      formatBasePrice(
+        product({ netContent: 330, contentUnit: "ml", price: 1.25 })
+      )
+    ).toBe("3,79 €/l");
+  });
+  it("is null for piece goods (Stk)", () => {
+    expect(
+      formatBasePrice(
+        product({ contentUnit: "Stk", netContent: 1, price: 2.5 })
+      )
+    ).toBeNull();
   });
 });
 
