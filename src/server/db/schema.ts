@@ -1,5 +1,6 @@
 import { sql } from "drizzle-orm";
 import {
+  index,
   integer,
   jsonb,
   numeric,
@@ -84,6 +85,8 @@ export const invoiceSchema = pgTable(
     uniqueIndex("invoice_issued_number_uniq")
       .on(table.invoiceId)
       .where(sql`status <> 'draft'`),
+    // Backs the paginated list's ORDER BY created_at DESC top-N scan.
+    index("invoice_created_at_idx").on(table.createdAt.desc()),
   ]
 );
 
