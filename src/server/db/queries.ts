@@ -173,7 +173,7 @@ export const QUERIES = {
       .update(invoiceTable)
       .set({
         invoiceId: sql`(SELECT COALESCE(MAX((invoice_id)::int), 0) + 1
-                        FROM invoice_table WHERE status <> 'draft')`,
+                        FROM invoice_invoices WHERE status <> 'draft')`,
         status: "open",
       })
       .where(eq(invoiceTable.id, id))

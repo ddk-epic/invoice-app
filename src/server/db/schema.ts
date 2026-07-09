@@ -29,13 +29,13 @@ import type {
  * push:      npx drizzle-kit push
  */
 
-export const privateSchema = pgTable("private_table", {
+export const privateSchema = pgTable("invoice_private", {
   id: serial("id").primaryKey(),
   phone: text("phone").notNull(),
   email: text("email").notNull(),
 });
 
-export const contactsSchema = pgTable("contacts_table", {
+export const contactsSchema = pgTable("invoice_contacts", {
   id: serial("id").primaryKey(),
   type: text("type").notNull(),
   name: text("name").notNull(),
@@ -45,7 +45,7 @@ export const contactsSchema = pgTable("contacts_table", {
 
 // Normalized catalog: one row per product.
 // GS1/PAngV-aligned shape; Grundpreis is computed at read time, not stored.
-export const productCatalogSchema = pgTable("products", {
+export const productCatalogSchema = pgTable("invoice_products", {
   id: serial("id").primaryKey(),
   barcode: text("barcode"),
   category: text("category").notNull(),
@@ -59,7 +59,7 @@ export const productCatalogSchema = pgTable("products", {
 });
 
 export const invoiceSchema = pgTable(
-  "invoice_table",
+  "invoice_invoices",
   {
     id: serial("id").primaryKey(),
     invoiceId: text("invoice_id").notNull(),
