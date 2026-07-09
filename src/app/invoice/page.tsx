@@ -1,6 +1,9 @@
 import React from "react";
+import Link from "next/link";
+import { redirect } from "next/navigation";
 
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import {
   Table,
@@ -16,8 +19,29 @@ import { getStatusColor, statusLabel } from "@/constants/constants";
 import { QUERIES } from "@/server/db/queries";
 import { toEuro, deShortDate, idPrefix } from "@/lib/utils";
 
-async function InvoiceViewAll() {
-  const invoiceList = await QUERIES.getAllInvoices();
+const PAGE_SIZE = 25;
+
+interface InvoiceViewAllProps {
+  searchParams: Promise<{ page?: string }>;
+}
+
+async function InvoiceViewAll({ searchParams }: InvoiceViewAllProps) {
+  const { page: pageParam } = await searchParams;
+
+  const total = await QUERIES.countInvoices();
+  const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
+
+  const requested = Number(pageParam);
+  const page = Math.min(
+    Math.max(1, Number.isInteger(requested) ? requested : 1),
+    totalPages
+  );
+  // Bare /invoice stays page 1; only a junk/out-of-range param gets normalized.
+  if (pageParam !== undefined && pageParam !== String(page)) {
+    redirect(`/invoice?page=${page}`);
+  }
+
+  const invoiceList = await QUERIES.getInvoicesPage(page, PAGE_SIZE);
   return (
     <main className="wrapper top min-h-screen bg-gray-50">
       <div className="px-4 py-6 sm:px-0">
@@ -60,6 +84,31 @@ async function InvoiceViewAll() {
                 ))}
               </TableBody>
             </Table>
+            <div className="flex items-center justify-between pt-4">
+              <span className="text-muted-foreground text-sm">
+                Seite {page} von {totalPages}
+              </span>
+              <div className="flex gap-2">
+                {page > 1 ? (
+                  <Button variant="outline" size="sm" asChild>
+                    <Link href={`/invoice?page=${page - 1}`}>Zurück</Link>
+                  </Button>
+                ) : (
+                  <Button variant="outline" size="sm" disabled>
+                    Zurück
+                  </Button>
+                )}
+                {page < totalPages ? (
+                  <Button variant="outline" size="sm" asChild>
+                    <Link href={`/invoice?page=${page + 1}`}>Weiter</Link>
+                  </Button>
+                ) : (
+                  <Button variant="outline" size="sm" disabled>
+                    Weiter
+                  </Button>
+                )}
+              </div>
+            </div>
           </CardContent>
         </Card>
       </div>

@@ -77,8 +77,19 @@ export const QUERIES = {
     return db.select().from(productCatalogTable);
   },
 
-  // Full invoice history for the /invoice list.
-  getAllInvoices: async function (): Promise<Invoice[]> {
+  countInvoices: async function (): Promise<number> {
+    const [row] = await db
+      .select({ count: sql<number>`count(*)::int` })
+      .from(invoiceTable);
+    return row?.count ?? 0;
+  },
+
+  // One page of the /invoice list, newest first. Kept separate from
+  // countInvoices so the read boundary can short-circuit on an out-of-range page.
+  getInvoicesPage: async function (
+    page: number,
+    pageSize: number
+  ): Promise<Invoice[]> {
     return db
       .select({
         id: invoiceTable.id,
@@ -89,21 +100,17 @@ export const QUERIES = {
         client: sql<string>`coalesce(${invoiceTable.sendTo} ->> 'name', '—')`,
       })
       .from(invoiceTable)
-      .orderBy(desc(invoiceTable.createdAt));
+      .orderBy(desc(invoiceTable.createdAt))
+      .limit(pageSize)
+      .offset((page - 1) * pageSize);
   },
 
-  // Dashboard slice: all unpaid work (any age) plus invoices settled in the
-  // last 7 days. Projects only the columns the work-item builders read - the
-  // jsonb contact/items blobs never leave the DB; `client` is the sender name
-  // pulled from the send_to snapshot.
-  //
-  // The window filters on updated_at, which equals the settle time only because
-  // markPaidById is the sole write to a paid row and paid rows are never touched
-  // again. If a second write path to paid appears, add a dedicated paid_at
-  // column - this assumption is load-bearing.
-  //
-  // The window uses the DB clock (now()); buildRecentlyPaid re-filters with the
-  // app clock. The sub-second difference between the two is accepted.
+  // Unpaid work (any age) plus invoices settled in the last 7 days.
+  // Window filters on updated_at, which equals settle time only because
+  // markPaidById is the sole write to a paid row: add a paid_at column if a
+  // second write path to paid appears.
+  // Window uses the DB clock; buildRecentlyPaid re-filters with the app clock,
+  // sub-second drift accepted.
   getLatestInvoices: async function (): Promise<LatestInvoice[]> {
     return db
       .select({
