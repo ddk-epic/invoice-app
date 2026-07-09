@@ -6,17 +6,12 @@ import {
   BaseContact,
   Contact,
   InvoiceData,
-  InvoiceItem,
   LatestInvoice,
   PrivateContact,
   WriteResult,
 } from "@/constants/types";
 import { BaseContactSchema, InvoiceSchema, ProductSchema } from "@/lib/schema";
-import {
-  productToInvoiceItem,
-  rowToProduct,
-  type ProductInput,
-} from "@/lib/products";
+import { rowToProduct, type Product, type ProductInput } from "@/lib/products";
 
 async function validateWrite(
   label: string,
@@ -45,7 +40,7 @@ export const getPrivateData = async () => {
 export const getInvoicesContactsProducts = async (): Promise<{
   invoiceList: LatestInvoice[];
   contactList: Contact[];
-  productList: InvoiceItem[];
+  productList: Product[];
 }> => {
   const [invoices, contacts, products] = await Promise.all([
     QUERIES.getLatestInvoices(),
@@ -54,7 +49,7 @@ export const getInvoicesContactsProducts = async (): Promise<{
   ]);
   const invoiceList = invoices;
   const contactList = contacts;
-  const productList = products.map(rowToProduct).map(productToInvoiceItem);
+  const productList = products.map(rowToProduct);
 
   return { invoiceList, contactList, productList };
 };
@@ -63,7 +58,7 @@ export const getInvoicesContactsProducts = async (): Promise<{
 export const getContactsAndProducts = async (): Promise<{
   privateContact: PrivateContact;
   contactList: Contact[];
-  productList: InvoiceItem[];
+  productList: Product[];
 }> => {
   const [privateData, contacts, products] = await Promise.all([
     QUERIES.getPrivateContact(),
@@ -72,7 +67,7 @@ export const getContactsAndProducts = async (): Promise<{
   ]);
   const [privateContact] = privateData;
   const contactList = contacts;
-  const productList = products.map(rowToProduct).map(productToInvoiceItem);
+  const productList = products.map(rowToProduct);
 
   return { privateContact, contactList, productList };
 };

@@ -13,12 +13,12 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 
-import { InvoiceItem } from "@/constants/types";
+import { weightLabel, formatBasePrice, type Product } from "@/lib/products";
 import { toEuro } from "@/lib/utils";
 
 interface AddItemModalProps {
-  products: InvoiceItem[];
-  addItem: (item: InvoiceItem) => void;
+  products: Product[];
+  addItem: (product: Product) => void;
 }
 
 function AddItemModal({ products: productList, addItem }: AddItemModalProps) {
@@ -39,9 +39,7 @@ function AddItemModal({ products: productList, addItem }: AddItemModalProps) {
     () =>
       productList.filter(
         (item) =>
-          item.description
-            .toLowerCase()
-            .includes(debouncedQuery.toLowerCase()) ||
+          item.name.toLowerCase().includes(debouncedQuery.toLowerCase()) ||
           item.category.toLowerCase().includes(debouncedQuery.toLowerCase())
       ),
     [productList, debouncedQuery]
@@ -117,14 +115,18 @@ function AddItemModal({ products: productList, addItem }: AddItemModalProps) {
                   <div className="ml-2 flex-1">
                     <div className="flex items-start justify-between">
                       <div>
-                        <h4 className="font-medium">{item.description}</h4>
+                        <h4 className="font-medium">{item.name}</h4>
                         <p className="text-sm text-gray-500">
                           {item.category.toUpperCase()}
                         </p>
                       </div>
                       <div className="mr-4 text-right">
-                        <p className="font-medium">{toEuro(item.rate)}</p>
-                        <p className="text-sm text-gray-500">{item.weight}</p>
+                        <p className="font-medium">{toEuro(item.price)}</p>
+                        <p className="text-sm text-gray-500">
+                          {weightLabel(item)}
+                          {formatBasePrice(item) &&
+                            ` · ${formatBasePrice(item)}`}
+                        </p>
                       </div>
                     </div>
                   </div>

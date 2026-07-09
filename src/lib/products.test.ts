@@ -1,6 +1,5 @@
 import { describe, it, expect } from "vitest";
 import type { SelectProductCatalog } from "@/server/db/schema";
-import type { InvoiceItem } from "@/constants/types";
 import {
   rowToProduct,
   weightLabel,
@@ -8,15 +7,14 @@ import {
   computeBasePrice,
   formatBasePrice,
   parseWeight,
-  invoiceItemToProductInput,
   type Product,
 } from "./products";
 
 const product = (over: Partial<Product> = {}): Product => ({
   id: 1,
-  gtin: null,
+  barcode: null,
   category: "beverage",
-  description: "Bier",
+  name: "Bier",
   brand: "Tsingtao",
   origin: null,
   netContent: 330,
@@ -30,9 +28,9 @@ describe("rowToProduct", () => {
   it("coerces DB string numerics to numbers", () => {
     const row = {
       id: 5,
-      gtin: null,
+      barcode: null,
       category: "meat",
-      description: "Roastbeef",
+      name: "Roastbeef",
       brand: null,
       origin: null,
       netContent: "20.500", // numeric column -> string
@@ -64,17 +62,17 @@ describe("weightLabel", () => {
 });
 
 describe("productToInvoiceItem", () => {
-  it("maps price -> rate/amount and pack_size -> perBox", () => {
+  it("adds a default quantity/amount, preserving product fields", () => {
     const item = productToInvoiceItem(product({ price: 30, packSize: 24 }));
-    expect(item.rate).toBe(30);
+    expect(item.price).toBe(30);
     expect(item.amount).toBe(30);
-    expect(item.perBox).toBe(24);
+    expect(item.packSize).toBe(24);
     expect(item.quantity).toBe(1);
   });
-  it("defaults null brand/pack to safe values", () => {
+  it("keeps null brand/pack untouched (no lossy defaulting)", () => {
     const item = productToInvoiceItem(product({ brand: null, packSize: null }));
-    expect(item.brand).toBe("");
-    expect(item.perBox).toBe(0);
+    expect(item.brand).toBeNull();
+    expect(item.packSize).toBeNull();
   });
 });
 
@@ -148,40 +146,5 @@ describe("parseWeight", () => {
     expect(parseWeight(null)).toBeNull();
     expect(parseWeight("fair")).toBeNull();
     expect(parseWeight("10")).toBeNull();
-  });
-});
-
-describe("invoiceItemToProductInput", () => {
-  const item = (over: Partial<InvoiceItem> = {}): InvoiceItem => ({
-    id: 0,
-    category: "beverage",
-    description: "Bier",
-    brand: "Tsingtao",
-    origin: "",
-    weight: "330ml",
-    perBox: 24,
-    quantity: 1,
-    rate: 30,
-    amount: 30,
-    ...over,
-  });
-  it("maps form fields and parses weight", () => {
-    const p = invoiceItemToProductInput(item());
-    expect(p.netContent).toBe(330);
-    expect(p.contentUnit).toBe("ml");
-    expect(p.packSize).toBe(24);
-    expect(p.price).toBe(30);
-    expect(p.id).toBeUndefined(); // id 0 => insert
-  });
-  it("keeps id > 0 for updates", () => {
-    expect(invoiceItemToProductInput(item({ id: 7 })).id).toBe(7);
-  });
-  it("falls back to 1 Stk on blank weight", () => {
-    const p = invoiceItemToProductInput(item({ weight: "" }));
-    expect(p.netContent).toBe(1);
-    expect(p.contentUnit).toBe("Stk");
-  });
-  it("null pack size when perBox is 0", () => {
-    expect(invoiceItemToProductInput(item({ perBox: 0 })).packSize).toBeNull();
   });
 });

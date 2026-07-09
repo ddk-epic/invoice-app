@@ -1,3 +1,5 @@
+import type { Product } from "@/lib/products";
+
 export type InvoiceStatus = "draft" | "open" | "paid" | "overdue";
 
 export type WriteResult =
@@ -38,20 +40,10 @@ export interface Contact extends BaseContact {
   id: number;
 }
 
-export interface BaseInvoiceItem {
-  category: string;
-  description: string;
-  brand: string;
-  origin?: string;
-  weight?: string;
-  perBox?: number;
+// An invoice line is a catalog product placed on an invoice, plus quantity/amount.
+export interface InvoiceItem extends Product {
   quantity: number;
-  rate: number;
   amount: number;
-}
-
-export interface InvoiceItem extends BaseInvoiceItem {
-  id: number;
 }
 
 // Thin invoice slice for the dashboard: what getLatestInvoices returns.

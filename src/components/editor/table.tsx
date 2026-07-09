@@ -3,6 +3,7 @@ import { Trash2 } from "lucide-react";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { InvoiceItem } from "@/constants/types";
+import { weightLabel } from "@/lib/products";
 import { toEuro } from "@/lib/utils";
 
 interface TableProps {
@@ -29,44 +30,47 @@ function Table(props: TableProps) {
       </thead>
       {items.length > 0 && (
         <tbody>
-          {items.map((item, index) => (
-            <tr key={item.id} className="border-t">
-              <td className="w-13 px-2">{index + 1}</td>
-              <td className="max-w-[300px] truncate">
-                {item.description}
-                {item.brand && " " + item.brand.toUpperCase()}
-                {item.weight && ", "}
-                {item.perBox ? item.perBox + " X " + item.weight : item.weight}
-              </td>
-              <td className="w-13 pr-2">
-                <Input
-                  id={item.id.toString()}
-                  type="number"
-                  value={item.quantity}
-                  onChange={(e) =>
-                    updateItemQty(item.id, Number(e.target.value) || 0)
-                  }
-                  className="h-auto w-13 border-1 p-0 text-right focus-visible:ring-0"
-                  min="0"
-                  step="1"
-                />
-              </td>
-              <td className="w-23 pr-2 text-right">{toEuro(item.rate)}</td>
-              <td className="w-23 text-right font-medium">
-                {toEuro(item.amount)}
-              </td>
-              <td className="px-1">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => removeItem(item.id)}
-                  className="h-8 w-8 p-0 text-red-400 hover:text-red-600"
-                >
-                  <Trash2 className="h-4 w-4" />
-                </Button>
-              </td>
-            </tr>
-          ))}
+          {items.map((item, index) => {
+            const label = weightLabel(item);
+            return (
+              <tr key={item.id} className="border-t">
+                <td className="w-13 px-2">{index + 1}</td>
+                <td className="max-w-[300px] truncate">
+                  {item.name}
+                  {item.brand && " " + item.brand.toUpperCase()}
+                  {label && ", "}
+                  {item.packSize ? item.packSize + " X " + label : label}
+                </td>
+                <td className="w-13 pr-2">
+                  <Input
+                    id={item.id.toString()}
+                    type="number"
+                    value={item.quantity}
+                    onChange={(e) =>
+                      updateItemQty(item.id, Number(e.target.value) || 0)
+                    }
+                    className="h-auto w-13 border-1 p-0 text-right focus-visible:ring-0"
+                    min="0"
+                    step="1"
+                  />
+                </td>
+                <td className="w-23 pr-2 text-right">{toEuro(item.price)}</td>
+                <td className="w-23 text-right font-medium">
+                  {toEuro(item.amount)}
+                </td>
+                <td className="px-1">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => removeItem(item.id)}
+                    className="h-8 w-8 p-0 text-red-400 hover:text-red-600"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                </td>
+              </tr>
+            );
+          })}
         </tbody>
       )}
     </table>

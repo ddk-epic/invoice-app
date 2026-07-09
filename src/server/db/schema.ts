@@ -46,9 +46,9 @@ export const contactsSchema = pgTable("contacts_table", {
 // GS1/PAngV-aligned shape; Grundpreis is computed at read time, not stored.
 export const productCatalogSchema = pgTable("products", {
   id: serial("id").primaryKey(),
-  gtin: text("gtin"),
+  barcode: text("barcode"),
   category: text("category").notNull(),
-  description: text("description").notNull(),
+  name: text("name").notNull(),
   brand: text("brand"),
   origin: text("origin"),
   netContent: numeric("net_content", { precision: 10, scale: 3 }).notNull(),

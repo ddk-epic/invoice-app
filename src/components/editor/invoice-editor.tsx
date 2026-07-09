@@ -23,12 +23,13 @@ import {
   discardDraftAction,
   updateDraftAction,
 } from "@/app/actions/server-actions";
+import { productToInvoiceItem, type Product } from "@/lib/products";
 import { computeInvoiceTotal } from "@/lib/invoice";
 
 interface InvoiceEditorProps {
   privateContact: PrivateContact;
   contacts: Contact[];
-  products: InvoiceItem[];
+  products: Product[];
   invoiceData?: InvoiceData;
 }
 
@@ -111,18 +112,19 @@ export default function InvoiceEditor(props: InvoiceEditorProps) {
     setInvoiceData((prev) => ({ ...prev, items }));
   };
 
-  const addItem = (item: InvoiceItem) => {
+  const addItem = (product: Product) => {
     const items = invoiceData.items;
-    const itemIndex = items.findIndex((i) => i.id === item.id);
+    const itemIndex = items.findIndex((i) => i.id === product.id);
 
     if (itemIndex !== -1) {
+      const existing = items[itemIndex];
+      const quantity = existing.quantity + 1;
       const updatedItem = {
-        ...items[itemIndex],
-        quantity: items[itemIndex].quantity + 1,
-        amount: (items[itemIndex].quantity + 1) * items[itemIndex].rate,
+        ...existing,
+        quantity,
+        amount: quantity * existing.price,
       };
 
-      // should be better than mapping
       const updatedItems = [
         ...items.slice(0, itemIndex),
         updatedItem,
@@ -130,15 +132,7 @@ export default function InvoiceEditor(props: InvoiceEditorProps) {
       ];
       handleItems(updatedItems);
     } else {
-      const newItem: InvoiceItem = {
-        ...item,
-        brand: item?.brand ?? "",
-        weight: item?.weight ?? "",
-        perBox: item?.perBox || 0,
-        quantity: 1,
-        amount: item.rate,
-      };
-      handleItems([...items, newItem]);
+      handleItems([...items, productToInvoiceItem(product)]);
     }
   };
 
@@ -148,7 +142,7 @@ export default function InvoiceEditor(props: InvoiceEditorProps) {
         const updatedItem = {
           ...i,
           quantity,
-          amount: quantity * i.rate,
+          amount: quantity * i.price,
         };
         return updatedItem;
       }

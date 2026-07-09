@@ -1,17 +1,20 @@
-import { InvoiceItem } from "@/constants/types";
+import type { InvoiceItem } from "@/constants/types";
 import type { SelectProductCatalog } from "@/server/db/schema";
+
+export const CONTENT_UNITS = ["g", "kg", "ml", "l", "Stk"] as const;
+export type ContentUnit = (typeof CONTENT_UNITS)[number];
 
 // Normalized catalog product. DB numeric columns arrive as strings via drizzle,
 // so this coerces them to numbers for app use.
 export interface Product {
   id: number;
-  gtin: string | null;
+  barcode: string | null; // EAN-13 / GTIN
   category: string;
-  description: string;
+  name: string;
   brand: string | null;
   origin: string | null;
   netContent: number;
-  contentUnit: string;
+  contentUnit: ContentUnit;
   packSize: number | null;
   price: number;
 }
@@ -19,13 +22,13 @@ export interface Product {
 export function rowToProduct(row: SelectProductCatalog): Product {
   return {
     id: row.id,
-    gtin: row.gtin,
+    barcode: row.barcode,
     category: row.category,
-    description: row.description,
+    name: row.name,
     brand: row.brand,
     origin: row.origin,
     netContent: Number(row.netContent),
-    contentUnit: row.contentUnit,
+    contentUnit: row.contentUnit as ContentUnit,
     packSize: row.packSize,
     price: Number(row.price),
   };
@@ -38,21 +41,10 @@ export function weightLabel(p: Product): string {
   return `${p.netContent}${p.contentUnit}`;
 }
 
-// Adapt a catalog product to the invoice-line shape the editor/PDF still consume.
-// quantity/amount are line defaults; the editor recomputes them when an item is added.
+// A picked product becomes an invoice line: the same fields plus a default
+// quantity/amount. The editor recomputes quantity/amount as the line is edited.
 export function productToInvoiceItem(p: Product): InvoiceItem {
-  return {
-    id: p.id,
-    category: p.category,
-    description: p.description,
-    brand: p.brand ?? "",
-    origin: p.origin ?? "",
-    weight: weightLabel(p),
-    perBox: p.packSize ?? 0,
-    quantity: 1,
-    rate: p.price,
-    amount: p.price,
-  };
+  return { ...p, quantity: 1, amount: p.price };
 }
 
 export interface BasePrice {
@@ -94,13 +86,13 @@ export function formatBasePrice(p: Product): string | null {
 // Payload for inserting/updating a catalog product. `id` present => update.
 export interface ProductInput {
   id?: number;
-  gtin?: string | null;
+  barcode?: string | null;
   category: string;
-  description: string;
+  name: string;
   brand?: string | null;
   origin?: string | null;
   netContent: number;
-  contentUnit: string;
+  contentUnit: ContentUnit;
   packSize?: number | null;
   price: number;
 }
@@ -132,21 +124,4 @@ export function parseWeight(
   const unit = WEIGHT_UNIT[m[2]];
   if (!unit || Number.isNaN(value)) return null;
   return { value, unit };
-}
-
-// Map the editor's InvoiceItem-shaped form back to a catalog ProductInput.
-// Unparseable/blank weight falls back to a single piece (1 Stk).
-export function invoiceItemToProductInput(item: InvoiceItem): ProductInput {
-  const parsed = parseWeight(item.weight) ?? { value: 1, unit: "Stk" };
-  return {
-    id: item.id && item.id > 0 ? item.id : undefined,
-    category: item.category,
-    description: item.description,
-    brand: item.brand || null,
-    origin: item.origin || null,
-    netContent: parsed.value,
-    contentUnit: parsed.unit,
-    packSize: item.perBox ? Number(item.perBox) : null,
-    price: Number(item.rate),
-  };
 }

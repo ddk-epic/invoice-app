@@ -15,10 +15,17 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
-import type { BaseContact, Contact, InvoiceItem } from "@/constants/types";
-import { baseContact, baseItem } from "@/constants/constants";
+import type { BaseContact, Contact } from "@/constants/types";
+import { baseContact, baseProduct } from "@/constants/constants";
 import { toEuro, cn } from "@/lib/utils";
-import { invoiceItemToProductInput } from "@/lib/products";
+import {
+  weightLabel,
+  formatBasePrice,
+  CONTENT_UNITS,
+  type Product,
+  type ProductInput,
+  type ContentUnit,
+} from "@/lib/products";
 import {
   insertContactAction,
   insertProductAction,
@@ -268,13 +275,13 @@ function ContactsModal({ contacts }: { contacts: Contact[] }) {
   );
 }
 
-function ProductsModal({ products: productList }: { products: InvoiceItem[] }) {
+function ProductsModal({ products: productList }: { products: Product[] }) {
   const router = useRouter();
   const [isProductsModalOpen, setIsProductsModalOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [filteredItems, setFilteredItems] = useState(productList);
   const [visibleCount, setVisibleCount] = useState(40);
-  const [itemData, setItemData] = useState<InvoiceItem>(baseItem);
+  const [productData, setProductData] = useState<ProductInput>(baseProduct);
 
   // Which product surface is open in the bottom sheet: none, a fresh product,
   // or an existing one being edited. `sheet !== null` dims the catalog.
@@ -298,34 +305,54 @@ function ProductsModal({ products: productList }: { products: InvoiceItem[] }) {
   );
 
   const debounceTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const isItemValid =
-    itemData.description !== "" &&
-    itemData.category !== "" &&
-    itemData.brand !== "" &&
-    itemData.rate !== 0;
+  const isProductValid =
+    productData.name !== "" &&
+    productData.category !== "" &&
+    productData.netContent > 0 &&
+    productData.price > 0;
 
   const openNewProduct = () => {
-    setItemData(baseItem);
+    setProductData(baseProduct);
     setSheet("new");
   };
 
-  const openEditProduct = (item: InvoiceItem) => {
-    setItemData(item);
+  const openEditProduct = (product: Product) => {
+    setProductData(product);
     setSheet("edit");
   };
 
   const closeSheet = () => setSheet(null);
 
   const handleProductInsert = async () => {
-    // id > 0 => update existing catalog row; otherwise insert a new one
-    await insertProductAction(invoiceItemToProductInput(itemData));
+    // id present => update existing catalog row; otherwise insert a new one
+    await insertProductAction({
+      ...productData,
+      brand: productData.brand?.trim() || null,
+      origin: productData.origin?.trim() || null,
+      barcode: productData.barcode?.trim() || null,
+    });
     closeSheet();
     router.refresh();
   };
 
-  const updateItemData = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const updateText = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setItemData((prev) => ({ ...prev, [name]: value }));
+    setProductData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const updateNumber = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setProductData((prev) => ({
+      ...prev,
+      [name]: value === "" && name === "packSize" ? null : Number(value) || 0,
+    }));
+  };
+
+  const updateUnit = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setProductData((prev) => ({
+      ...prev,
+      contentUnit: e.target.value as ContentUnit,
+    }));
   };
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -337,7 +364,7 @@ function ProductsModal({ products: productList }: { products: InvoiceItem[] }) {
     debounceTimer.current = setTimeout(() => {
       const filtered = productList.filter(
         (item) =>
-          item.description.toLowerCase().includes(query.toLowerCase()) ||
+          item.name.toLowerCase().includes(query.toLowerCase()) ||
           item.category.toLowerCase().includes(query.toLowerCase())
       );
       setFilteredItems(filtered);
@@ -351,7 +378,7 @@ function ProductsModal({ products: productList }: { products: InvoiceItem[] }) {
         if (!open)
           setTimeout(() => {
             setSearchQuery("");
-            setItemData(baseItem);
+            setProductData(baseProduct);
             setFilteredItems(productList);
             setVisibleCount(40);
             setSheet(null);
@@ -408,7 +435,7 @@ function ProductsModal({ products: productList }: { products: InvoiceItem[] }) {
             <div className="space-y-1">
               {filteredItems.length > 0 ? (
                 filteredItems.slice(0, visibleCount).map((item) => {
-                  const lifted = sheet === "edit" && itemData.id === item.id;
+                  const lifted = sheet === "edit" && productData.id === item.id;
                   return (
                     <div
                       key={item.id}
@@ -419,14 +446,18 @@ function ProductsModal({ products: productList }: { products: InvoiceItem[] }) {
                       )}
                     >
                       <div>
-                        <h4 className="font-medium">{item.description}</h4>
+                        <h4 className="font-medium">{item.name}</h4>
                         <p className="text-sm text-gray-500">
                           {item.category.toUpperCase()}
                         </p>
                       </div>
                       <div className="mr-2 text-right">
-                        <p className="font-medium">{toEuro(item.rate)}</p>
-                        <p className="text-sm text-gray-500">{item.weight}</p>
+                        <p className="font-medium">{toEuro(item.price)}</p>
+                        <p className="text-sm text-gray-500">
+                          {weightLabel(item)}
+                          {formatBasePrice(item) &&
+                            ` · ${formatBasePrice(item)}`}
+                        </p>
                       </div>
                     </div>
                   );
@@ -462,7 +493,7 @@ function ProductsModal({ products: productList }: { products: InvoiceItem[] }) {
               <h3 className="font-medium text-gray-700">
                 {sheet === "new"
                   ? "Neuer Artikel"
-                  : `Bearbeiten: ${itemData.description}`}
+                  : `Bearbeiten: ${productData.name}`}
               </h3>
               <Button
                 variant="ghost"
@@ -477,25 +508,25 @@ function ProductsModal({ products: productList }: { products: InvoiceItem[] }) {
               <div className="space-y-2">
                 <div className="flex space-x-6">
                   <div className="flex-grow">
-                    <Label className="pb-1">Beschreibung</Label>
+                    <Label className="pb-1">Name</Label>
                     <Input
-                      id="description"
-                      name="description"
+                      id="name"
+                      name="name"
                       type="text"
-                      placeholder="Beschreibung"
-                      value={itemData.description}
-                      onChange={(e) => updateItemData(e)}
+                      placeholder="Name"
+                      value={productData.name}
+                      onChange={updateText}
                     />
                   </div>
                   <div className="w-32">
                     <Label className="pb-1">Preis</Label>
                     <Input
-                      id="rate"
-                      name="rate"
-                      type="text"
+                      id="price"
+                      name="price"
+                      type="number"
                       placeholder="Preis"
-                      value={itemData.rate.toString()}
-                      onChange={(e) => updateItemData(e)}
+                      value={productData.price || ""}
+                      onChange={updateNumber}
                       className="text-right"
                     />
                   </div>
@@ -508,21 +539,35 @@ function ProductsModal({ products: productList }: { products: InvoiceItem[] }) {
                       name="category"
                       type="text"
                       placeholder="Kategorie"
-                      value={itemData.category}
-                      onChange={(e) => updateItemData(e)}
+                      value={productData.category}
+                      onChange={updateText}
                     />
                   </div>
-                  <div className="w-32">
-                    <Label className="pb-1">Gewicht / Volumen</Label>
-                    <Input
-                      id="weight"
-                      name="weight"
-                      type="text"
-                      placeholder="Gewicht / Vol..."
-                      value={itemData.weight}
-                      onChange={(e) => updateItemData(e)}
-                      className="text-right"
-                    />
+                  <div className="w-40">
+                    <Label className="pb-1">Inhalt</Label>
+                    <div className="flex gap-2">
+                      <Input
+                        id="netContent"
+                        name="netContent"
+                        type="number"
+                        placeholder="Menge"
+                        value={productData.netContent || ""}
+                        onChange={updateNumber}
+                        className="text-right"
+                      />
+                      <select
+                        name="contentUnit"
+                        value={productData.contentUnit}
+                        onChange={updateUnit}
+                        className="rounded-md border px-2 text-sm"
+                      >
+                        {CONTENT_UNITS.map((unit) => (
+                          <option key={unit} value={unit}>
+                            {unit}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
                   </div>
                 </div>
                 <div className="flex space-x-6">
@@ -533,45 +578,56 @@ function ProductsModal({ products: productList }: { products: InvoiceItem[] }) {
                       name="brand"
                       type="text"
                       placeholder="Marke"
-                      value={itemData.brand}
-                      onChange={(e) => updateItemData(e)}
+                      value={productData.brand ?? ""}
+                      onChange={updateText}
                     />
                   </div>
                   <div className="w-32">
                     <Label className="pb-1">Boxanzahl</Label>
                     <Input
-                      id="box"
-                      name="box"
-                      type="text"
+                      id="packSize"
+                      name="packSize"
+                      type="number"
                       placeholder="Boxanzahl"
-                      value={itemData.perBox}
-                      onChange={(e) => updateItemData(e)}
+                      value={productData.packSize ?? ""}
+                      onChange={updateNumber}
                       className="text-right"
                     />
                   </div>
                 </div>
                 <div className="flex space-x-6">
                   <div className="flex-grow">
+                    <Label className="pb-1">EAN</Label>
+                    <Input
+                      id="barcode"
+                      name="barcode"
+                      type="text"
+                      placeholder="EAN"
+                      value={productData.barcode ?? ""}
+                      onChange={updateText}
+                    />
+                  </div>
+                  <div className="w-40">
                     <Label className="pb-1">Herkunft</Label>
                     <Input
                       id="origin"
                       name="origin"
                       type="text"
                       placeholder="Herkunft"
-                      value={itemData.origin}
-                      onChange={(e) => updateItemData(e)}
+                      value={productData.origin ?? ""}
+                      onChange={updateText}
                     />
                   </div>
-                  <div className="flex w-32 items-end pt-4.5">
-                    <Button
-                      variant="ghost"
-                      onClick={handleProductInsert}
-                      disabled={!isItemValid}
-                      className="w-32 bg-gradient-to-r from-teal-500 to-teal-600 text-base text-white"
-                    >
-                      {sheet === "new" ? "Anlegen" : "Aktualisieren"}
-                    </Button>
-                  </div>
+                </div>
+                <div className="flex justify-end">
+                  <Button
+                    variant="ghost"
+                    onClick={handleProductInsert}
+                    disabled={!isProductValid}
+                    className="w-32 bg-gradient-to-r from-teal-500 to-teal-600 text-base text-white"
+                  >
+                    {sheet === "new" ? "Anlegen" : "Aktualisieren"}
+                  </Button>
                 </div>
               </div>
             </div>

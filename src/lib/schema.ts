@@ -6,7 +6,7 @@ import type {
   Contact,
   InvoiceItem,
 } from "@/constants/types";
-import type { ProductInput } from "@/lib/products";
+import { CONTENT_UNITS, type ProductInput } from "@/lib/products";
 
 const AddressSchema: z.ZodType<Address> = z.object({
   street: z.string(),
@@ -33,14 +33,16 @@ const ContactSchema: z.ZodType<Contact> = z.object({
 
 const InvoiceItemSchema: z.ZodType<InvoiceItem> = z.object({
   id: z.number(),
+  barcode: z.string().nullable(),
   category: z.string(),
-  description: z.string(),
-  brand: z.string(),
-  origin: z.string().optional(),
-  weight: z.string().optional(),
-  perBox: z.number().optional(),
+  name: z.string(),
+  brand: z.string().nullable(),
+  origin: z.string().nullable(),
+  netContent: z.number(),
+  contentUnit: z.enum(CONTENT_UNITS),
+  packSize: z.number().nullable(),
+  price: z.number(),
   quantity: z.number(),
-  rate: z.number(),
   amount: z.number(),
 });
 
@@ -62,13 +64,13 @@ export const InvoiceSchema = z.object({
 
 export const ProductSchema: z.ZodType<ProductInput> = z.object({
   id: z.number().optional(),
-  gtin: z.string().nullable().optional(),
+  barcode: z.string().nullable().optional(),
   category: z.string().min(1),
-  description: z.string().min(1),
+  name: z.string().min(1),
   brand: z.string().nullable().optional(),
   origin: z.string().nullable().optional(),
   netContent: z.number().positive(),
-  contentUnit: z.enum(["g", "kg", "ml", "l", "Stk"]),
+  contentUnit: z.enum(CONTENT_UNITS),
   packSize: z.number().int().positive().nullable().optional(),
   price: z.number().nonnegative(),
 });

@@ -6,6 +6,7 @@ import { Page, Text, View, Document, StyleSheet } from "@react-pdf/renderer";
 import { Overline, UnderLine } from "./pdf-components";
 
 import { InvoiceData, PrivateContact } from "@/constants/types";
+import { weightLabel } from "@/lib/products";
 import { toEuro, deShortDate, idPrefix } from "@/lib/utils";
 
 interface PdfDocumentProps {
@@ -160,16 +161,18 @@ function PdfDocument(props: PdfDocumentProps) {
             <View key={item.id} style={s.inline}>
               <Text style={[{ width: 30 }]}>{index + 1}</Text>
               <Text style={[{ width: 273 }]}>
-                {item.description}
+                {item.name}
                 {item.brand && " " + item.brand.toUpperCase()}
-                {item.weight && ", "}
-                {item.perBox ? item.perBox + " X " + item.weight : item.weight}
+                {weightLabel(item) && ", "}
+                {item.packSize
+                  ? item.packSize + " X " + weightLabel(item)
+                  : weightLabel(item)}
               </Text>
               <Text style={[{ width: 72, textAlign: "right" }]}>
                 {item.quantity}
               </Text>
               <Text style={[{ width: 72, textAlign: "right" }]}>
-                {toEuro(item.rate)}
+                {toEuro(item.price)}
               </Text>
               <Text style={[{ width: 72, textAlign: "right" }]}>
                 {toEuro(item.amount)}

@@ -33,9 +33,9 @@ function rowToContact(row: SelectContact): Contact {
 // Map an app-level ProductInput to a DB row (numeric columns are strings in drizzle).
 function productInputToRow(p: ProductInput) {
   return {
-    gtin: p.gtin ?? null,
+    barcode: p.barcode ?? null,
     category: p.category,
-    description: p.description,
+    name: p.name,
     brand: p.brand ?? null,
     origin: p.origin ?? null,
     netContent: String(p.netContent),
