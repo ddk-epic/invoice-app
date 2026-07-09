@@ -40,7 +40,6 @@ export interface Contact extends BaseContact {
   id: number;
 }
 
-// An invoice line is a catalog product placed on an invoice, plus quantity/amount.
 export interface InvoiceItem extends Product {
   quantity: number;
   amount: number;

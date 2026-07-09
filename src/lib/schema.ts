@@ -6,7 +6,7 @@ import type {
   Contact,
   InvoiceItem,
 } from "@/constants/types";
-import { CONTENT_UNITS, type ProductInput } from "@/lib/products";
+import { ContentUnitSchema, type ProductInput } from "@/lib/products";
 
 const AddressSchema: z.ZodType<Address> = z.object({
   street: z.string(),
@@ -39,7 +39,7 @@ const InvoiceItemSchema: z.ZodType<InvoiceItem> = z.object({
   brand: z.string().nullable(),
   origin: z.string().nullable(),
   netContent: z.number(),
-  contentUnit: z.enum(CONTENT_UNITS),
+  contentUnit: ContentUnitSchema,
   packSize: z.number().nullable(),
   price: z.number(),
   quantity: z.number(),
@@ -70,7 +70,7 @@ export const ProductSchema: z.ZodType<ProductInput> = z.object({
   brand: z.string().nullable().optional(),
   origin: z.string().nullable().optional(),
   netContent: z.number().positive(),
-  contentUnit: z.enum(CONTENT_UNITS),
+  contentUnit: ContentUnitSchema,
   packSize: z.number().int().positive().nullable().optional(),
   price: z.number().nonnegative(),
 });

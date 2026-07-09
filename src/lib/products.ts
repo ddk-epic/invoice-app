@@ -1,8 +1,11 @@
+import z from "zod";
+
 import type { InvoiceItem } from "@/constants/types";
 import type { SelectProductCatalog } from "@/server/db/schema";
 
 export const CONTENT_UNITS = ["g", "kg", "ml", "l", "Stk"] as const;
-export type ContentUnit = (typeof CONTENT_UNITS)[number];
+export const ContentUnitSchema = z.enum(CONTENT_UNITS);
+export type ContentUnit = z.infer<typeof ContentUnitSchema>;
 
 // Normalized catalog product. DB numeric columns arrive as strings via drizzle,
 // so this coerces them to numbers for app use.
@@ -28,7 +31,7 @@ export function rowToProduct(row: SelectProductCatalog): Product {
     brand: row.brand,
     origin: row.origin,
     netContent: Number(row.netContent),
-    contentUnit: row.contentUnit as ContentUnit,
+    contentUnit: ContentUnitSchema.parse(row.contentUnit),
     packSize: row.packSize,
     price: Number(row.price),
   };
@@ -41,8 +44,6 @@ export function weightLabel(p: Product): string {
   return `${p.netContent}${p.contentUnit}`;
 }
 
-// A picked product becomes an invoice line: the same fields plus a default
-// quantity/amount. The editor recomputes quantity/amount as the line is edited.
 export function productToInvoiceItem(p: Product): InvoiceItem {
   return { ...p, quantity: 1, amount: p.price };
 }
@@ -71,8 +72,6 @@ export function computeBasePrice(p: Product): BasePrice {
   return { value: round2(p.price / packs), unit: "€/Stk" };
 }
 
-// German-formatted Grundpreis label ("3,03 €/kg"). Null for piece goods (Stk),
-// which PAngV doesn't require and where €/Stk just restates the price.
 export function formatBasePrice(p: Product): string | null {
   if (p.contentUnit === "Stk") return null;
   const { value, unit } = computeBasePrice(p);
