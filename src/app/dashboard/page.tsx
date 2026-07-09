@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { currentUser } from "@clerk/nextjs/server";
 
 import { getInvoicesContactsProducts } from "../actions/server-actions";
@@ -33,6 +34,12 @@ export default async function Dashboard() {
             </span>
           </div>
           <div className="flex items-center gap-1">
+            <Link
+              href="/invoice"
+              className="rounded-md px-2.5 py-1.5 text-sm font-normal text-slate-500 hover:bg-slate-100"
+            >
+              Alle Rechnungen
+            </Link>
             <ContactsModal contacts={contactList} />
             <ProductsModal products={productList} />
             <CreateInvoiceModal contacts={contactList} />
