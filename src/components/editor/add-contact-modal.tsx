@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -64,6 +65,9 @@ function SelectContactModal(props: SelectContactModalProps) {
         <DialogContent className="max-h-[95vh] max-w-2xl gap-2 overflow-y-auto">
           <DialogHeader className="mb-2">
             <DialogTitle>Kontakt auswählen</DialogTitle>
+            <DialogDescription>
+              Wählen Sie einen Kontakt für die Rechnung aus.
+            </DialogDescription>
           </DialogHeader>
           {contactList.map((contact) => (
             <Button

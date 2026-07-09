@@ -9,6 +9,7 @@ import {
   Dialog,
   DialogTrigger,
   DialogContent,
+  DialogDescription,
   DialogTitle,
   DialogHeader,
 } from "@/components/ui/dialog";
@@ -142,6 +143,9 @@ function ContactsModal({ contacts }: { contacts: Contact[] }) {
                 <Plus className="size-4" /> Neuer Kontakt
               </Button>
             )}
+            <DialogDescription className="sr-only">
+              Kontakte verwalten und bearbeiten.
+            </DialogDescription>
           </DialogHeader>
         </div>
 
@@ -411,6 +415,9 @@ function ProductsModal({ products: productList }: { products: Product[] }) {
                 <Plus className="size-4" /> Neuer Artikel
               </Button>
             )}
+            <DialogDescription className="sr-only">
+              Artikel verwalten und bearbeiten.
+            </DialogDescription>
           </DialogHeader>
           <div className="relative">
             <Input

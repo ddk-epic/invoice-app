@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -86,6 +87,10 @@ function AddItemModal({ products: productList, addItem }: AddItemModalProps) {
         <div className="top-0 px-6 pt-6">
           <DialogHeader className="mb-4">
             <DialogTitle>Zu Hinzufügende Artikel auswählen</DialogTitle>
+            <DialogDescription>
+              Wählen Sie die Artikel aus, die der Rechnung hinzugefügt werden
+              sollen.
+            </DialogDescription>
           </DialogHeader>
           <div className="relative">
             <Input
