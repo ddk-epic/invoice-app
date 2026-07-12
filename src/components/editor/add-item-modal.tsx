@@ -14,7 +14,12 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 
-import { weightLabel, formatBasePrice, type Product } from "@/lib/products";
+import {
+  weightLabel,
+  formatBasePrice,
+  productMatches,
+  type Product,
+} from "@/lib/products";
 import { toEuro } from "@/lib/utils";
 import { useSearchableList } from "@/hooks/use-searchable-list";
 
@@ -22,10 +27,6 @@ interface AddItemModalProps {
   products: Product[];
   addItem: (product: Product) => void;
 }
-
-const productMatches = (product: Product, query: string) =>
-  product.name.toLowerCase().includes(query.toLowerCase()) ||
-  product.category.toLowerCase().includes(query.toLowerCase());
 
 function AddItemModal({ products: productList, addItem }: AddItemModalProps) {
   const [isAddItemModalOpen, setIsAddItemModalOpen] = useState(false);

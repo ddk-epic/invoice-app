@@ -36,6 +36,10 @@ export function rowToProduct(row: SelectProductCatalog): Product {
   };
 }
 
+export const productMatches = (product: Product, query: string) =>
+  product.name.toLowerCase().includes(query.toLowerCase()) ||
+  product.category.toLowerCase().includes(query.toLowerCase());
+
 // Human weight label, matching the legacy free-text `weight` (e.g. "330ml").
 // Piece-priced items (Stk) carry no weight label.
 export function weightLabel(p: Product): string {
