@@ -3,7 +3,6 @@ import type { SelectProductCatalog } from "@/server/db/schema";
 import {
   rowToProduct,
   weightLabel,
-  productToInvoiceItem,
   computeBasePrice,
   formatBasePrice,
   parseWeight,
@@ -58,21 +57,6 @@ describe("weightLabel", () => {
     expect(weightLabel(product({ contentUnit: "Stk", netContent: 1 }))).toBe(
       ""
     );
-  });
-});
-
-describe("productToInvoiceItem", () => {
-  it("adds a default quantity/amount, preserving product fields", () => {
-    const item = productToInvoiceItem(product({ price: 30, packSize: 24 }));
-    expect(item.price).toBe(30);
-    expect(item.amount).toBe(30);
-    expect(item.packSize).toBe(24);
-    expect(item.quantity).toBe(1);
-  });
-  it("keeps null brand/pack untouched (no lossy defaulting)", () => {
-    const item = productToInvoiceItem(product({ brand: null, packSize: null }));
-    expect(item.brand).toBeNull();
-    expect(item.packSize).toBeNull();
   });
 });
 

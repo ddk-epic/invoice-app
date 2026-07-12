@@ -1,6 +1,5 @@
 import z from "zod";
 
-import type { InvoiceItem } from "@/constants/types";
 import type { SelectProductCatalog } from "@/server/db/schema";
 
 export const CONTENT_UNITS = ["g", "kg", "ml", "l", "Stk"] as const;
@@ -42,10 +41,6 @@ export function rowToProduct(row: SelectProductCatalog): Product {
 export function weightLabel(p: Product): string {
   if (p.contentUnit === "Stk") return "";
   return `${p.netContent}${p.contentUnit}`;
-}
-
-export function productToInvoiceItem(p: Product): InvoiceItem {
-  return { ...p, quantity: 1, amount: p.price };
 }
 
 export interface BasePrice {
