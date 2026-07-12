@@ -26,7 +26,7 @@ import {
 import { Contact } from "@/lib/contacts";
 
 import { redirect, RedirectType } from "next/navigation";
-import { toast } from "sonner";
+import { notifyError } from "@/diagnostics/notify";
 import { createDraftAction } from "@/app/actions/server-actions";
 import { Spinner } from "../ui/spinner";
 
@@ -48,7 +48,7 @@ export const CreateInvoiceModal = (props: CreatInvoiceModalProps) => {
     const draftId = await createDraftAction({ contactId: contactField!.id });
     setIsLoading(false);
     if (draftId == null) {
-      toast.error("Rechnung konnte nicht erstellt werden.");
+      notifyError("Rechnung konnte nicht erstellt werden.");
       return;
     }
 

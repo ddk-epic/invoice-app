@@ -3,8 +3,9 @@
 import { useState, useTransition } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { toast } from "sonner";
 import { Check, Pencil, Trash2 } from "lucide-react";
+
+import { notifyError, notifySuccess } from "@/diagnostics/notify";
 
 import { toEuro, deShortDate } from "@/lib/utils";
 import { Derived, WorkItem, toSections, sumAmount } from "@/lib/work-items";
@@ -57,11 +58,11 @@ function Row({ item }: { item: WorkItem }) {
       setSettled(true);
       const ok = await markPaidAction(item.id);
       if (ok) {
-        toast.success(`Als bezahlt markiert · ${item.client}`);
+        notifySuccess(`Als bezahlt markiert · ${item.client}`);
         router.refresh();
       } else {
         setSettled(false);
-        toast.error("Konnte nicht als bezahlt markiert werden");
+        notifyError("Konnte nicht als bezahlt markiert werden");
       }
     });
 
@@ -69,10 +70,10 @@ function Row({ item }: { item: WorkItem }) {
     startTransition(async () => {
       const ok = await discardDraftAction(item.id);
       if (ok) {
-        toast.success(`Entwurf gelöscht · ${item.client}`);
+        notifySuccess(`Entwurf gelöscht · ${item.client}`);
         router.refresh();
       } else {
-        toast.error("Konnte nicht gelöscht werden");
+        notifyError("Konnte nicht gelöscht werden");
       }
     });
 

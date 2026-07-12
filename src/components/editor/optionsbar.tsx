@@ -20,7 +20,7 @@ import {
 } from "@/app/actions/server-actions";
 import { canFinalize } from "@/lib/invoice";
 import { redirect } from "next/navigation";
-import { toast } from "sonner";
+import { notifyError } from "@/diagnostics/notify";
 
 interface OptionsbarProps {
   privateContact: Profile;
@@ -52,7 +52,7 @@ function Optionsbar(props: OptionsbarProps) {
     if (!invoiceData.id) return false;
     const res = await updateDraftAction(invoiceData.id, invoiceData);
     if (!res.ok) {
-      toast.error(
+      notifyError(
         res.error === "validation"
           ? "Bitte füllen Sie alle erforderlichen Felder aus."
           : "Entwurf konnte nicht gespeichert werden."
@@ -67,7 +67,7 @@ function Optionsbar(props: OptionsbarProps) {
     if (!saved) return;
     const result = await finalizeDraftAction(invoiceData.id);
     if (!result.ok) {
-      toast.error(finalizeError(result.reason));
+      notifyError(finalizeError(result.reason));
       return;
     }
 
