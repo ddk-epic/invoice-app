@@ -15,6 +15,7 @@ import {
 import type {
   Address,
   Contact,
+  DraftItem,
   InvoiceItem,
   InvoiceStatus,
 } from "@/constants/types";
@@ -84,7 +85,7 @@ export const invoiceSchema = pgTable(
     sendTo: jsonb("send_to").$type<Contact>().notNull(),
     invoiceTo: jsonb("invoice_to").$type<Contact>().notNull(),
 
-    items: jsonb("items").$type<InvoiceItem[]>().notNull(),
+    items: jsonb("items").$type<DraftItem[] | InvoiceItem[]>().notNull(),
     total: integer("total").notNull(),
     taxRate: integer("tax_rate").notNull(),
 

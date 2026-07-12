@@ -5,12 +5,12 @@ import Logo from "./logo";
 import { Page, Text, View, Document, StyleSheet } from "@react-pdf/renderer";
 import { Overline, UnderLine } from "./pdf-components";
 
-import { Invoice, Profile } from "@/constants/types";
+import { FinalizedInvoice, Profile } from "@/constants/types";
 import { weightLabel } from "@/lib/products";
 import { toEuro, deShortDate, idPrefix } from "@/lib/utils";
 
 interface PdfDocumentProps {
-  data: Invoice;
+  data: FinalizedInvoice;
   privateData: Profile;
 }
 

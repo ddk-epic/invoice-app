@@ -4,7 +4,7 @@ import type {
   Address,
   BaseContact,
   Contact,
-  InvoiceItem,
+  DraftItem,
 } from "@/constants/types";
 import { ContentUnitSchema, type ProductInput } from "@/lib/products";
 
@@ -31,35 +31,25 @@ const ContactSchema: z.ZodType<Contact> = z.object({
   address: AddressSchema,
 });
 
-const InvoiceItemSchema: z.ZodType<InvoiceItem> = z.object({
-  id: z.number(),
-  barcode: z.string().nullable(),
-  category: z.string(),
-  name: z.string(),
-  brand: z.string().nullable(),
-  origin: z.string().nullable(),
-  netContent: z.number(),
-  contentUnit: ContentUnitSchema,
-  packSize: z.number().nullable(),
-  price: z.number(),
+const DraftItemSchema: z.ZodType<DraftItem> = z.object({
+  productId: z.number(),
   quantity: z.number(),
-  amount: z.number(),
 });
 
-// Write payload; not pinned to Invoice (invoiceId is set on submit, dates may be strings).
-export const InvoiceSchema = z.object({
-  invoiceId: z.string().optional(),
+// Autosave payload: a Draft's editable subset. sender, invoiceId and frozen
+// items/total are server-owned at finalize, never client-authored.
+export const DraftSchema = z.object({
+  invoiceId: z.string(),
   invoiceDate: z.string(),
   dueDate: z.string(),
-  status: z.enum(["draft", "open", "paid", "overdue"]),
-  sender: ContactSchema,
+  status: z.literal("draft"),
+  locationId: z.number().nullable().optional(),
+  sender: z.null(),
   sendTo: ContactSchema,
   invoiceTo: ContactSchema,
-  items: z.array(InvoiceItemSchema),
+  items: z.array(DraftItemSchema),
   total: z.number(),
   taxRate: z.number(),
-  createdAt: z.union([z.string(), z.date()]),
-  updatedAt: z.union([z.string(), z.date()]),
 });
 
 export const ProductSchema: z.ZodType<ProductInput> = z.object({

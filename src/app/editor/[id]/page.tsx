@@ -19,7 +19,7 @@ async function DraftEditorPage({ params }: EditorPageProps) {
       QUERIES.getDraftById(draftId),
       getContactsAndProducts(),
     ]);
-  if (!draft) notFound();
+  if (!draft || draft.status !== "draft") notFound();
 
   return (
     <main className="top min-h-screen bg-gray-100">

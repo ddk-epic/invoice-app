@@ -6,13 +6,13 @@ import {
   BaseContact,
   Contact,
   CreateDraftInput,
+  DraftInvoice,
   FinalizeResult,
-  Invoice,
   LatestInvoice,
   Profile,
   WriteResult,
 } from "@/constants/types";
-import { BaseContactSchema, InvoiceSchema, ProductSchema } from "@/lib/schema";
+import { BaseContactSchema, DraftSchema, ProductSchema } from "@/lib/schema";
 import { rowToProduct, type Product, type ProductInput } from "@/lib/products";
 import {
   createDraft,
@@ -90,9 +90,9 @@ export const createDraftAction = async (
 
 export const updateDraftAction = async (
   id: number,
-  draft: Invoice
+  draft: DraftInvoice
 ): Promise<WriteResult> =>
-  validateWrite("updateDraftAction", InvoiceSchema, draft, () =>
+  validateWrite("updateDraftAction", DraftSchema, draft, () =>
     QUERIES.updateDraftById(id, draft)
   );
 

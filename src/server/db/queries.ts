@@ -1,6 +1,6 @@
 import "server-only";
 
-import { and, desc, eq, gte, ne, or, sql } from "drizzle-orm";
+import { and, desc, eq, gte, inArray, ne, or, sql } from "drizzle-orm";
 import { db } from "./index";
 import {
   contactsSchema as contactsTable,
@@ -9,18 +9,21 @@ import {
   profileSchema as profileTable,
   productCatalogSchema as productCatalogTable,
   type SelectContact,
+  type SelectInvoice,
 } from "./schema";
 
 import {
   BaseContact,
   Contact,
+  DraftItem,
+  InvoiceItem,
   InvoiceRow,
   Invoice,
   LatestInvoice,
   Location,
   Profile,
 } from "@/constants/types";
-import type { ProductInput } from "@/lib/products";
+import { rowToProduct, type Product, type ProductInput } from "@/lib/products";
 
 function rowToContact(row: SelectContact): Contact {
   return {
@@ -62,6 +65,36 @@ function invoiceDataToRow(inv: Invoice) {
     items: inv.items,
     total: inv.total,
     taxRate: inv.taxRate,
+  };
+}
+
+function rowToInvoice(row: SelectInvoice): Invoice {
+  const base = {
+    id: row.id,
+    invoiceId: row.invoiceId,
+    invoiceDate: row.invoiceDate,
+    dueDate: row.dueDate,
+    locationId: row.locationId,
+    sendTo: row.sendTo,
+    invoiceTo: row.invoiceTo,
+    total: row.total,
+    taxRate: row.taxRate,
+    createdAt: row.createdAt,
+    updatedAt: row.updatedAt,
+  };
+  if (row.status === "draft") {
+    return {
+      ...base,
+      status: "draft",
+      sender: null,
+      items: row.items as DraftItem[],
+    };
+  }
+  return {
+    ...base,
+    status: row.status,
+    sender: row.sender as Contact,
+    items: row.items as InvoiceItem[],
   };
 }
 
@@ -175,7 +208,7 @@ export const QUERIES = {
       .from(invoiceTable)
       .where(eq(invoiceTable.invoiceId, invoiceId))
       .limit(1);
-    return row;
+    return row ? rowToInvoice(row) : undefined;
   },
 
   getDraftById: async function (id: number): Promise<Invoice | undefined> {
@@ -183,7 +216,16 @@ export const QUERIES = {
       .select()
       .from(invoiceTable)
       .where(eq(invoiceTable.id, id));
-    return row;
+    return row ? rowToInvoice(row) : undefined;
+  },
+
+  getProductsByIds: async function (ids: number[]): Promise<Product[]> {
+    if (ids.length === 0) return [];
+    const rows = await db
+      .select()
+      .from(productCatalogTable)
+      .where(inArray(productCatalogTable.id, ids));
+    return rows.map(rowToProduct);
   },
 
   insertDraft: async function (inv: Invoice) {
@@ -204,13 +246,20 @@ export const QUERIES = {
   // Assign the next sequential number, freeze the sender, flip to open, atomically.
   // The SET subquery sees the pre-update table, so this still-draft row is excluded.
   // status='draft' guard makes a re-finalize a no-op.
-  finalizeDraftById: async function (id: number, sender: Contact) {
+  finalizeDraftById: async function (
+    id: number,
+    sender: Contact,
+    items: InvoiceItem[],
+    total: number
+  ) {
     const [row] = await db
       .update(invoiceTable)
       .set({
         invoiceId: sql`(SELECT COALESCE(MAX((invoice_id)::int), 0) + 1
                         FROM invoice_invoices WHERE status <> 'draft')`,
         sender,
+        items,
+        total,
         status: "open",
       })
       .where(and(eq(invoiceTable.id, id), eq(invoiceTable.status, "draft")))

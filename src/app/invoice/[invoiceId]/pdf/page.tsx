@@ -16,7 +16,7 @@ async function InvoiceGenerator(props: InvoiceGeneratorProps) {
   const privateData = (await getPrivateData())[0];
   const invoice = await getInvoiceData(invoiceId);
 
-  if (!invoice) notFound();
+  if (!invoice || invoice.status === "draft") notFound();
 
   const document = <PdfDocument data={invoice} privateData={privateData} />;
 

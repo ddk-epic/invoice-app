@@ -2,12 +2,13 @@ import "server-only";
 
 import type {
   CreateDraftInput,
+  DraftInvoice,
   FinalizeResult,
-  Invoice,
+  InvoiceItem,
   WriteResult,
 } from "@/constants/types";
 import { QUERIES } from "@/server/db/queries";
-import { canFinalize } from "@/lib/invoice";
+import { canFinalize, computeTotal, resolveItem } from "@/lib/invoice";
 import { resolveSender } from "@/lib/sender";
 import { addDays, todayIso } from "@/lib/utils";
 
@@ -22,7 +23,7 @@ export async function createDraft(
     if (!contact) return null;
 
     const invoiceDate = todayIso();
-    const draft: Invoice = {
+    const draft: DraftInvoice = {
       invoiceId: "",
       invoiceDate,
       dueDate: addDays(invoiceDate, DEFAULT_PAYMENT_TERM_DAYS),
@@ -63,7 +64,20 @@ export async function finalizeDraft(id: number): Promise<FinalizeResult> {
     if (!location) return { ok: false, reason: "no_location" };
 
     const sender = resolveSender(profile, location);
-    const row = await QUERIES.finalizeDraftById(id, sender);
+
+    const products = await QUERIES.getProductsByIds(
+      draft.items.map((i) => i.productId)
+    );
+    const byId = new Map(products.map((p) => [p.id, p]));
+    const items: InvoiceItem[] = [];
+    for (const di of draft.items) {
+      const product = byId.get(di.productId);
+      if (!product) return { ok: false, reason: "db" };
+      items.push(resolveItem(di, product));
+    }
+    const total = computeTotal(items);
+
+    const row = await QUERIES.finalizeDraftById(id, sender, items, total);
     if (!row) return { ok: false, reason: "not_found" };
     return { ok: true, number: row.invoiceId };
   } catch (err) {

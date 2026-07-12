@@ -50,7 +50,7 @@ function Table(props: TableProps) {
                       updateItemQty(item.id, Number(e.target.value) || 0)
                     }
                     className="h-auto w-13 border-1 p-0 text-right focus-visible:ring-0"
-                    min="0"
+                    min="1"
                     step="1"
                   />
                 </td>

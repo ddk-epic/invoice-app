@@ -1,6 +1,12 @@
 "use client";
 
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { useRouter } from "next/navigation";
 
 import { Card } from "@/components/ui/card";
@@ -12,20 +18,27 @@ import AddItemModal from "./add-item-modal";
 import InvoiceDetails from "./invoice-details";
 import SelectContactModal from "./add-contact-modal";
 
-import { Contact, Invoice, InvoiceItem, Profile } from "@/constants/types";
+import {
+  Contact,
+  DraftInvoice,
+  DraftItem,
+  InvoiceItem,
+  Profile,
+} from "@/constants/types";
 import {
   discardDraftAction,
   updateDraftAction,
 } from "@/app/actions/server-actions";
-import { productToInvoiceItem, type Product } from "@/lib/products";
-import { computeTotal } from "@/lib/invoice";
+import { type Product } from "@/lib/products";
+import { computeTotal, resolveItem } from "@/lib/invoice";
+import { addProduct, removeProduct, setQuantity } from "@/lib/invoice-items";
 import { addDays } from "@/lib/utils";
 
 interface InvoiceEditorProps {
   privateContact: Profile;
   contacts: Contact[];
   products: Product[];
-  invoiceData: Invoice;
+  invoiceData: DraftInvoice;
 }
 
 export default function InvoiceEditor(props: InvoiceEditorProps) {
@@ -40,13 +53,27 @@ export default function InvoiceEditor(props: InvoiceEditorProps) {
   const [isInvoiceToModalOpen, setIsInvoiceToModalOpen] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
 
-  // Seed total from items so a stale stored total isn't flagged dirty on open.
+  const productById = useMemo(
+    () => new Map(productList.map((p) => [p.id, p])),
+    [productList]
+  );
+
+  const resolve = useCallback(
+    (items: DraftItem[]): InvoiceItem[] =>
+      items.flatMap((di) => {
+        const product = productById.get(di.productId);
+        return product ? [resolveItem(di, product)] : [];
+      }),
+    [productById]
+  );
+
+  // Seed estimate total so a stale stored total isn't flagged dirty on open.
   const initialWithComputedTotal = {
     ...initialInvoice,
-    total: computeTotal(initialInvoice.items),
+    total: computeTotal(resolve(initialInvoice.items)),
   };
 
-  const [invoiceData, setInvoiceData] = useState<Invoice>(
+  const [invoiceData, setInvoiceData] = useState<DraftInvoice>(
     initialWithComputedTotal
   );
 
@@ -65,10 +92,7 @@ export default function InvoiceEditor(props: InvoiceEditorProps) {
   const saveDraft = useCallback(
     async (showSpinner: boolean) => {
       if (!draftId) return;
-      const current = {
-        ...latestRef.current,
-        total: computeTotal(latestRef.current.items),
-      };
+      const current = latestRef.current;
       const snapshot = JSON.stringify(current);
       if (snapshot === lastSavedRef.current) return; // not dirty
       if (showSpinner) setIsSaving(true);
@@ -102,52 +126,24 @@ export default function InvoiceEditor(props: InvoiceEditorProps) {
     };
   }, [draftId, saveDraft]);
 
-  const handleItems = (items: InvoiceItem[]) => {
-    setInvoiceData((prev) => ({ ...prev, items }));
+  const setItems = (items: DraftItem[]) => {
+    setInvoiceData((prev) => ({
+      ...prev,
+      items,
+      total: computeTotal(resolve(items)),
+    }));
   };
 
-  const addItem = (product: Product) => {
-    const items = invoiceData.items;
-    const itemIndex = items.findIndex((i) => i.id === product.id);
+  const addItem = (product: Product) =>
+    setItems(addProduct(invoiceData.items, product.id));
 
-    if (itemIndex !== -1) {
-      const existing = items[itemIndex];
-      const quantity = existing.quantity + 1;
-      const updatedItem = {
-        ...existing,
-        quantity,
-        amount: quantity * existing.price,
-      };
+  const updateItemQty = (id: number, quantity: number) =>
+    setItems(setQuantity(invoiceData.items, id, quantity));
 
-      const updatedItems = [
-        ...items.slice(0, itemIndex),
-        updatedItem,
-        ...items.slice(itemIndex + 1),
-      ];
-      handleItems(updatedItems);
-    } else {
-      handleItems([...items, productToInvoiceItem(product)]);
-    }
-  };
+  const removeItem = (id: number) =>
+    setItems(removeProduct(invoiceData.items, id));
 
-  const updateItemQty = (id: number, quantity: number) => {
-    const updatedItems = invoiceData.items.map((i) => {
-      if (i.id === id) {
-        const updatedItem = {
-          ...i,
-          quantity,
-          amount: quantity * i.price,
-        };
-        return updatedItem;
-      }
-      return i;
-    });
-    handleItems(updatedItems);
-  };
-
-  const removeItem = (id: number) => {
-    handleItems(invoiceData.items.filter((item) => item.id !== id));
-  };
+  const resolvedItems = resolve(invoiceData.items);
 
   const updateContactById = (id: number, name: string) => {
     const contact = contactList.find((contact) => contact.id === id);
@@ -235,7 +231,7 @@ export default function InvoiceEditor(props: InvoiceEditorProps) {
               {/* Table */}
               <div>
                 <Table
-                  items={invoiceData.items}
+                  items={resolvedItems}
                   updateItemQty={updateItemQty}
                   removeItem={removeItem}
                 />
@@ -248,7 +244,7 @@ export default function InvoiceEditor(props: InvoiceEditorProps) {
               )}
 
               {/* Total */}
-              <Total items={invoiceData.items} taxRate={invoiceData.taxRate} />
+              <Total items={resolvedItems} taxRate={invoiceData.taxRate} />
             </div>
           </div>
         </Card>

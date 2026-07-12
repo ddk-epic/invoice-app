@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/sheet";
 import { Separator } from "@/components/ui/separator";
 
-import { FinalizeResult, Invoice, Profile } from "@/constants/types";
+import { DraftInvoice, FinalizeResult, Profile } from "@/constants/types";
 import {
   finalizeDraftAction,
   updateDraftAction,
@@ -24,7 +24,7 @@ import { toast } from "sonner";
 
 interface OptionsbarProps {
   privateContact: Profile;
-  invoiceData: Invoice;
+  invoiceData: DraftInvoice;
   discardData: () => void;
 }
 

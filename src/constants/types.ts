@@ -84,22 +84,33 @@ export interface LatestInvoice {
   client: string;
 }
 
-export interface Invoice {
+interface InvoiceBase {
   id?: number;
   invoiceId: string;
   invoiceDate: string;
   dueDate: string;
-  status: InvoiceStatus;
   locationId?: number | null;
 
-  sender: Contact | null;
   sendTo: Contact;
   invoiceTo: Contact;
 
-  items: InvoiceItem[];
   total: number;
   taxRate: number;
 
   createdAt: Date;
   updatedAt: Date;
 }
+
+export interface DraftInvoice extends InvoiceBase {
+  status: "draft";
+  sender: null;
+  items: DraftItem[];
+}
+
+export interface FinalizedInvoice extends InvoiceBase {
+  status: "open" | "paid" | "overdue";
+  sender: Contact;
+  items: InvoiceItem[];
+}
+
+export type Invoice = DraftInvoice | FinalizedInvoice;

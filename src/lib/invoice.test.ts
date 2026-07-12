@@ -33,7 +33,7 @@ const item = (over: Partial<InvoiceItem> = {}): InvoiceItem => ({
   ...over,
 });
 
-const draft = (items: InvoiceItem[]): Invoice => ({
+const draft = (items: DraftItem[]): Invoice => ({
   invoiceId: "",
   invoiceDate: "2026-07-12",
   dueDate: "2026-07-26",
@@ -53,7 +53,7 @@ describe("canFinalize", () => {
     expect(canFinalize(draft([]))).toBe(false);
   });
   it("is true with at least one line item", () => {
-    expect(canFinalize(draft([item()]))).toBe(true);
+    expect(canFinalize(draft([{ productId: 1, quantity: 1 }]))).toBe(true);
   });
 });
 
