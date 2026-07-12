@@ -31,6 +31,7 @@ import {
   insertContactAction,
   insertProductAction,
   updateContactAction,
+  updateProductAction,
 } from "@/app/actions/server-actions";
 
 function ContactsModal({ contacts }: { contacts: Contact[] }) {
@@ -327,14 +328,19 @@ function ProductsModal({ products: productList }: { products: Product[] }) {
 
   const closeSheet = () => setSheet(null);
 
-  const handleProductInsert = async () => {
-    // id present => update existing catalog row; otherwise insert a new one
-    await insertProductAction({
+  const handleProductSubmit = async () => {
+    const product = {
       ...productData,
       brand: productData.brand?.trim() || null,
       origin: productData.origin?.trim() || null,
       barcode: productData.barcode?.trim() || null,
-    });
+    };
+
+    if (sheet === "edit" && productData.id != null) {
+      await updateProductAction(productData.id, product);
+    } else {
+      await insertProductAction(product);
+    }
     closeSheet();
     router.refresh();
   };
@@ -629,7 +635,7 @@ function ProductsModal({ products: productList }: { products: Product[] }) {
                 <div className="flex justify-end">
                   <Button
                     variant="ghost"
-                    onClick={handleProductInsert}
+                    onClick={handleProductSubmit}
                     disabled={!isProductValid}
                     className="w-32 bg-gradient-to-r from-teal-500 to-teal-600 text-base text-white"
                   >

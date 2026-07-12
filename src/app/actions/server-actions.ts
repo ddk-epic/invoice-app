@@ -114,9 +114,18 @@ export const insertProductAction = async (
   product: ProductInput
 ): Promise<WriteResult> =>
   validateWrite("insertProductAction", ProductSchema, product, () =>
-    product.id
-      ? QUERIES.updateProduct(product.id, product)
-      : QUERIES.insertProduct(product)
+    QUERIES.insertProduct(product)
+  );
+
+export const updateProductAction = async (
+  id: number,
+  product: ProductInput
+): Promise<WriteResult> =>
+  validateWrite(
+    "updateProductAction",
+    ProductSchema,
+    product,
+    async () => (await QUERIES.updateProduct(id, product)).rowCount > 0
   );
 
 export const insertContactAction = async (
