@@ -38,9 +38,26 @@ describe("rowToProduct", () => {
       price: "276.75",
     } as unknown as SelectProductCatalog;
     const p = rowToProduct(row);
-    expect(p.netContent).toBe(20.5);
-    expect(p.price).toBe(276.75);
-    expect(typeof p.netContent).toBe("number");
+    expect(p).not.toBeNull();
+    expect(p!.netContent).toBe(20.5);
+    expect(p!.price).toBe(276.75);
+    expect(typeof p!.netContent).toBe("number");
+  });
+
+  it("returns null for an off-list content unit", () => {
+    const row = {
+      id: 7,
+      barcode: null,
+      category: "misc",
+      name: "Odd",
+      brand: null,
+      origin: null,
+      netContent: "1.000",
+      contentUnit: "oz",
+      packSize: null,
+      price: "1.00",
+    } as unknown as SelectProductCatalog;
+    expect(rowToProduct(row)).toBeNull();
   });
 });
 

@@ -1,6 +1,7 @@
 import z from "zod";
 
 import type { SelectProductCatalog } from "@/server/db/schema";
+import { log } from "@/diagnostics/log";
 
 export const CONTENT_UNITS = ["g", "kg", "ml", "l", "Stk"] as const;
 export const ContentUnitSchema = z.enum(CONTENT_UNITS);
@@ -21,7 +22,9 @@ export interface Product {
   price: number;
 }
 
-export function rowToProduct(row: SelectProductCatalog): Product {
+export function rowToProduct(row: SelectProductCatalog): Product | null {
+  const unit = ContentUnitSchema.safeParse(row.contentUnit);
+  if (!unit.success) return null;
   return {
     id: row.id,
     barcode: row.barcode,
@@ -30,10 +33,31 @@ export function rowToProduct(row: SelectProductCatalog): Product {
     brand: row.brand,
     origin: row.origin,
     netContent: Number(row.netContent),
-    contentUnit: ContentUnitSchema.parse(row.contentUnit),
+    contentUnit: unit.data,
     packSize: row.packSize,
     price: Number(row.price),
   };
+}
+
+export function collectProducts(rows: SelectProductCatalog[]): {
+  productList: Product[];
+  droppedProducts: number;
+} {
+  const productList: Product[] = [];
+  let droppedProducts = 0;
+  for (const row of rows) {
+    const product = rowToProduct(row);
+    if (product) {
+      productList.push(product);
+    } else {
+      droppedProducts++;
+      log("warn", "product_parse_failed", {
+        productId: row.id,
+        unit: row.contentUnit,
+      });
+    }
+  }
+  return { productList, droppedProducts };
 }
 
 export const productMatches = (product: Product, query: string) =>

@@ -13,7 +13,11 @@ import {
 import { log } from "@/diagnostics/log";
 import { BaseContact, Contact } from "@/lib/contacts";
 import { BaseContactSchema, DraftSchema, ProductSchema } from "@/lib/schema";
-import { rowToProduct, type Product, type ProductInput } from "@/lib/products";
+import {
+  collectProducts,
+  type Product,
+  type ProductInput,
+} from "@/lib/products";
 import {
   createDraft,
   discardDraft,
@@ -49,6 +53,7 @@ export const getInvoicesContactsProducts = async (): Promise<{
   invoiceList: LatestInvoice[];
   contactList: Contact[];
   productList: Product[];
+  droppedProducts: number;
 }> => {
   const [invoices, contacts, products] = await Promise.all([
     QUERIES.getLatestInvoices(),
@@ -57,9 +62,9 @@ export const getInvoicesContactsProducts = async (): Promise<{
   ]);
   const invoiceList = invoices;
   const contactList = contacts;
-  const productList = products.map(rowToProduct);
+  const { productList, droppedProducts } = collectProducts(products);
 
-  return { invoiceList, contactList, productList };
+  return { invoiceList, contactList, productList, droppedProducts };
 };
 
 // editor
@@ -67,6 +72,7 @@ export const getContactsAndProducts = async (): Promise<{
   privateContact: Profile;
   contactList: Contact[];
   productList: Product[];
+  droppedProducts: number;
 }> => {
   const [privateData, contacts, products] = await Promise.all([
     QUERIES.getPrivateContact(),
@@ -75,9 +81,9 @@ export const getContactsAndProducts = async (): Promise<{
   ]);
   const [privateContact] = privateData;
   const contactList = contacts;
-  const productList = products.map(rowToProduct);
+  const { productList, droppedProducts } = collectProducts(products);
 
-  return { privateContact, contactList, productList };
+  return { privateContact, contactList, productList, droppedProducts };
 };
 
 export const getInvoiceData = async (invoiceId: string) => {

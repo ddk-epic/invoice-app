@@ -22,7 +22,11 @@ import {
   Profile,
 } from "@/constants/types";
 import { BaseContact, Contact } from "@/lib/contacts";
-import { rowToProduct, type Product, type ProductInput } from "@/lib/products";
+import {
+  collectProducts,
+  type Product,
+  type ProductInput,
+} from "@/lib/products";
 
 function rowToContact(row: SelectContact): Contact {
   return {
@@ -224,7 +228,7 @@ export const QUERIES = {
       .select()
       .from(productCatalogTable)
       .where(inArray(productCatalogTable.id, ids));
-    return rows.map(rowToProduct);
+    return collectProducts(rows).productList;
   },
 
   insertDraft: async function (inv: Invoice) {
