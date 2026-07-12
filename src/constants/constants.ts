@@ -1,4 +1,4 @@
-import { BaseContact, Contact, InvoiceData, InvoiceStatus } from "./types";
+import { BaseContact, Contact, Invoice, InvoiceStatus } from "./types";
 import type { ProductInput } from "@/lib/products";
 
 // UI-boundary German labels for the internal status.
@@ -115,7 +115,7 @@ export const baseProduct: ProductInput = {
   price: 0,
 };
 
-export const invoiceTemplate: InvoiceData = {
+export const invoiceTemplate: Invoice = {
   invoiceId: "",
   invoiceDate: new Date().toISOString().split("T")[0],
   dueDate: new Date().toISOString().split("T")[0],
@@ -143,7 +143,7 @@ export const invoiceTemplate: InvoiceData = {
   updatedAt: new Date(),
 };
 
-export const sampleInvoiceData: InvoiceData = {
+export const sampleInvoiceData: Invoice = {
   id: 10,
   invoiceId: "21",
   invoiceDate: "2025-06-20",

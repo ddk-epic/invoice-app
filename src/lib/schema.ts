@@ -46,7 +46,7 @@ const InvoiceItemSchema: z.ZodType<InvoiceItem> = z.object({
   amount: z.number(),
 });
 
-// Write payload; not pinned to InvoiceData (invoiceId is set on submit, dates may be strings).
+// Write payload; not pinned to Invoice (invoiceId is set on submit, dates may be strings).
 export const InvoiceSchema = z.object({
   invoiceId: z.string().optional(),
   invoiceDate: z.string(),

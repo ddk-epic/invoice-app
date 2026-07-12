@@ -13,8 +13,8 @@ import {
 import {
   BaseContact,
   Contact,
+  InvoiceRow,
   Invoice,
-  InvoiceData,
   LatestInvoice,
   PrivateContact,
 } from "@/constants/types";
@@ -47,7 +47,7 @@ function productInputToRow(p: ProductInput) {
 
 // jsonb columns take objects directly - drizzle serializes them; do NOT
 // pre-stringify (that double-encodes).
-function invoiceDataToRow(inv: InvoiceData) {
+function invoiceDataToRow(inv: Invoice) {
   return {
     invoiceId: inv.invoiceId,
     invoiceDate: inv.invoiceDate,
@@ -89,7 +89,7 @@ export const QUERIES = {
   getInvoicesPage: async function (
     page: number,
     pageSize: number
-  ): Promise<Invoice[]> {
+  ): Promise<InvoiceRow[]> {
     return db
       .select({
         id: invoiceTable.id,
@@ -134,7 +134,7 @@ export const QUERIES = {
 
   getInvoiceById: async function (
     invoiceId: string
-  ): Promise<InvoiceData | undefined> {
+  ): Promise<Invoice | undefined> {
     const [row] = await db
       .select()
       .from(invoiceTable)
@@ -143,7 +143,7 @@ export const QUERIES = {
     return row;
   },
 
-  getDraftById: async function (id: number): Promise<InvoiceData | undefined> {
+  getDraftById: async function (id: number): Promise<Invoice | undefined> {
     const [row] = await db
       .select()
       .from(invoiceTable)
@@ -151,7 +151,7 @@ export const QUERIES = {
     return row;
   },
 
-  insertDraft: async function (inv: InvoiceData) {
+  insertDraft: async function (inv: Invoice) {
     const [row] = await db
       .insert(invoiceTable)
       .values(invoiceDataToRow(inv))
@@ -159,7 +159,7 @@ export const QUERIES = {
     return row;
   },
 
-  updateDraftById: async function (id: number, inv: InvoiceData) {
+  updateDraftById: async function (id: number, inv: Invoice) {
     return db
       .update(invoiceTable)
       .set(invoiceDataToRow(inv))

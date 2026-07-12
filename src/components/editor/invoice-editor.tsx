@@ -15,7 +15,7 @@ import SelectContactModal from "./add-contact-modal";
 import { invoiceTemplate } from "@/constants/constants";
 import {
   Contact,
-  InvoiceData,
+  Invoice,
   InvoiceItem,
   PrivateContact,
 } from "@/constants/types";
@@ -30,7 +30,7 @@ interface InvoiceEditorProps {
   privateContact: PrivateContact;
   contacts: Contact[];
   products: Product[];
-  invoiceData?: InvoiceData;
+  invoiceData?: Invoice;
 }
 
 export default function InvoiceEditor(props: InvoiceEditorProps) {
@@ -52,7 +52,7 @@ export default function InvoiceEditor(props: InvoiceEditorProps) {
     total: computeInvoiceTotal(initialInvoiceData.items),
   };
 
-  const [invoiceData, setInvoiceData] = useState<InvoiceData>(
+  const [invoiceData, setInvoiceData] = useState<Invoice>(
     initialWithComputedTotal
   );
 

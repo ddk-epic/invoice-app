@@ -16,7 +16,7 @@ import { Separator } from "@/components/ui/separator";
 import { PDFDownloadLink } from "@react-pdf/renderer";
 import PdfDocument from "@/components/pdf/pdf-document";
 
-import { InvoiceData, PrivateContact } from "@/constants/types";
+import { Invoice, PrivateContact } from "@/constants/types";
 import {
   submitDraftAction,
   updateDraftAction,
@@ -27,7 +27,7 @@ import { toast } from "sonner";
 interface OptionsbarProps {
   id: string;
   privateContact: PrivateContact;
-  invoiceData: InvoiceData;
+  invoiceData: Invoice;
   discardData: () => void;
 }
 

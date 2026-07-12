@@ -12,7 +12,7 @@ export interface PrivateContact {
 }
 
 // Thin invoice row for the /invoice list.
-export interface Invoice {
+export interface InvoiceRow {
   id: number;
   invoiceId: string;
   status: InvoiceStatus;
@@ -58,7 +58,7 @@ export interface LatestInvoice {
   client: string;
 }
 
-export interface InvoiceData {
+export interface Invoice {
   id?: number;
   invoiceId: string;
   invoiceDate: string;

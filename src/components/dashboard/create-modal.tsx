@@ -24,7 +24,7 @@ import {
 } from "@/components/ui/select";
 
 import { invoiceTemplate } from "@/constants/constants";
-import { Contact, InvoiceData } from "@/constants/types";
+import { Contact, Invoice } from "@/constants/types";
 
 import { redirect, RedirectType } from "next/navigation";
 import { toast } from "sonner";
@@ -46,7 +46,7 @@ export const CreateInvoiceModal = (props: CreatInvoiceModalProps) => {
     e.preventDefault();
     setIsLoading(true);
 
-    const draft: InvoiceData = {
+    const draft: Invoice = {
       ...invoiceTemplate,
       sendTo: contactField!,
       invoiceTo: contactField!,

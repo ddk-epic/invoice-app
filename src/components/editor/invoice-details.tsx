@@ -3,10 +3,10 @@
 import React from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { InvoiceData } from "@/constants/types";
+import { Invoice } from "@/constants/types";
 
 interface InvoiceDetailsProps {
-  invoiceData: InvoiceData;
+  invoiceData: Invoice;
   updateDetails: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 

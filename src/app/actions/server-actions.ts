@@ -5,7 +5,7 @@ import { QUERIES } from "@/server/db/queries";
 import {
   BaseContact,
   Contact,
-  InvoiceData,
+  Invoice,
   LatestInvoice,
   PrivateContact,
   WriteResult,
@@ -77,7 +77,7 @@ export const getInvoiceData = async (invoiceId: string) => {
 };
 
 export const createDraftAction = async (
-  draft: InvoiceData
+  draft: Invoice
 ): Promise<number | null> => {
   const result = InvoiceSchema.safeParse(draft);
   if (!result.success) {
@@ -95,7 +95,7 @@ export const createDraftAction = async (
 
 export const updateDraftAction = async (
   id: number,
-  draft: InvoiceData
+  draft: Invoice
 ): Promise<WriteResult> =>
   validateWrite("updateDraftAction", InvoiceSchema, draft, () =>
     QUERIES.updateDraftById(id, draft)
