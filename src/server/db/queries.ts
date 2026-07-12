@@ -5,6 +5,7 @@ import { db } from "./index";
 import {
   contactsSchema as contactsTable,
   invoiceSchema as invoiceTable,
+  locationSchema as locationTable,
   profileSchema as profileTable,
   productCatalogSchema as productCatalogTable,
   type SelectContact,
@@ -16,6 +17,7 @@ import {
   InvoiceRow,
   Invoice,
   LatestInvoice,
+  Location,
   Profile,
 } from "@/constants/types";
 import type { ProductInput } from "@/lib/products";
@@ -76,6 +78,38 @@ export const QUERIES = {
 
   getAllProducts: async function () {
     return db.select().from(productCatalogTable);
+  },
+
+  getContactById: async function (id: number): Promise<Contact | undefined> {
+    const [row] = await db
+      .select()
+      .from(contactsTable)
+      .where(eq(contactsTable.id, id))
+      .limit(1);
+    return row ? rowToContact(row) : undefined;
+  },
+
+  getProfile: async function (): Promise<Profile | undefined> {
+    const [row] = await db.select().from(profileTable).limit(1);
+    return row;
+  },
+
+  getPrimaryLocation: async function (): Promise<Location | undefined> {
+    const [row] = await db
+      .select()
+      .from(locationTable)
+      .where(eq(locationTable.isPrimary, true))
+      .limit(1);
+    return row;
+  },
+
+  getLocationById: async function (id: number): Promise<Location | undefined> {
+    const [row] = await db
+      .select()
+      .from(locationTable)
+      .where(eq(locationTable.id, id))
+      .limit(1);
+    return row;
   },
 
   countInvoices: async function (): Promise<number> {
@@ -167,17 +201,19 @@ export const QUERIES = {
       .where(eq(invoiceTable.id, id));
   },
 
-  // Assign the next sequential issued number and flip to open, atomically.
+  // Assign the next sequential number, freeze the sender, flip to open, atomically.
   // The SET subquery sees the pre-update table, so this still-draft row is excluded.
-  submitDraft: async function (id: number) {
+  // status='draft' guard makes a re-finalize a no-op.
+  finalizeDraftById: async function (id: number, sender: Contact) {
     const [row] = await db
       .update(invoiceTable)
       .set({
         invoiceId: sql`(SELECT COALESCE(MAX((invoice_id)::int), 0) + 1
                         FROM invoice_invoices WHERE status <> 'draft')`,
+        sender,
         status: "open",
       })
-      .where(eq(invoiceTable.id, id))
+      .where(and(eq(invoiceTable.id, id), eq(invoiceTable.status, "draft")))
       .returning({ invoiceId: invoiceTable.invoiceId });
     return row;
   },

@@ -23,8 +23,7 @@ import {
   SelectItem,
 } from "@/components/ui/select";
 
-import { invoiceTemplate } from "@/constants/constants";
-import { Contact, Invoice } from "@/constants/types";
+import { Contact } from "@/constants/types";
 
 import { redirect, RedirectType } from "next/navigation";
 import { toast } from "sonner";
@@ -46,13 +45,7 @@ export const CreateInvoiceModal = (props: CreatInvoiceModalProps) => {
     e.preventDefault();
     setIsLoading(true);
 
-    const draft: Invoice = {
-      ...invoiceTemplate,
-      sendTo: contactField!,
-      invoiceTo: contactField!,
-    };
-
-    const draftId = await createDraftAction(draft);
+    const draftId = await createDraftAction({ contactId: contactField!.id });
     setIsLoading(false);
     if (draftId == null) {
       toast.error("Rechnung konnte nicht erstellt werden.");

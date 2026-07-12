@@ -16,6 +16,17 @@ export function toEuro(number: number) {
   });
 }
 
+export function todayIso(): string {
+  return new Date().toISOString().split("T")[0];
+}
+
+// Add days to a YYYY-MM-DD date, staying in UTC to avoid DST off-by-one.
+export function addDays(isoDate: string, days: number): string {
+  const d = new Date(isoDate + "T00:00:00Z");
+  d.setUTCDate(d.getUTCDate() + days);
+  return d.toISOString().split("T")[0];
+}
+
 export function deShortDate(date: Date | string) {
   // string
   if (typeof date === "string") {

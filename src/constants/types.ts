@@ -5,6 +5,19 @@ export type InvoiceStatus = "draft" | "open" | "paid" | "overdue";
 export type WriteResult =
   { ok: true } | { ok: false; error: "validation" | "db" };
 
+export interface CreateDraftInput {
+  contactId: number;
+  locationId?: number;
+}
+
+export type FinalizeResult =
+  | { ok: true; number: string }
+  | {
+      ok: false;
+      reason:
+        "not_found" | "not_finalizable" | "no_profile" | "no_location" | "db";
+    };
+
 export interface Profile {
   id?: number;
   name: string;

@@ -5,6 +5,7 @@ import { QUERIES } from "@/server/db/queries";
 import {
   BaseContact,
   Contact,
+  CreateDraftInput,
   Invoice,
   LatestInvoice,
   Profile,
@@ -12,6 +13,12 @@ import {
 } from "@/constants/types";
 import { BaseContactSchema, InvoiceSchema, ProductSchema } from "@/lib/schema";
 import { rowToProduct, type Product, type ProductInput } from "@/lib/products";
+import {
+  createDraft,
+  discardDraft,
+  finalizeDraft,
+  markPaid,
+} from "@/server/invoice-transitions";
 
 async function validateWrite(
   label: string,
@@ -77,21 +84,8 @@ export const getInvoiceData = async (invoiceId: string) => {
 };
 
 export const createDraftAction = async (
-  draft: Invoice
-): Promise<number | null> => {
-  const result = InvoiceSchema.safeParse(draft);
-  if (!result.success) {
-    console.error("createDraftAction: invalid draft:", result.error);
-    return null;
-  }
-  try {
-    const row = await QUERIES.insertDraft(draft);
-    return row.id;
-  } catch (err) {
-    console.error("createDraftAction failed:", err);
-    return null;
-  }
-};
+  input: CreateDraftInput
+): Promise<number | null> => createDraft(input);
 
 export const updateDraftAction = async (
   id: number,
@@ -101,35 +95,20 @@ export const updateDraftAction = async (
     QUERIES.updateDraftById(id, draft)
   );
 
-// Promote a draft to an issued invoice; returns the assigned number or null.
+// Finalize a draft; returns the assigned number or null.
 export const submitDraftAction = async (id: number): Promise<string | null> => {
-  try {
-    const row = await QUERIES.submitDraft(id);
-    return row.invoiceId;
-  } catch (err) {
-    console.error("submitDraftAction failed:", err);
-    return null;
-  }
+  const result = await finalizeDraft(id);
+  return result.ok ? result.number : null;
 };
 
 export const markPaidAction = async (id: number) => {
-  try {
-    await QUERIES.markPaidById(id);
-    return true;
-  } catch (err) {
-    console.error("markPaidAction failed:", err);
-    return false;
-  }
+  const result = await markPaid(id);
+  return result.ok;
 };
 
 export const discardDraftAction = async (id: number) => {
-  try {
-    await QUERIES.deleteDraftById(id);
-    return true;
-  } catch (err) {
-    console.error("discardDraftAction failed:", err);
-    return false;
-  }
+  const result = await discardDraft(id);
+  return result.ok;
 };
 
 export const insertProductAction = async (
