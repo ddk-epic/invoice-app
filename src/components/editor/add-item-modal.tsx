@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { useState } from "react";
 
 import { Plus, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -16,64 +16,27 @@ import { Input } from "@/components/ui/input";
 
 import { weightLabel, formatBasePrice, type Product } from "@/lib/products";
 import { toEuro } from "@/lib/utils";
+import { useSearchableList } from "@/hooks/use-searchable-list";
 
 interface AddItemModalProps {
   products: Product[];
   addItem: (product: Product) => void;
 }
 
+const productMatches = (product: Product, query: string) =>
+  product.name.toLowerCase().includes(query.toLowerCase()) ||
+  product.category.toLowerCase().includes(query.toLowerCase());
+
 function AddItemModal({ products: productList, addItem }: AddItemModalProps) {
   const [isAddItemModalOpen, setIsAddItemModalOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [debouncedQuery, setDebouncedQuery] = useState("");
-  const [visibleCount, setVisibleCount] = useState(40);
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setDebouncedQuery(searchQuery);
-      setVisibleCount(40);
-    }, 300);
-    return () => clearTimeout(timer);
-  }, [searchQuery]);
-
-  const filteredItems = useMemo(
-    () =>
-      productList.filter(
-        (item) =>
-          item.name.toLowerCase().includes(debouncedQuery.toLowerCase()) ||
-          item.category.toLowerCase().includes(debouncedQuery.toLowerCase())
-      ),
-    [productList, debouncedQuery]
-  );
-
-  const loaderRef = useCallback(
-    (observerDiv: HTMLDivElement | null) => {
-      if (!observerDiv) return;
-
-      const observer = new IntersectionObserver(([entry]) => {
-        if (entry.isIntersecting) {
-          setVisibleCount((prev) => Math.min(prev + 20, filteredItems.length));
-        }
-      });
-      observer.observe(observerDiv);
-
-      return () => observer.disconnect();
-    },
-    [filteredItems.length]
-  );
-
-  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchQuery(e.target.value);
-  };
+  const { query, setQuery, reset, visible, noMatches, loadMoreRef } =
+    useSearchableList(productList, productMatches);
 
   return (
     <Dialog
       open={isAddItemModalOpen}
       onOpenChange={(open) => {
-        if (!open)
-          setTimeout(() => {
-            setSearchQuery("");
-          }, 300);
+        if (!open) setTimeout(reset, 300);
         setIsAddItemModalOpen(open);
       }}
     >
@@ -95,13 +58,13 @@ function AddItemModal({ products: productList, addItem }: AddItemModalProps) {
           <div className="relative">
             <Input
               placeholder="Artikel suchen..."
-              value={searchQuery}
-              onChange={handleSearchChange}
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
               className="pl-3"
             />
             <Button
               variant="ghost"
-              onClick={() => setSearchQuery("")}
+              onClick={() => setQuery("")}
               className="text-muted-foreground absolute top-1/2 right-1 size-7 -translate-y-1/2 transform"
             >
               <X />
@@ -111,8 +74,8 @@ function AddItemModal({ products: productList, addItem }: AddItemModalProps) {
 
         <div className="flex-1 overflow-y-auto px-6">
           <div className="grid">
-            {filteredItems.length > 0 ? (
-              filteredItems.slice(0, visibleCount).map((item) => (
+            {!noMatches ? (
+              visible.map((item) => (
                 <div
                   key={item.id}
                   className="flex min-w-[450px] items-center justify-between border-t p-1"
@@ -146,13 +109,11 @@ function AddItemModal({ products: productList, addItem }: AddItemModalProps) {
               ))
             ) : (
               <div className="py-8 text-center text-gray-500">
-                <p>
-                  Keine passenden Artikel zu &quot;{searchQuery}&quot; gefunden.
-                </p>
+                <p>Keine passenden Artikel zu &quot;{query}&quot; gefunden.</p>
               </div>
             )}
             <div
-              ref={loaderRef}
+              ref={loadMoreRef}
               className="h-10 bg-gradient-to-b from-white to-gray-100"
             />
           </div>
