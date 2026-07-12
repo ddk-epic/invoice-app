@@ -10,18 +10,18 @@ import {
   ProductsModal,
 } from "@/components/dashboard/edit-modal";
 import { OpenWork } from "@/components/dashboard/open-work";
+import { ServerWarnings } from "@/diagnostics/server-warnings";
 
 export default async function Dashboard() {
-  const [user, { invoiceList, contactList, productList }] = await Promise.all([
-    currentUser(),
-    getInvoicesContactsProducts(),
-  ]);
+  const [user, { invoiceList, contactList, productList, droppedProducts }] =
+    await Promise.all([currentUser(), getInvoicesContactsProducts()]);
 
   const items = buildWorkItems(invoiceList);
   const recentlyPaid = buildRecentlyPaid(invoiceList);
 
   return (
     <main className="min-h-screen bg-slate-50">
+      <ServerWarnings droppedProducts={droppedProducts} />
       <div className="mx-auto max-w-4xl px-4 py-8">
         {/* Header */}
         <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
