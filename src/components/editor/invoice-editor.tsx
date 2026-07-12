@@ -18,7 +18,7 @@ import {
   updateDraftAction,
 } from "@/app/actions/server-actions";
 import { productToInvoiceItem, type Product } from "@/lib/products";
-import { computeInvoiceTotal } from "@/lib/invoice";
+import { computeTotal } from "@/lib/invoice";
 import { addDays } from "@/lib/utils";
 
 interface InvoiceEditorProps {
@@ -43,7 +43,7 @@ export default function InvoiceEditor(props: InvoiceEditorProps) {
   // Seed total from items so a stale stored total isn't flagged dirty on open.
   const initialWithComputedTotal = {
     ...initialInvoice,
-    total: computeInvoiceTotal(initialInvoice.items),
+    total: computeTotal(initialInvoice.items),
   };
 
   const [invoiceData, setInvoiceData] = useState<Invoice>(
@@ -67,7 +67,7 @@ export default function InvoiceEditor(props: InvoiceEditorProps) {
       if (!draftId) return;
       const current = {
         ...latestRef.current,
-        total: computeInvoiceTotal(latestRef.current.items),
+        total: computeTotal(latestRef.current.items),
       };
       const snapshot = JSON.stringify(current);
       if (snapshot === lastSavedRef.current) return; // not dirty

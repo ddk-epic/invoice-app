@@ -60,6 +60,37 @@ A Draft that meets the preconditions to be finalized. Since draft creation alway
 sets a recipient and the editor can only swap it (never clear it), the only varying
 precondition is: it has at least one line item. In code: `canFinalize`.
 
+### Invoice items
+
+Working name `InvoiceItem`. The noun is under review (candidates: Invoice product,
+Position); the rename is deferred to its own session. The decisions below stand
+regardless of the final name.
+
+**Invoice item**:
+A catalog Product chosen for an invoice together with a quantity. On a Draft it is
+only a reference: which Product, how many. Its price and amount are not stored on the
+Draft; they are resolved and frozen from the catalog at Finalize.
+
+**Amount**:
+An item's line total, `quantity × price`. On a Draft it is derived on the fly from
+the current catalog price (shown, never stored per item). At Finalize the server
+freezes it from the finalize-time catalog price.
+_Avoid_: line total, Nettowert (UI only).
+
+**Total**:
+The invoice's `Σ amount`. On a Draft it is a non-authoritative estimate the editor
+computes and caches (for dashboard prioritization); it may go stale if a catalog
+price changes while the Draft is closed. At Finalize the server ignores the cached
+estimate, recomputes from finalize-time catalog prices, and freezes the authoritative
+value. Stored even though derivable, so the author's reviewed number cannot drift.
+_Avoid_: grand total, sum.
+
+Just as the **Sender** is null-until-Finalize, an item's **price** / **amount** and
+the invoice **Total** are unresolved-until-Finalize. A Draft holds only the author's
+inputs; the priced snapshot is minted at the transition. Price is taken at Finalize,
+not when the product was added, so a Draft always reflects current catalog prices
+until it is frozen.
+
 ## Relationships
 
 - One **Profile** has one-to-many **Locations**; exactly one is primary.

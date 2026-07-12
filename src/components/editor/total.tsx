@@ -2,7 +2,7 @@ import React from "react";
 
 import { InvoiceItem } from "@/constants/types";
 import { toEuro } from "@/lib/utils";
-import { computeInvoiceTotal } from "@/lib/invoice";
+import { computeTotal } from "@/lib/invoice";
 
 interface TotalProps {
   items: InvoiceItem[];
@@ -10,7 +10,7 @@ interface TotalProps {
 }
 
 function Total({ items, taxRate }: TotalProps) {
-  const totalAmount = computeInvoiceTotal(items);
+  const totalAmount = computeTotal(items);
 
   const tax = taxRate / 100;
   const subtotal = totalAmount / (1 + tax);
