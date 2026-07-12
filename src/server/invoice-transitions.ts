@@ -39,8 +39,7 @@ export async function createDraft(
       updatedAt: new Date(),
     };
 
-    const row = await QUERIES.insertDraft(draft);
-    return row.id;
+    return QUERIES.insertDraft(draft);
   } catch (err) {
     console.error("createDraft failed:", err);
     return null;
@@ -77,9 +76,9 @@ export async function finalizeDraft(id: number): Promise<FinalizeResult> {
     }
     const total = computeTotal(items);
 
-    const row = await QUERIES.finalizeDraftById(id, sender, items, total);
-    if (!row) return { ok: false, reason: "not_found" };
-    return { ok: true, number: row.invoiceId };
+    const number = await QUERIES.finalizeDraftById(id, sender, items, total);
+    if (!number) return { ok: false, reason: "not_found" };
+    return { ok: true, number };
   } catch (err) {
     console.error("finalizeDraft failed:", err);
     return { ok: false, reason: "db" };

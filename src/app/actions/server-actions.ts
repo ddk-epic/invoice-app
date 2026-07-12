@@ -127,11 +127,8 @@ export const updateProductAction = async (
   id: number,
   product: ProductInput
 ): Promise<WriteResult> =>
-  validateWrite(
-    "updateProductAction",
-    ProductSchema,
-    product,
-    async () => (await QUERIES.updateProduct(id, product)).rowCount > 0
+  validateWrite("updateProductAction", ProductSchema, product, () =>
+    QUERIES.updateProduct(id, product)
   );
 
 export const insertContactAction = async (
@@ -145,9 +142,6 @@ export const updateContactAction = async (
   id: number,
   contact: BaseContact
 ): Promise<WriteResult> =>
-  validateWrite(
-    "updateContactAction",
-    BaseContactSchema,
-    contact,
-    async () => (await QUERIES.updateContact(id, contact)).rowCount > 0
+  validateWrite("updateContactAction", BaseContactSchema, contact, () =>
+    QUERIES.updateContact(id, contact)
   );

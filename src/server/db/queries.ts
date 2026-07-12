@@ -10,6 +10,7 @@ import {
   productCatalogSchema as productCatalogTable,
   type SelectContact,
   type SelectInvoice,
+  type SelectProductCatalog,
 } from "./schema";
 
 import {
@@ -38,7 +39,7 @@ function rowToContact(row: SelectContact): Contact {
   };
 }
 
-// Map an app-level ProductInput to a DB row (numeric columns are strings in drizzle).
+// numeric columns are strings in drizzle
 function productInputToRow(p: ProductInput) {
   return {
     barcode: p.barcode ?? null,
@@ -53,8 +54,7 @@ function productInputToRow(p: ProductInput) {
   };
 }
 
-// jsonb columns take objects directly - drizzle serializes them; do NOT
-// pre-stringify (that double-encodes).
+// jsonb takes objects directly; pre-stringifying double-encodes.
 function invoiceDataToRow(inv: Invoice) {
   return {
     invoiceId: inv.invoiceId,
@@ -103,20 +103,20 @@ function rowToInvoice(row: SelectInvoice): Invoice {
 
 export const QUERIES = {
   // SELECT
-  getPrivateContact: async function (): Promise<Profile[]> {
+  async getPrivateContact(): Promise<Profile[]> {
     return db.select().from(profileTable);
   },
 
-  getAllContacts: async function (): Promise<Contact[]> {
+  async getAllContacts(): Promise<Contact[]> {
     const rows = await db.select().from(contactsTable);
     return rows.map(rowToContact);
   },
 
-  getAllProducts: async function () {
+  async getAllProducts(): Promise<SelectProductCatalog[]> {
     return db.select().from(productCatalogTable);
   },
 
-  getContactById: async function (id: number): Promise<Contact | undefined> {
+  async getContactById(id: number): Promise<Contact | undefined> {
     const [row] = await db
       .select()
       .from(contactsTable)
@@ -125,12 +125,12 @@ export const QUERIES = {
     return row ? rowToContact(row) : undefined;
   },
 
-  getProfile: async function (): Promise<Profile | undefined> {
+  async getProfile(): Promise<Profile | undefined> {
     const [row] = await db.select().from(profileTable).limit(1);
     return row;
   },
 
-  getPrimaryLocation: async function (): Promise<Location | undefined> {
+  async getPrimaryLocation(): Promise<Location | undefined> {
     const [row] = await db
       .select()
       .from(locationTable)
@@ -139,7 +139,7 @@ export const QUERIES = {
     return row;
   },
 
-  getLocationById: async function (id: number): Promise<Location | undefined> {
+  async getLocationById(id: number): Promise<Location | undefined> {
     const [row] = await db
       .select()
       .from(locationTable)
@@ -148,19 +148,14 @@ export const QUERIES = {
     return row;
   },
 
-  countInvoices: async function (): Promise<number> {
+  async countInvoices(): Promise<number> {
     const [row] = await db
       .select({ count: sql<number>`count(*)::int` })
       .from(invoiceTable);
     return row?.count ?? 0;
   },
 
-  // One page of the /invoice list, newest first. Kept separate from
-  // countInvoices so the read boundary can short-circuit on an out-of-range page.
-  getInvoicesPage: async function (
-    page: number,
-    pageSize: number
-  ): Promise<InvoiceRow[]> {
+  async getInvoicesPage(page: number, pageSize: number): Promise<InvoiceRow[]> {
     return db
       .select({
         id: invoiceTable.id,
@@ -176,13 +171,9 @@ export const QUERIES = {
       .offset((page - 1) * pageSize);
   },
 
-  // Unpaid work (any age) plus invoices settled in the last 7 days.
-  // Window filters on updated_at, which equals settle time only because
-  // markPaidById is the sole write to a paid row: add a paid_at column if a
-  // second write path to paid appears.
   // Window uses the DB clock; buildRecentlyPaid re-filters with the app clock,
   // sub-second drift accepted.
-  getLatestInvoices: async function (): Promise<LatestInvoice[]> {
+  async getLatestInvoices(): Promise<LatestInvoice[]> {
     return db
       .select({
         id: invoiceTable.id,
@@ -203,9 +194,7 @@ export const QUERIES = {
       );
   },
 
-  getInvoiceById: async function (
-    invoiceId: string
-  ): Promise<Invoice | undefined> {
+  async getInvoiceById(invoiceId: string): Promise<Invoice | undefined> {
     const [row] = await db
       .select()
       .from(invoiceTable)
@@ -214,7 +203,7 @@ export const QUERIES = {
     return row ? rowToInvoice(row) : undefined;
   },
 
-  getDraftById: async function (id: number): Promise<Invoice | undefined> {
+  async getDraftById(id: number): Promise<Invoice | undefined> {
     const [row] = await db
       .select()
       .from(invoiceTable)
@@ -222,7 +211,7 @@ export const QUERIES = {
     return row ? rowToInvoice(row) : undefined;
   },
 
-  getProductsByIds: async function (ids: number[]): Promise<Product[]> {
+  async getProductsByIds(ids: number[]): Promise<Product[]> {
     if (ids.length === 0) return [];
     const rows = await db
       .select()
@@ -231,16 +220,17 @@ export const QUERIES = {
     return collectProducts(rows).productList;
   },
 
-  insertDraft: async function (inv: Invoice) {
+  async insertDraft(inv: Invoice): Promise<number> {
     const [row] = await db
       .insert(invoiceTable)
       .values(invoiceDataToRow(inv))
       .returning({ id: invoiceTable.id });
-    return row;
+    if (!row) throw new Error("insertDraft returned no row");
+    return row.id;
   },
 
-  updateDraftById: async function (id: number, inv: Invoice) {
-    return db
+  async updateDraftById(id: number, inv: Invoice): Promise<void> {
+    await db
       .update(invoiceTable)
       .set(invoiceDataToRow(inv))
       .where(eq(invoiceTable.id, id));
@@ -248,13 +238,13 @@ export const QUERIES = {
 
   // Assign the next sequential number, freeze the sender, flip to open, atomically.
   // The SET subquery sees the pre-update table, so this still-draft row is excluded.
-  // status='draft' guard makes a re-finalize a no-op.
-  finalizeDraftById: async function (
+  // status='draft' guard makes a re-finalize a no-op; then returning is empty.
+  async finalizeDraftById(
     id: number,
     sender: Contact,
     items: InvoiceItem[],
     total: number
-  ) {
+  ): Promise<string | undefined> {
     const [row] = await db
       .update(invoiceTable)
       .set({
@@ -267,41 +257,42 @@ export const QUERIES = {
       })
       .where(and(eq(invoiceTable.id, id), eq(invoiceTable.status, "draft")))
       .returning({ invoiceId: invoiceTable.invoiceId });
-    return row;
+    return row?.invoiceId;
   },
 
-  deleteDraftById: async function (id: number) {
-    return db.delete(invoiceTable).where(eq(invoiceTable.id, id));
+  async deleteDraftById(id: number): Promise<void> {
+    await db.delete(invoiceTable).where(eq(invoiceTable.id, id));
   },
 
   // overdue is derived at read time; a late invoice is still stored 'open'.
-  // Match on status so only issued invoices settle, never drafts.
-  markPaidById: async function (id: number) {
-    return db
+  async markPaidById(id: number): Promise<void> {
+    await db
       .update(invoiceTable)
       .set({ status: "paid" })
       .where(and(eq(invoiceTable.id, id), eq(invoiceTable.status, "open")));
   },
 
-  insertProduct: async function (p: ProductInput) {
-    return db.insert(productCatalogTable).values(productInputToRow(p));
+  async insertProduct(p: ProductInput): Promise<void> {
+    await db.insert(productCatalogTable).values(productInputToRow(p));
   },
 
-  updateProduct: async function (id: number, p: ProductInput) {
-    return db
+  async updateProduct(id: number, p: ProductInput): Promise<boolean> {
+    const res = await db
       .update(productCatalogTable)
       .set(productInputToRow(p))
       .where(eq(productCatalogTable.id, id));
+    return res.rowCount > 0;
   },
 
-  insertContact: async function (newContact: BaseContact) {
-    return db.insert(contactsTable).values(newContact);
+  async insertContact(newContact: BaseContact): Promise<void> {
+    await db.insert(contactsTable).values(newContact);
   },
 
-  updateContact: async function (id: number, contact: BaseContact) {
-    return db
+  async updateContact(id: number, contact: BaseContact): Promise<boolean> {
+    const res = await db
       .update(contactsTable)
       .set(contact)
       .where(eq(contactsTable.id, id));
+    return res.rowCount > 0;
   },
 };
