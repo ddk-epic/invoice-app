@@ -61,6 +61,11 @@ export interface Contact extends BaseContact {
   id: number;
 }
 
+export interface DraftItem {
+  productId: number;
+  quantity: number;
+}
+
 export interface InvoiceItem extends Product {
   quantity: number;
   amount: number;
