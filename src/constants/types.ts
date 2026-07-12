@@ -5,10 +5,18 @@ export type InvoiceStatus = "draft" | "open" | "paid" | "overdue";
 export type WriteResult =
   { ok: true } | { ok: false; error: "validation" | "db" };
 
-export interface PrivateContact {
+export interface Profile {
   id?: number;
+  name: string;
   phone: string;
   email: string;
+}
+
+export interface Location {
+  id: number;
+  label: string | null;
+  address: Address;
+  isPrimary: boolean;
 }
 
 // Thin invoice row for the /invoice list.
@@ -64,8 +72,9 @@ export interface Invoice {
   invoiceDate: string;
   dueDate: string;
   status: InvoiceStatus;
+  locationId?: number | null;
 
-  sender: Contact;
+  sender: Contact | null;
   sendTo: Contact;
   invoiceTo: Contact;
 

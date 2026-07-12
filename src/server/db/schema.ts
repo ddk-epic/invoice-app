@@ -1,5 +1,6 @@
 import { sql } from "drizzle-orm";
 import {
+  boolean,
   index,
   integer,
   jsonb,
@@ -29,10 +30,19 @@ import type {
  * push:      npx drizzle-kit push
  */
 
-export const privateSchema = pgTable("invoice_private", {
+export const profileSchema = pgTable("invoice_profile", {
   id: serial("id").primaryKey(),
+  name: text("name").notNull(),
   phone: text("phone").notNull(),
   email: text("email").notNull(),
+});
+
+// One row per business address; exactly one is primary.
+export const locationSchema = pgTable("invoice_locations", {
+  id: serial("id").primaryKey(),
+  label: text("label"),
+  address: jsonb("address").$type<Address>().notNull(),
+  isPrimary: boolean("is_primary").notNull().default(false),
 });
 
 export const contactsSchema = pgTable("invoice_contacts", {
@@ -66,8 +76,11 @@ export const invoiceSchema = pgTable(
     invoiceDate: text("invoice_date").notNull(),
     dueDate: text("due_date").notNull(),
     status: text("status").$type<InvoiceStatus>().notNull(),
+    // Which Location this draft finalizes from; null => primary.
+    locationId: integer("location_id"),
 
-    sender: jsonb("sender").$type<Contact>().notNull(),
+    // Frozen at finalize; null while a draft.
+    sender: jsonb("sender").$type<Contact>(),
     sendTo: jsonb("send_to").$type<Contact>().notNull(),
     invoiceTo: jsonb("invoice_to").$type<Contact>().notNull(),
 
@@ -89,6 +102,9 @@ export const invoiceSchema = pgTable(
     index("invoice_created_at_idx").on(table.createdAt.desc()),
   ]
 );
+
+export type SelectProfile = typeof profileSchema.$inferSelect;
+export type SelectLocation = typeof locationSchema.$inferSelect;
 
 export type InsertContact = typeof contactsSchema.$inferInsert;
 export type SelectContact = typeof contactsSchema.$inferSelect;

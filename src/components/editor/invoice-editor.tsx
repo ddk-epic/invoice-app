@@ -13,12 +13,7 @@ import InvoiceDetails from "./invoice-details";
 import SelectContactModal from "./add-contact-modal";
 
 import { invoiceTemplate } from "@/constants/constants";
-import {
-  Contact,
-  Invoice,
-  InvoiceItem,
-  PrivateContact,
-} from "@/constants/types";
+import { Contact, Invoice, InvoiceItem, Profile } from "@/constants/types";
 import {
   discardDraftAction,
   updateDraftAction,
@@ -27,7 +22,7 @@ import { productToInvoiceItem, type Product } from "@/lib/products";
 import { computeInvoiceTotal } from "@/lib/invoice";
 
 interface InvoiceEditorProps {
-  privateContact: PrivateContact;
+  privateContact: Profile;
   contacts: Contact[];
   products: Product[];
   invoiceData?: Invoice;

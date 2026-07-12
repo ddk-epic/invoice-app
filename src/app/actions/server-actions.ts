@@ -7,7 +7,7 @@ import {
   Contact,
   Invoice,
   LatestInvoice,
-  PrivateContact,
+  Profile,
   WriteResult,
 } from "@/constants/types";
 import { BaseContactSchema, InvoiceSchema, ProductSchema } from "@/lib/schema";
@@ -56,7 +56,7 @@ export const getInvoicesContactsProducts = async (): Promise<{
 
 // editor
 export const getContactsAndProducts = async (): Promise<{
-  privateContact: PrivateContact;
+  privateContact: Profile;
   contactList: Contact[];
   productList: Product[];
 }> => {

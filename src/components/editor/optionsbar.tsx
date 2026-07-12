@@ -16,7 +16,7 @@ import { Separator } from "@/components/ui/separator";
 import { PDFDownloadLink } from "@react-pdf/renderer";
 import PdfDocument from "@/components/pdf/pdf-document";
 
-import { Invoice, PrivateContact } from "@/constants/types";
+import { Invoice, Profile } from "@/constants/types";
 import {
   submitDraftAction,
   updateDraftAction,
@@ -26,7 +26,7 @@ import { toast } from "sonner";
 
 interface OptionsbarProps {
   id: string;
-  privateContact: PrivateContact;
+  privateContact: Profile;
   invoiceData: Invoice;
   discardData: () => void;
 }
@@ -102,7 +102,7 @@ function Optionsbar(props: OptionsbarProps) {
               <h3>Details</h3>
               <div className="flex flex-col space-y-1 pt-1 pl-4">
                 <span>Rechnung / PDF</span>
-                <span>Author: {invoiceData.sender.name}</span>
+                <span>Author: {invoiceData.sender?.name}</span>
                 <span>Empfänger: {invoiceData.sendTo.name}</span>
               </div>
             </div>

@@ -5,7 +5,7 @@ import { db } from "./index";
 import {
   contactsSchema as contactsTable,
   invoiceSchema as invoiceTable,
-  privateSchema as privateTable,
+  profileSchema as profileTable,
   productCatalogSchema as productCatalogTable,
   type SelectContact,
 } from "./schema";
@@ -16,7 +16,7 @@ import {
   InvoiceRow,
   Invoice,
   LatestInvoice,
-  PrivateContact,
+  Profile,
 } from "@/constants/types";
 import type { ProductInput } from "@/lib/products";
 
@@ -53,6 +53,7 @@ function invoiceDataToRow(inv: Invoice) {
     invoiceDate: inv.invoiceDate,
     dueDate: inv.dueDate,
     status: inv.status,
+    locationId: inv.locationId ?? null,
     sender: inv.sender,
     sendTo: inv.sendTo,
     invoiceTo: inv.invoiceTo,
@@ -64,8 +65,8 @@ function invoiceDataToRow(inv: Invoice) {
 
 export const QUERIES = {
   // SELECT
-  getPrivateContact: async function (): Promise<PrivateContact[]> {
-    return db.select().from(privateTable);
+  getPrivateContact: async function (): Promise<Profile[]> {
+    return db.select().from(profileTable);
   },
 
   getAllContacts: async function (): Promise<Contact[]> {
