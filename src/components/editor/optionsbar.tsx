@@ -1,8 +1,8 @@
 "use client";
 
-import React, { useState } from "react";
+import { useState } from "react";
 
-import { Settings, Download, BookCheck, Trash2 } from "lucide-react";
+import { Settings, BookCheck, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Sheet,
@@ -13,33 +13,40 @@ import {
 } from "@/components/ui/sheet";
 import { Separator } from "@/components/ui/separator";
 
-import { PDFDownloadLink } from "@react-pdf/renderer";
-import PdfDocument from "@/components/pdf/pdf-document";
-
-import { Invoice, Profile } from "@/constants/types";
+import { FinalizeResult, Invoice, Profile } from "@/constants/types";
 import {
-  submitDraftAction,
+  finalizeDraftAction,
   updateDraftAction,
 } from "@/app/actions/server-actions";
+import { canFinalize } from "@/lib/invoice";
 import { redirect } from "next/navigation";
 import { toast } from "sonner";
 
 interface OptionsbarProps {
-  id: string;
   privateContact: Profile;
   invoiceData: Invoice;
   discardData: () => void;
 }
 
+type FinalizeError = Extract<FinalizeResult, { ok: false }>["reason"];
+
+function finalizeError(reason: FinalizeError): string {
+  switch (reason) {
+    case "not_finalizable":
+      return "Bitte fügen Sie mindestens einen Artikel hinzu.";
+    case "no_profile":
+    case "no_location":
+      return "Absenderprofil ist unvollständig.";
+    default:
+      return "Rechnung konnte nicht finalisiert werden.";
+  }
+}
+
 function Optionsbar(props: OptionsbarProps) {
-  const { id: invoiceId, privateContact, invoiceData, discardData } = props;
+  const { privateContact, invoiceData, discardData } = props;
   const [isLoading, setIsLoading] = useState(false);
 
-  const isInvoiceValid =
-    invoiceData.invoiceId &&
-    invoiceData.sendTo &&
-    invoiceData.invoiceTo &&
-    invoiceData.items.length > 0;
+  const finalizable = canFinalize(invoiceData);
 
   const saveDraft = async () => {
     if (!invoiceData.id) return false;
@@ -54,30 +61,20 @@ function Optionsbar(props: OptionsbarProps) {
     return res.ok;
   };
 
-  const handlePublish = async () => {
+  const handleFinalize = async () => {
     if (!invoiceData.id) return;
     const saved = await saveDraft();
     if (!saved) return;
-    const assignedId = await submitDraftAction(invoiceData.id);
-    if (!assignedId) return;
+    const result = await finalizeDraftAction(invoiceData.id);
+    if (!result.ok) {
+      toast.error(finalizeError(result.reason));
+      return;
+    }
 
     setIsLoading(true);
     setTimeout(() => {
-      redirect(`/invoice/${assignedId}/pdf`);
+      redirect(`/invoice/${result.number}/pdf`);
     }, 2000);
-  };
-
-  const handleDownload = async (
-    event: React.MouseEvent<HTMLAnchorElement, MouseEvent>
-  ) => {
-    if (!isInvoiceValid) {
-      event.preventDefault(); // prevent download
-      toast.error("Bitte füllen Sie alle erforderlichen Felder aus.", {
-        duration: 5000,
-      });
-      return;
-    }
-    await saveDraft();
   };
 
   return (
@@ -102,58 +99,28 @@ function Optionsbar(props: OptionsbarProps) {
               <h3>Details</h3>
               <div className="flex flex-col space-y-1 pt-1 pl-4">
                 <span>Rechnung / PDF</span>
-                <span>Author: {invoiceData.sender?.name}</span>
+                <span>Author: {privateContact.name}</span>
                 <span>Empfänger: {invoiceData.sendTo.name}</span>
               </div>
             </div>
 
             <Separator />
 
-            {/* Export & Save */}
+            {/* Finalize */}
             <div>
               <h3 className="mb-3 flex items-center gap-2 font-medium">
-                <Download className="h-4 w-4" />
-                Exportieren & Speichern
+                <BookCheck className="h-4 w-4" />
+                Finalisieren
               </h3>
               <div className="space-y-2">
-                {/* publish PDF */}
                 <Button
-                  onClick={handlePublish}
+                  onClick={handleFinalize}
                   variant="outline"
                   className="w-full justify-start"
-                  disabled={isLoading}
+                  disabled={isLoading || !finalizable}
                 >
                   <BookCheck className="mr-1 h-4 w-4" />
-                  PDF veröffentlichen
-                </Button>
-                {/* download PDF */}
-                <Button
-                  className="w-full justify-start"
-                  variant="outline"
-                  disabled={isLoading}
-                >
-                  <PDFDownloadLink
-                    // Remount when the invoice changes so the link regenerates the PDF.
-                    key={JSON.stringify(invoiceData)}
-                    onClick={handleDownload}
-                    document={
-                      <PdfDocument
-                        data={invoiceData}
-                        privateData={privateContact}
-                      />
-                    }
-                    fileName={
-                      invoiceData.sendTo.name.split(" ")[0] +
-                      "_" +
-                      invoiceId +
-                      ".pdf"
-                    }
-                  >
-                    <span className="-ml-1 flex gap-2">
-                      <Download className="mr-1 h-4 w-4" />
-                      PDF herunterladen
-                    </span>
-                  </PDFDownloadLink>
+                  Rechnung finalisieren
                 </Button>
               </div>
             </div>

@@ -43,23 +43,16 @@ function SelectContactModal(props: SelectContactModalProps) {
             variant="ghost"
             className="m-0 block h-[130px] w-full p-0 pb-0.5 text-left"
           >
-            {contact.name !== "undefined" ? (
-              <div className="flex flex-col px-2 text-sm font-normal text-gray-500">
-                <div className="font-medium">{contact.name}</div>
-                <p>{contact.owner}</p>
-                <p>{contact.address.street}</p>
-                <p>
-                  {contact.address.zip} {contact.address.state}
-                </p>
-                <p>{contact.address.country}</p>
-                {!contact?.owner && <p className="h-5"></p>}
-              </div>
-            ) : (
-              <div className="flex h-full w-full items-center justify-center space-x-2 rounded-lg border-2 border-dashed text-base text-gray-500">
-                <Plus className="h-4 w-4" />
-                <p>{label} hinzufügen</p>
-              </div>
-            )}
+            <div className="flex flex-col px-2 text-sm font-normal text-gray-500">
+              <div className="font-medium">{contact.name}</div>
+              <p>{contact.owner}</p>
+              <p>{contact.address.street}</p>
+              <p>
+                {contact.address.zip} {contact.address.state}
+              </p>
+              <p>{contact.address.country}</p>
+              {!contact?.owner && <p className="h-5"></p>}
+            </div>
           </Button>
         </DialogTrigger>
         <DialogContent className="max-h-[95vh] max-w-2xl gap-2 overflow-y-auto">

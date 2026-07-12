@@ -1,4 +1,4 @@
-import { BaseContact, Contact, Invoice, InvoiceStatus } from "./types";
+import { BaseContact, Contact, InvoiceStatus } from "./types";
 import type { ProductInput } from "@/lib/products";
 
 // UI-boundary German labels for the internal status.
@@ -35,19 +35,6 @@ export const baseContact: BaseContact = {
     state: "-",
     zip: 0,
     country: "Deutschland",
-  },
-};
-
-export const empty: Contact = {
-  id: 0,
-  type: "client",
-  name: "undefined",
-  address: {
-    street: "",
-    city: "",
-    state: "",
-    zip: 0,
-    country: "",
   },
 };
 
@@ -113,85 +100,4 @@ export const baseProduct: ProductInput = {
   contentUnit: "g",
   packSize: null,
   price: 0,
-};
-
-export const invoiceTemplate: Invoice = {
-  invoiceId: "",
-  invoiceDate: new Date().toISOString().split("T")[0],
-  dueDate: new Date().toISOString().split("T")[0],
-  status: "draft",
-  sender: {
-    id: 1,
-    type: "admin",
-    name: "Maxima",
-    owner: "phtt",
-    address: {
-      street: "123 London street",
-      city: "Hamburg",
-      state: "HA",
-      zip: 77777,
-      country: "GER",
-    },
-  },
-  sendTo: empty,
-  invoiceTo: empty,
-  items: [],
-
-  total: 0,
-  taxRate: 7,
-  createdAt: new Date(),
-  updatedAt: new Date(),
-};
-
-export const sampleInvoiceData: Invoice = {
-  id: 10,
-  invoiceId: "21",
-  invoiceDate: "2025-06-20",
-  dueDate: "2025-07-05",
-  status: "draft",
-  sender: {
-    id: 0,
-    type: "admin",
-    name: "admin",
-    owner: "admin",
-    address: {
-      street: "",
-      city: "",
-      state: "",
-      zip: 0,
-      country: "",
-    },
-  },
-  sendTo: {
-    id: 3,
-    type: "client",
-    name: "client",
-    owner: "client",
-    address: {
-      street: "",
-      city: "",
-      state: "",
-      zip: 0,
-      country: "",
-    },
-  },
-  invoiceTo: {
-    id: 3,
-    type: "client",
-    name: "client",
-    owner: "client",
-    address: {
-      street: "",
-      city: "",
-      state: "",
-      zip: 0,
-      country: "",
-    },
-  },
-  items: [],
-
-  total: 0,
-  taxRate: 7,
-  createdAt: new Date(),
-  updatedAt: new Date(),
 };

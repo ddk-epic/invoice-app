@@ -12,7 +12,6 @@ import AddItemModal from "./add-item-modal";
 import InvoiceDetails from "./invoice-details";
 import SelectContactModal from "./add-contact-modal";
 
-import { invoiceTemplate } from "@/constants/constants";
 import { Contact, Invoice, InvoiceItem, Profile } from "@/constants/types";
 import {
   discardDraftAction,
@@ -20,12 +19,13 @@ import {
 } from "@/app/actions/server-actions";
 import { productToInvoiceItem, type Product } from "@/lib/products";
 import { computeInvoiceTotal } from "@/lib/invoice";
+import { addDays } from "@/lib/utils";
 
 interface InvoiceEditorProps {
   privateContact: Profile;
   contacts: Contact[];
   products: Product[];
-  invoiceData?: Invoice;
+  invoiceData: Invoice;
 }
 
 export default function InvoiceEditor(props: InvoiceEditorProps) {
@@ -40,11 +40,10 @@ export default function InvoiceEditor(props: InvoiceEditorProps) {
   const [isInvoiceToModalOpen, setIsInvoiceToModalOpen] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
 
-  const initialInvoiceData = initialInvoice ?? invoiceTemplate;
   // Seed total from items so a stale stored total isn't flagged dirty on open.
   const initialWithComputedTotal = {
-    ...initialInvoiceData,
-    total: computeInvoiceTotal(initialInvoiceData.items),
+    ...initialInvoice,
+    total: computeInvoiceTotal(initialInvoice.items),
   };
 
   const [invoiceData, setInvoiceData] = useState<Invoice>(
@@ -163,6 +162,13 @@ export default function InvoiceEditor(props: InvoiceEditorProps) {
     setInvoiceData((prev) => ({ ...prev, [name]: value }));
   };
 
+  const setDueFromTerm = (days: number) => {
+    setInvoiceData((prev) => ({
+      ...prev,
+      dueDate: addDays(prev.invoiceDate, days),
+    }));
+  };
+
   const discardData = async () => {
     if (draftId) await discardDraftAction(draftId);
     router.push("/dashboard");
@@ -171,7 +177,6 @@ export default function InvoiceEditor(props: InvoiceEditorProps) {
   return (
     <>
       <Optionsbar
-        id={invoiceData.invoiceId}
         privateContact={privateContact}
         invoiceData={invoiceData}
         discardData={discardData}
@@ -193,6 +198,7 @@ export default function InvoiceEditor(props: InvoiceEditorProps) {
                 <InvoiceDetails
                   invoiceData={invoiceData}
                   updateDetails={updateInput}
+                  setDueFromTerm={setDueFromTerm}
                 />
               </div>
             </div>

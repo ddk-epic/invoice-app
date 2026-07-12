@@ -3,14 +3,22 @@
 import React from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
 import { Invoice } from "@/constants/types";
+
+const PAYMENT_TERMS = [14, 30] as const;
 
 interface InvoiceDetailsProps {
   invoiceData: Invoice;
   updateDetails: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  setDueFromTerm: (days: number) => void;
 }
 
-function InvoiceDetails({ invoiceData, updateDetails }: InvoiceDetailsProps) {
+function InvoiceDetails({
+  invoiceData,
+  updateDetails,
+  setDueFromTerm,
+}: InvoiceDetailsProps) {
   return (
     <div className="space-y-1">
       <div className="flex items-center gap-2">
@@ -45,6 +53,20 @@ function InvoiceDetails({ invoiceData, updateDetails }: InvoiceDetailsProps) {
           onChange={(e) => updateDetails(e)}
           className="h-8 w-30 md:w-36"
         />
+        <div className="flex gap-1">
+          {PAYMENT_TERMS.map((days) => (
+            <Button
+              key={days}
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={() => setDueFromTerm(days)}
+              className="h-8 px-2"
+            >
+              +{days} Tage
+            </Button>
+          ))}
+        </div>
       </div>
     </div>
   );

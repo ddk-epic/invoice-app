@@ -6,6 +6,7 @@ import {
   BaseContact,
   Contact,
   CreateDraftInput,
+  FinalizeResult,
   Invoice,
   LatestInvoice,
   Profile,
@@ -95,11 +96,9 @@ export const updateDraftAction = async (
     QUERIES.updateDraftById(id, draft)
   );
 
-// Finalize a draft; returns the assigned number or null.
-export const submitDraftAction = async (id: number): Promise<string | null> => {
-  const result = await finalizeDraft(id);
-  return result.ok ? result.number : null;
-};
+export const finalizeDraftAction = async (
+  id: number
+): Promise<FinalizeResult> => finalizeDraft(id);
 
 export const markPaidAction = async (id: number) => {
   const result = await markPaid(id);
