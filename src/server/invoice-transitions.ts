@@ -1,30 +1,18 @@
 import "server-only";
 
 import type {
-  Contact,
   CreateDraftInput,
   FinalizeResult,
   Invoice,
-  Location,
-  Profile,
   WriteResult,
 } from "@/constants/types";
 import { QUERIES } from "@/server/db/queries";
 import { canFinalize } from "@/lib/invoice";
+import { resolveSender } from "@/lib/sender";
 import { addDays, todayIso } from "@/lib/utils";
 
 const DEFAULT_TAX_RATE = 7;
 const DEFAULT_PAYMENT_TERM_DAYS = 14;
-
-// Compose the frozen Sender snapshot from the live Profile + Location.
-export function resolveSender(profile: Profile, location: Location): Contact {
-  return {
-    id: profile.id ?? 0,
-    type: "profile",
-    name: profile.name,
-    address: location.address,
-  };
-}
 
 export async function createDraft(
   input: CreateDraftInput
