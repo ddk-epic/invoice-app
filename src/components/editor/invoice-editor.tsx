@@ -8,9 +8,11 @@ import React, {
   useState,
 } from "react";
 import { useRouter } from "next/navigation";
+import { Check } from "lucide-react";
 
 import { Card } from "@/components/ui/card";
 import { Spinner } from "@/components/ui/spinner";
+import { log } from "@/diagnostics/log";
 import Total from "./total";
 import Table from "./table";
 import Optionsbar from "./optionsbar";
@@ -34,6 +36,32 @@ import { computeTotal, resolveItem } from "@/lib/invoice";
 import { addProduct, removeProduct, setQuantity } from "@/lib/invoice-items";
 import { addDays } from "@/lib/utils";
 
+type SaveState = "idle" | "saving" | "saved" | "error";
+
+function SaveStatus({ state }: { state: Exclude<SaveState, "idle"> }) {
+  if (state === "saving") {
+    return (
+      <span className="flex items-center gap-2 rounded-full bg-white px-3 py-1.5 text-sm text-slate-500 shadow">
+        <Spinner size="small" className="text-purple-600" />
+        Speichern…
+      </span>
+    );
+  }
+  if (state === "saved") {
+    return (
+      <span className="flex items-center gap-1.5 rounded-full bg-white px-3 py-1.5 text-sm text-slate-500 shadow">
+        <Check className="size-4 text-emerald-600" />
+        Gespeichert
+      </span>
+    );
+  }
+  return (
+    <span className="rounded-full bg-white px-3 py-1.5 text-sm font-medium text-rose-600 shadow">
+      Speichern fehlgeschlagen
+    </span>
+  );
+}
+
 interface InvoiceEditorProps {
   privateContact: Profile;
   contacts: Contact[];
@@ -51,7 +79,7 @@ export default function InvoiceEditor(props: InvoiceEditorProps) {
 
   const [isSendToModalOpen, setIsSendToModalOpen] = useState(false);
   const [isInvoiceToModalOpen, setIsInvoiceToModalOpen] = useState(false);
-  const [isSaving, setIsSaving] = useState(false);
+  const [saveState, setSaveState] = useState<SaveState>("idle");
 
   const productById = useMemo(
     () => new Map(productList.map((p) => [p.id, p])),
@@ -95,10 +123,15 @@ export default function InvoiceEditor(props: InvoiceEditorProps) {
       const current = latestRef.current;
       const snapshot = JSON.stringify(current);
       if (snapshot === lastSavedRef.current) return; // not dirty
-      if (showSpinner) setIsSaving(true);
+      if (showSpinner) setSaveState("saving");
       const res = await updateDraftAction(draftId, current);
-      if (res.ok) lastSavedRef.current = snapshot;
-      if (showSpinner) setIsSaving(false);
+      if (res.ok) {
+        lastSavedRef.current = snapshot;
+        setSaveState("saved");
+      } else {
+        setSaveState("error");
+        log("error", "autosave_failed", { draftId });
+      }
     },
     [draftId]
   );
@@ -177,9 +210,9 @@ export default function InvoiceEditor(props: InvoiceEditorProps) {
         invoiceData={invoiceData}
         discardData={discardData}
       />
-      {isSaving && (
+      {saveState !== "idle" && (
         <div className="fixed right-6 bottom-6">
-          <Spinner size="large" className="text-purple-600" />
+          <SaveStatus state={saveState} />
         </div>
       )}
       <div className="mx-auto max-w-4xl py-4">
