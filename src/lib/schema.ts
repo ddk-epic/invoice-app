@@ -1,11 +1,7 @@
 import z from "zod";
 
-import type {
-  Address,
-  BaseContact,
-  Contact,
-  DraftItem,
-} from "@/constants/types";
+import type { Address, DraftItem } from "@/constants/types";
+import type { BaseContact, Contact } from "@/lib/contacts";
 import { ContentUnitSchema, type ProductInput } from "@/lib/products";
 
 const AddressSchema: z.ZodType<Address> = z.object({

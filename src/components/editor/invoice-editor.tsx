@@ -19,12 +19,12 @@ import InvoiceDetails from "./invoice-details";
 import SelectContactModal from "./add-contact-modal";
 
 import {
-  Contact,
   DraftInvoice,
   DraftItem,
   InvoiceItem,
   Profile,
 } from "@/constants/types";
+import { Contact } from "@/lib/contacts";
 import {
   discardDraftAction,
   updateDraftAction,

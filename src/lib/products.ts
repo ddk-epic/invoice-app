@@ -95,6 +95,20 @@ export interface ProductInput {
   price: number;
 }
 
+export function emptyProduct(): ProductInput {
+  return {
+    barcode: "",
+    category: "",
+    name: "",
+    brand: "",
+    origin: "",
+    netContent: 0,
+    contentUnit: "g",
+    packSize: null,
+    price: 0,
+  };
+}
+
 const WEIGHT_UNIT: Record<string, string> = {
   g: "g",
   gr: "g",

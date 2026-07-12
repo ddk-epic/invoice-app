@@ -13,8 +13,6 @@ import {
 } from "./schema";
 
 import {
-  BaseContact,
-  Contact,
   DraftItem,
   InvoiceItem,
   InvoiceRow,
@@ -23,6 +21,7 @@ import {
   Location,
   Profile,
 } from "@/constants/types";
+import { BaseContact, Contact } from "@/lib/contacts";
 import { rowToProduct, type Product, type ProductInput } from "@/lib/products";
 
 function rowToContact(row: SelectContact): Contact {

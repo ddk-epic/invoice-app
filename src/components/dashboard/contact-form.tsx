@@ -8,15 +8,14 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
-import type { BaseContact, Contact } from "@/constants/types";
-import { baseContact } from "@/constants/constants";
+import { emptyContact, type BaseContact, type Contact } from "@/lib/contacts";
 import {
   insertContactAction,
   updateContactAction,
 } from "@/app/actions/server-actions";
 
 function toFormData(contact: Contact | null): BaseContact {
-  if (!contact) return baseContact;
+  if (!contact) return emptyContact();
   return {
     type: contact.type,
     name: contact.name,

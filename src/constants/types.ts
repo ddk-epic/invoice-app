@@ -1,4 +1,5 @@
 import type { Product } from "@/lib/products";
+import type { Contact } from "@/lib/contacts";
 
 export type InvoiceStatus = "draft" | "open" | "paid" | "overdue";
 
@@ -48,17 +49,6 @@ export interface Address {
   state: string;
   zip: number;
   country: string;
-}
-
-export interface BaseContact {
-  type: string;
-  name: string;
-  owner?: string;
-  address: Address;
-}
-
-export interface Contact extends BaseContact {
-  id: number;
 }
 
 export interface DraftItem {

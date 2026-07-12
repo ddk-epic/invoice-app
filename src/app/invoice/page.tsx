@@ -14,7 +14,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
-import { getStatusColor, statusLabel } from "@/constants/constants";
+import { getStatusColor, statusLabel } from "@/lib/invoice";
 
 import { QUERIES } from "@/server/db/queries";
 import { toEuro, deShortDate, idPrefix } from "@/lib/utils";

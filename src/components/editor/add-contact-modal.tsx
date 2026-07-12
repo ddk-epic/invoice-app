@@ -11,7 +11,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 
-import { Contact } from "@/constants/types";
+import { Contact } from "@/lib/contacts";
 
 interface SelectContactModalProps {
   isModalOpen: boolean;

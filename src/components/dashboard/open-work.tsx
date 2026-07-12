@@ -8,11 +8,17 @@ import { Check, Pencil, Trash2 } from "lucide-react";
 
 import { toEuro, deShortDate } from "@/lib/utils";
 import { Derived, WorkItem, toSections, sumAmount } from "@/lib/work-items";
-import { sectionLabel, statusLabel } from "@/constants/constants";
+import { statusLabel } from "@/lib/invoice";
 import {
   markPaidAction,
   discardDraftAction,
 } from "@/app/actions/server-actions";
+
+const sectionLabel: Record<"draft" | "overdue" | "open", string> = {
+  draft: "Entwürfe",
+  overdue: "Überfällig",
+  open: "Offen",
+};
 
 const STRIPE: Record<Derived, string> = {
   draft: "border-l-amber-400",

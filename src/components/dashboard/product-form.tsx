@@ -8,9 +8,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
-import { baseProduct } from "@/constants/constants";
 import {
   CONTENT_UNITS,
+  emptyProduct,
   type Product,
   type ProductInput,
   type ContentUnit,
@@ -29,7 +29,7 @@ interface ProductFormProps {
 function ProductForm({ mode, product, onDone }: ProductFormProps) {
   const router = useRouter();
   const [productData, setProductData] = useState<ProductInput>(
-    product ?? baseProduct
+    product ?? emptyProduct()
   );
 
   const isProductValid =

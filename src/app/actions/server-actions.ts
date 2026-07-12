@@ -3,8 +3,6 @@
 import type { ZodTypeAny } from "zod";
 import { QUERIES } from "@/server/db/queries";
 import {
-  BaseContact,
-  Contact,
   CreateDraftInput,
   DraftInvoice,
   FinalizeResult,
@@ -12,6 +10,7 @@ import {
   Profile,
   WriteResult,
 } from "@/constants/types";
+import { BaseContact, Contact } from "@/lib/contacts";
 import { BaseContactSchema, DraftSchema, ProductSchema } from "@/lib/schema";
 import { rowToProduct, type Product, type ProductInput } from "@/lib/products";
 import {

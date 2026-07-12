@@ -1,6 +1,6 @@
 "use client";
 
-import type { Contact } from "@/constants/types";
+import type { Contact } from "@/lib/contacts";
 import { toEuro } from "@/lib/utils";
 import {
   weightLabel,

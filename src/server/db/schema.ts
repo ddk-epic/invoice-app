@@ -14,11 +14,11 @@ import {
 
 import type {
   Address,
-  Contact,
   DraftItem,
   InvoiceItem,
   InvoiceStatus,
 } from "@/constants/types";
+import type { Contact } from "@/lib/contacts";
 
 /**
  * This is an example of how to use the multi-project schema feature of Drizzle ORM. Use the same

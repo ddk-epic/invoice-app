@@ -23,7 +23,7 @@ import {
   SelectItem,
 } from "@/components/ui/select";
 
-import { Contact } from "@/constants/types";
+import { Contact } from "@/lib/contacts";
 
 import { redirect, RedirectType } from "next/navigation";
 import { toast } from "sonner";
