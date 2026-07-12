@@ -13,6 +13,7 @@ import {
   insertContactAction,
   updateContactAction,
 } from "@/app/actions/server-actions";
+import { notifyWrite } from "@/diagnostics/notify";
 
 function toFormData(contact: Contact | null): BaseContact {
   if (!contact) return emptyContact();
@@ -67,13 +68,18 @@ function ContactForm({ mode, contact, onDone }: ContactFormProps) {
       },
     };
 
-    if (mode === "edit" && contact) {
-      await updateContactAction(contact.id, next);
-    } else {
-      await insertContactAction(next);
-    }
-    onDone();
-    router.refresh();
+    const res =
+      mode === "edit" && contact
+        ? await updateContactAction(contact.id, next)
+        : await insertContactAction(next);
+
+    notifyWrite(res, {
+      success: "Gespeichert",
+      onOk: () => {
+        onDone();
+        router.refresh();
+      },
+    });
   };
 
   return (

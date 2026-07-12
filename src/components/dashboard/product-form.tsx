@@ -19,6 +19,7 @@ import {
   insertProductAction,
   updateProductAction,
 } from "@/app/actions/server-actions";
+import { notifyWrite } from "@/diagnostics/notify";
 
 interface ProductFormProps {
   mode: "new" | "edit";
@@ -66,13 +67,18 @@ function ProductForm({ mode, product, onDone }: ProductFormProps) {
       barcode: productData.barcode?.trim() || null,
     };
 
-    if (mode === "edit" && productData.id != null) {
-      await updateProductAction(productData.id, next);
-    } else {
-      await insertProductAction(next);
-    }
-    onDone();
-    router.refresh();
+    const res =
+      mode === "edit" && productData.id != null
+        ? await updateProductAction(productData.id, next)
+        : await insertProductAction(next);
+
+    notifyWrite(res, {
+      success: "Gespeichert",
+      onOk: () => {
+        onDone();
+        router.refresh();
+      },
+    });
   };
 
   return (
