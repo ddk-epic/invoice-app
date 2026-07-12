@@ -10,6 +10,7 @@ import {
   Profile,
   WriteResult,
 } from "@/constants/types";
+import { log } from "@/diagnostics/log";
 import { BaseContact, Contact } from "@/lib/contacts";
 import { BaseContactSchema, DraftSchema, ProductSchema } from "@/lib/schema";
 import { rowToProduct, type Product, type ProductInput } from "@/lib/products";
@@ -35,7 +36,7 @@ async function validateWrite(
     if (result === false) return { ok: false, error: "db" };
     return { ok: true };
   } catch (err) {
-    console.error(`${label} failed:`, err);
+    log("error", `${label} failed`, { err });
     return { ok: false, error: "db" };
   }
 }
