@@ -45,11 +45,13 @@ export function useSearchableList<T>(
     setLimit(PAGE_SIZE);
   }, []);
 
+  const visible = useMemo(() => filtered.slice(0, limit), [filtered, limit]);
+
   return {
     query,
     setQuery,
     reset,
-    visible: filtered.slice(0, limit),
+    visible,
     total: filtered.length,
     noMatches: filtered.length === 0,
     loadMoreRef,
