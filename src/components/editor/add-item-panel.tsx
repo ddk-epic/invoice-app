@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  memo,
   useCallback,
   useEffect,
   useLayoutEffect,
@@ -136,7 +137,10 @@ interface AddItemPanelProps {
   addItem: (product: Product) => void;
 }
 
-function ItemPicker({ products, addItem }: AddItemPanelProps) {
+const ItemPicker = memo(function ItemPicker({
+  products,
+  addItem,
+}: AddItemPanelProps) {
   const { query, setQuery, visible, total, noMatches, loadMoreRef } =
     useSearchableList(products, productMatches);
   const [chosen, setChosen] = useState<Set<Product["id"]>>(new Set());
@@ -213,7 +217,7 @@ function ItemPicker({ products, addItem }: AddItemPanelProps) {
       </div>
     </div>
   );
-}
+});
 
 function AddItemPanel({ products, addItem }: AddItemPanelProps) {
   const [open, setOpen] = useState(false);
