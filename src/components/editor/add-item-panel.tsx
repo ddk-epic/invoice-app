@@ -39,6 +39,13 @@ function groupByCategory(items: Product[]): Map<string, Product[]> {
 type DockPosition =
   { top: number; left: number } | { top: number; right: number };
 
+function samePos(a: DockPosition, b: DockPosition): boolean {
+  if (a.top !== b.top) return false;
+  return "left" in a
+    ? "left" in b && a.left === b.left
+    : "right" in b && a.right === b.right;
+}
+
 function useDockPosition(
   open: boolean,
   triggerRef: React.RefObject<HTMLElement | null>
@@ -58,18 +65,29 @@ function useDockPosition(
         floor
       );
       const rightRoom = window.innerWidth - rect.right;
-      setPos(
+      const next: DockPosition =
         rightRoom >= PANEL_WIDTH + VIEWPORT_PAD
           ? { top, left: rect.right + 8 }
-          : { top, right: window.innerWidth - rect.left + 8 }
-      );
+          : { top, right: window.innerWidth - rect.left + 8 };
+      // Skip no-op updates: scrolling the panel's own list doesn't move the trigger.
+      setPos((prev) => (samePos(prev, next) ? prev : next));
+    };
+    // Coalesce scroll/resize bursts to one measure per frame.
+    let frame = 0;
+    const schedule = () => {
+      if (frame) return;
+      frame = requestAnimationFrame(() => {
+        frame = 0;
+        measure();
+      });
     };
     measure();
-    window.addEventListener("resize", measure);
-    window.addEventListener("scroll", measure, true);
+    window.addEventListener("resize", schedule);
+    window.addEventListener("scroll", schedule, true);
     return () => {
-      window.removeEventListener("resize", measure);
-      window.removeEventListener("scroll", measure, true);
+      if (frame) cancelAnimationFrame(frame);
+      window.removeEventListener("resize", schedule);
+      window.removeEventListener("scroll", schedule, true);
     };
   }, [open, triggerRef]);
   return pos;
