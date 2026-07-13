@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import { ArrowLeft } from "lucide-react";
 
 import { statusLabel } from "@/lib/invoice";
 import type { InvoiceStatus } from "@/constants/types";
@@ -58,8 +59,9 @@ async function InvoiceViewAll({ searchParams }: InvoiceViewAllProps) {
           </div>
           <Link
             href="/dashboard"
-            className="rounded-md px-2.5 py-1.5 text-sm font-normal text-slate-500 hover:bg-slate-100"
+            className="inline-flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-sm font-normal text-slate-500 hover:bg-slate-100"
           >
+            <ArrowLeft className="size-4" />
             Offene Vorgänge
           </Link>
         </div>
@@ -111,39 +113,39 @@ async function InvoiceViewAll({ searchParams }: InvoiceViewAllProps) {
               </div>
             ))}
           </div>
-
-          <div className="flex items-center justify-between border-t border-slate-200 px-4 py-3">
-            <span className="text-sm text-slate-400">
-              Seite {page} von {totalPages}
-            </span>
-            <div className="flex gap-1.5">
-              {page > 1 ? (
-                <Link
-                  href={`/invoice?page=${page - 1}`}
-                  className="rounded-md border border-slate-200 px-2.5 py-1.5 text-sm font-medium text-slate-600 hover:bg-slate-100"
-                >
-                  Zurück
-                </Link>
-              ) : (
-                <span className="rounded-md border border-slate-200 px-2.5 py-1.5 text-sm font-medium text-slate-300">
-                  Zurück
-                </span>
-              )}
-              {page < totalPages ? (
-                <Link
-                  href={`/invoice?page=${page + 1}`}
-                  className="rounded-md border border-slate-200 px-2.5 py-1.5 text-sm font-medium text-slate-600 hover:bg-slate-100"
-                >
-                  Weiter
-                </Link>
-              ) : (
-                <span className="rounded-md border border-slate-200 px-2.5 py-1.5 text-sm font-medium text-slate-300">
-                  Weiter
-                </span>
-              )}
-            </div>
-          </div>
         </section>
+
+        <div className="flex items-center justify-between px-4 py-3">
+          <span className="text-sm text-slate-400">
+            Seite {page} von {totalPages}
+          </span>
+          <div className="flex gap-1.5">
+            {page > 1 ? (
+              <Link
+                href={`/invoice?page=${page - 1}`}
+                className="rounded-md px-2.5 py-1.5 text-sm font-normal text-slate-500 hover:bg-slate-100"
+              >
+                Zurück
+              </Link>
+            ) : (
+              <span className="rounded-md px-2.5 py-1.5 text-sm font-normal text-slate-300">
+                Zurück
+              </span>
+            )}
+            {page < totalPages ? (
+              <Link
+                href={`/invoice?page=${page + 1}`}
+                className="rounded-md px-2.5 py-1.5 text-sm font-normal text-slate-500 hover:bg-slate-100"
+              >
+                Weiter
+              </Link>
+            ) : (
+              <span className="rounded-md px-2.5 py-1.5 text-sm font-normal text-slate-300">
+                Weiter
+              </span>
+            )}
+          </div>
+        </div>
       </div>
     </main>
   );
