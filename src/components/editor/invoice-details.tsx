@@ -62,7 +62,7 @@ function InvoiceDetails({
               <Button
                 key={days}
                 type="button"
-                variant={active ? "default" : "ghost"}
+                variant={active ? "brand" : "ghost"}
                 size="sm"
                 title={`+${days} Tage`}
                 onClick={() => setDueFromTerm(days)}

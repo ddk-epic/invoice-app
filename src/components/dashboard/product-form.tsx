@@ -208,10 +208,10 @@ function ProductForm({ mode, product, onDone }: ProductFormProps) {
           </div>
           <div className="flex justify-end">
             <Button
-              variant="ghost"
+              variant="brand"
               onClick={handleSubmit}
               disabled={!isProductValid}
-              className="to-brand w-32 bg-gradient-to-r from-teal-500 text-base text-white"
+              className="w-32 text-base"
             >
               {mode === "new" ? "Anlegen" : "Aktualisieren"}
             </Button>

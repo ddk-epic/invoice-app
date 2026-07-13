@@ -148,10 +148,10 @@ function ContactForm({ mode, contact, onDone }: ContactFormProps) {
             <div className="flex-grow"></div>
             <div className="flex w-32 items-end pt-4.5">
               <Button
-                variant="ghost"
+                variant="brand"
                 onClick={handleSubmit}
                 disabled={!isContactValid}
-                className="to-brand w-32 bg-gradient-to-r from-teal-500 text-base text-white"
+                className="w-32 text-base"
               >
                 {mode === "new" ? "Anlegen" : "Aktualisieren"}
               </Button>

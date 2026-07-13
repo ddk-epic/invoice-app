@@ -274,6 +274,7 @@ function AddItemPanel({ products, addItem }: AddItemPanelProps) {
     <div className="relative inline-block">
       <Button
         ref={triggerRef}
+        variant="brand"
         size="sm"
         className="flex items-center gap-2"
         onClick={() => setOpen((o) => !o)}

@@ -88,7 +88,7 @@ function Optionsbar(props: OptionsbarProps) {
       <Sheet>
         {/* Actions Menu Header */}
         <SheetTrigger asChild>
-          <Button className="h-12 w-12 rounded-full shadow-lg">
+          <Button variant="brand" className="h-12 w-12 rounded-full shadow-lg">
             <Settings className="size-6" />
           </Button>
         </SheetTrigger>
@@ -156,6 +156,7 @@ function Optionsbar(props: OptionsbarProps) {
         <Button
           onClick={handleSave}
           aria-label="Entwurf speichern"
+          variant="brand"
           className="h-12 w-12 rounded-full shadow-lg"
           disabled={saving || busy}
         >
