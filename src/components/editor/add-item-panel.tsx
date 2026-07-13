@@ -143,6 +143,10 @@ const ItemPicker = memo(function ItemPicker({
 }: AddItemPanelProps) {
   const { query, setQuery, visible, total, noMatches, loadMoreRef } =
     useSearchableList(products, productMatches);
+  const groups = useMemo(
+    () => [...groupByCategory(visible).entries()],
+    [visible]
+  );
   const [chosen, setChosen] = useState<Set<Product["id"]>>(new Set());
   const onAdd = (p: Product) => {
     addItem(p);
@@ -165,7 +169,7 @@ const ItemPicker = memo(function ItemPicker({
 
       <div className="flex-1 overflow-y-auto pb-1">
         {!noMatches ? (
-          [...groupByCategory(visible).entries()].map(([category, items]) => (
+          groups.map(([category, items]) => (
             <div key={category}>
               <div className="sticky top-0 z-10 bg-gray-100/95 px-3 py-1 text-xs font-semibold tracking-wide text-gray-500 uppercase backdrop-blur">
                 {category}
