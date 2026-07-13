@@ -50,6 +50,7 @@ export function useSearchableList<T>(
     setQuery,
     reset,
     visible: filtered.slice(0, limit),
+    total: filtered.length,
     noMatches: filtered.length === 0,
     loadMoreRef,
   };

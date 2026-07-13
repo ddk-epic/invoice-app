@@ -16,7 +16,7 @@ import { log } from "@/diagnostics/log";
 import Total from "./total";
 import Table from "./table";
 import Optionsbar from "./optionsbar";
-import AddItemModal from "./add-item-modal";
+import AddItemPanel from "./add-item-panel";
 import InvoiceDetails from "./invoice-details";
 import SelectContactModal from "./add-contact-modal";
 
@@ -258,7 +258,7 @@ export default function InvoiceEditor(props: InvoiceEditorProps) {
               {/* Invoice Items */}
               <div className="mb-4 flex items-center justify-between">
                 <h2 className="text-lg font-semibold">{/*Items*/}</h2>
-                <AddItemModal products={productList} addItem={addItem} />
+                <AddItemPanel products={productList} addItem={addItem} />
               </div>
 
               {/* Table */}
