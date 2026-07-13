@@ -9,7 +9,7 @@ import {
   useRef,
   useState,
 } from "react";
-import { Check, Plus, Search } from "lucide-react";
+import { Check, Plus, Search, X } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { toEuro } from "@/lib/utils";
@@ -161,6 +161,11 @@ const ItemPicker = memo(function ItemPicker({
 }: AddItemPanelProps) {
   const { query, setQuery, visible, total, noMatches, loadMoreRef } =
     useSearchableList(products, productMatches);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const clearQuery = () => {
+    setQuery("");
+    inputRef.current?.focus();
+  };
   const groups = useMemo(
     () => [...groupByCategory(visible).entries()],
     [visible]
@@ -176,13 +181,27 @@ const ItemPicker = memo(function ItemPicker({
       <div className="flex items-center gap-2 border-b px-3 py-2.5">
         <Search className="size-4 shrink-0 text-gray-400" />
         <input
+          ref={inputRef}
           autoFocus
           placeholder="Artikel suchen..."
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           className="flex-1 bg-transparent text-sm outline-none placeholder:text-gray-400"
         />
-        <span className="text-xs text-gray-400">{total}</span>
+        <button
+          type="button"
+          onClick={clearQuery}
+          aria-label="Suche löschen"
+          tabIndex={query ? 0 : -1}
+          className={`shrink-0 rounded border border-transparent p-0.5 text-gray-400 hover:border-gray-300 hover:text-gray-700 ${
+            query ? "" : "invisible"
+          }`}
+        >
+          <X className="size-4" />
+        </button>
+        <span className="w-[4ch] shrink-0 text-right text-xs text-gray-400 tabular-nums">
+          {total}
+        </span>
       </div>
 
       <div className="flex-1 overflow-y-auto pb-1">
