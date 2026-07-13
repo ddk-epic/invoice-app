@@ -211,7 +211,7 @@ function ProductForm({ mode, product, onDone }: ProductFormProps) {
               variant="ghost"
               onClick={handleSubmit}
               disabled={!isProductValid}
-              className="w-32 bg-gradient-to-r from-teal-500 to-teal-600 text-base text-white"
+              className="to-brand w-32 bg-gradient-to-r from-teal-500 text-base text-white"
             >
               {mode === "new" ? "Anlegen" : "Aktualisieren"}
             </Button>

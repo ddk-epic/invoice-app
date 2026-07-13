@@ -13,7 +13,7 @@ function Navbar() {
           {/* Link */}
           <Link href="/dashboard">
             <div className="flex flex-shrink-0 items-center">
-              <FileText className="h-8 w-8 text-purple-600" />
+              <FileText className="text-brand h-8 w-8" />
               <div>
                 <span className="ml-2 text-xl font-bold text-gray-900">
                   Invoice App

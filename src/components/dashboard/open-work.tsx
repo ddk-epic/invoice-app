@@ -42,7 +42,7 @@ function PdfLink({ invoiceId }: { invoiceId: string }) {
 
 function PaidBadge() {
   return (
-    <span className="inline-flex items-center gap-1 rounded-md bg-emerald-600 px-2.5 py-1.5 text-sm font-medium text-white">
+    <span className="bg-brand inline-flex items-center gap-1 rounded-md px-2.5 py-1.5 text-sm font-medium text-white">
       <Check className="size-3.5" /> Bezahlt
     </span>
   );

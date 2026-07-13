@@ -72,7 +72,7 @@ export const CreateInvoiceModal = (props: CreatInvoiceModalProps) => {
       }}
     >
       <DialogTrigger asChild>
-        <Button className="ml-1 inline-flex items-center gap-1.5 rounded-md bg-teal-600 px-3.5 py-2 text-sm font-semibold text-white hover:bg-teal-700">
+        <Button className="bg-brand ml-1 inline-flex items-center gap-1.5 rounded-md px-3.5 py-2 text-sm font-semibold text-white hover:bg-teal-700">
           <Plus className="size-4" />
           Neue Rechnung
         </Button>
@@ -155,7 +155,7 @@ export const CreateInvoiceModal = (props: CreatInvoiceModalProps) => {
             </Button>
             <Button
               type="submit"
-              className="flex w-38 items-center justify-center bg-purple-600 hover:bg-purple-700"
+              className="bg-brand flex w-38 items-center justify-center hover:bg-teal-700"
               disabled={isLoading}
             >
               {isLoading ? <Spinner size="small" /> : "Rechnung erstellen"}
