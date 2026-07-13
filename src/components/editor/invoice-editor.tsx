@@ -64,20 +64,30 @@ export default function InvoiceEditor(props: InvoiceEditorProps) {
   const session = useDraftSession(seededInvoice);
   const { data: invoiceData, update } = session;
 
-  const setItems = (mutate: (items: DraftItem[]) => DraftItem[]) =>
-    update((prev) => {
-      const items = mutate(prev.items);
-      return { ...prev, items, total: computeTotal(resolve(items)) };
-    });
+  const setItems = useCallback(
+    (mutate: (items: DraftItem[]) => DraftItem[]) =>
+      update((prev) => {
+        const items = mutate(prev.items);
+        return { ...prev, items, total: computeTotal(resolve(items)) };
+      }),
+    [update, resolve]
+  );
 
-  const addItem = (product: Product) =>
-    setItems((items) => addProduct(items, product.id));
+  const addItem = useCallback(
+    (product: Product) => setItems((items) => addProduct(items, product.id)),
+    [setItems]
+  );
 
-  const updateItemQty = (id: number, quantity: number) =>
-    setItems((items) => setQuantity(items, id, quantity));
+  const updateItemQty = useCallback(
+    (id: number, quantity: number) =>
+      setItems((items) => setQuantity(items, id, quantity)),
+    [setItems]
+  );
 
-  const removeItem = (id: number) =>
-    setItems((items) => removeProduct(items, id));
+  const removeItem = useCallback(
+    (id: number) => setItems((items) => removeProduct(items, id)),
+    [setItems]
+  );
 
   const resolvedItems = resolve(invoiceData.items);
 
