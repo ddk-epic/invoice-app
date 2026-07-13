@@ -1,10 +1,9 @@
 "use client";
 
 import React, { useCallback, useMemo, useState } from "react";
-import { useRouter } from "next/navigation";
 
 import { Card } from "@/components/ui/card";
-import { useAutosave } from "@/hooks/use-autosave";
+import { useDraftSession } from "@/hooks/use-draft-session";
 import Total from "./total";
 import Table from "./table";
 import Optionsbar from "./optionsbar";
@@ -19,7 +18,6 @@ import {
   Profile,
 } from "@/constants/types";
 import { Contact } from "@/lib/contacts";
-import { discardDraftAction } from "@/app/actions/server-actions";
 import { type Product } from "@/lib/products";
 import { computeTotal, resolveItem } from "@/lib/invoice";
 import { addProduct, removeProduct, setQuantity } from "@/lib/invoice-items";
@@ -58,75 +56,54 @@ export default function InvoiceEditor(props: InvoiceEditorProps) {
   );
 
   // Seed estimate total so a stale stored total isn't flagged dirty on open.
-  const initialWithComputedTotal = {
+  const [seededInvoice] = useState(() => ({
     ...initialInvoice,
     total: computeTotal(resolve(initialInvoice.items)),
-  };
+  }));
 
-  const [invoiceData, setInvoiceData] = useState<DraftInvoice>(
-    initialWithComputedTotal
-  );
+  const session = useDraftSession(seededInvoice);
+  const { data: invoiceData, update } = session;
 
-  const router = useRouter();
-  const draftId = invoiceData.id;
-
-  const { status, saving, saveNow, beginDiscard } = useAutosave(invoiceData);
-
-  const setItems = (items: DraftItem[]) => {
-    setInvoiceData((prev) => ({
-      ...prev,
-      items,
-      total: computeTotal(resolve(items)),
-    }));
-  };
+  const setItems = (mutate: (items: DraftItem[]) => DraftItem[]) =>
+    update((prev) => {
+      const items = mutate(prev.items);
+      return { ...prev, items, total: computeTotal(resolve(items)) };
+    });
 
   const addItem = (product: Product) =>
-    setItems(addProduct(invoiceData.items, product.id));
+    setItems((items) => addProduct(items, product.id));
 
   const updateItemQty = (id: number, quantity: number) =>
-    setItems(setQuantity(invoiceData.items, id, quantity));
+    setItems((items) => setQuantity(items, id, quantity));
 
   const removeItem = (id: number) =>
-    setItems(removeProduct(invoiceData.items, id));
+    setItems((items) => removeProduct(items, id));
 
   const resolvedItems = resolve(invoiceData.items);
 
   const updateContactById = (id: number, name: string) => {
     const contact = contactList.find((contact) => contact.id === id);
     if (!contact) return;
-    setInvoiceData((prev) => ({ ...prev, [name]: contact }));
+    update((prev) => ({ ...prev, [name]: contact }));
     setIsSendToModalOpen(false);
     setIsInvoiceToModalOpen(false);
   };
 
   const updateInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setInvoiceData((prev) => ({ ...prev, [name]: value }));
+    update((prev) => ({ ...prev, [name]: value }));
   };
 
   const setDueFromTerm = (days: number) => {
-    setInvoiceData((prev) => ({
+    update((prev) => ({
       ...prev,
       dueDate: addDays(prev.invoiceDate, days),
     }));
   };
 
-  const discardData = async () => {
-    beginDiscard();
-    if (draftId) await discardDraftAction(draftId);
-    router.push("/dashboard");
-  };
-
   return (
     <>
-      <Optionsbar
-        privateContact={privateContact}
-        invoiceData={invoiceData}
-        discardData={discardData}
-        saveNow={saveNow}
-        status={status}
-        saving={saving}
-      />
+      <Optionsbar privateContact={privateContact} session={session} />
       <div className="mx-auto max-w-4xl py-4">
         <Card className="wrapper min-h-[1086px] min-w-2xl bg-white shadow-lg md:min-h-[1584px]">
           <div className="flex h-full flex-col px-12 py-6 text-sm">

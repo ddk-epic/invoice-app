@@ -1,7 +1,5 @@
 "use client";
 
-import { useState } from "react";
-
 import { Settings, BookCheck, Trash2, Save, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -13,12 +11,14 @@ import {
 } from "@/components/ui/sheet";
 import { Separator } from "@/components/ui/separator";
 
-import { DraftInvoice, FinalizeResult, Profile } from "@/constants/types";
-import { finalizeDraftAction } from "@/app/actions/server-actions";
+import { Profile } from "@/constants/types";
 import { canFinalize } from "@/lib/invoice";
-import { redirect } from "next/navigation";
 import { notifyError, notifySuccess } from "@/diagnostics/notify";
-import { type SaveStatus } from "@/hooks/use-autosave";
+import {
+  type DraftSession,
+  type SaveStatus,
+  type SessionFinalizeResult,
+} from "@/hooks/use-draft-session";
 
 function SaveBadge({ status }: { status: SaveStatus }) {
   if (status === "error") {
@@ -47,17 +47,15 @@ function SaveBadge({ status }: { status: SaveStatus }) {
 
 interface OptionsbarProps {
   privateContact: Profile;
-  invoiceData: DraftInvoice;
-  discardData: () => void;
-  saveNow: () => Promise<boolean>;
-  status: SaveStatus;
-  saving: boolean;
+  session: DraftSession;
 }
 
-type FinalizeError = Extract<FinalizeResult, { ok: false }>["reason"];
+type FinalizeError = Extract<SessionFinalizeResult, { ok: false }>["reason"];
 
 function finalizeError(reason: FinalizeError): string {
   switch (reason) {
+    case "unsaved":
+      return "Entwurf konnte nicht gespeichert werden.";
     case "not_finalizable":
       return "Bitte fügen Sie mindestens einen Artikel hinzu.";
     case "no_profile":
@@ -69,32 +67,20 @@ function finalizeError(reason: FinalizeError): string {
 }
 
 function Optionsbar(props: OptionsbarProps) {
-  const { privateContact, invoiceData, discardData, saveNow, status, saving } =
-    props;
-  const [isLoading, setIsLoading] = useState(false);
+  const { privateContact, session } = props;
+  const { data: invoiceData, status, saving, busy } = session;
 
   const finalizable = canFinalize(invoiceData);
 
   const handleSave = async () => {
-    const ok = await saveNow();
+    const ok = await session.saveNow();
     if (ok) notifySuccess("Gespeichert");
     else notifyError("Speichern fehlgeschlagen");
   };
 
   const handleFinalize = async () => {
-    if (!invoiceData.id) return;
-    const saved = await saveNow();
-    if (!saved) return;
-    const result = await finalizeDraftAction(invoiceData.id);
-    if (!result.ok) {
-      notifyError(finalizeError(result.reason));
-      return;
-    }
-
-    setIsLoading(true);
-    setTimeout(() => {
-      redirect(`/invoice/${result.number}/pdf`);
-    }, 2000);
+    const result = await session.finalize();
+    if (!result.ok) notifyError(finalizeError(result.reason));
   };
 
   return (
@@ -137,7 +123,7 @@ function Optionsbar(props: OptionsbarProps) {
                   onClick={handleFinalize}
                   variant="outline"
                   className="w-full justify-start"
-                  disabled={isLoading || !finalizable}
+                  disabled={busy || !finalizable}
                 >
                   <BookCheck className="mr-1 h-4 w-4" />
                   Rechnung finalisieren
@@ -151,10 +137,10 @@ function Optionsbar(props: OptionsbarProps) {
               <div className="space-y-2">
                 {/* discard draft */}
                 <Button
-                  onClick={discardData}
+                  onClick={session.discard}
                   variant="outline"
                   className="w-full justify-start"
-                  disabled={isLoading}
+                  disabled={busy}
                 >
                   <Trash2 className="mr-1 h-4 w-4" />
                   Entwurf verwerfen
@@ -171,7 +157,7 @@ function Optionsbar(props: OptionsbarProps) {
           onClick={handleSave}
           aria-label="Entwurf speichern"
           className="h-12 w-12 rounded-full shadow-lg"
-          disabled={saving}
+          disabled={saving || busy}
         >
           {status === "saved" ? (
             <Check className="size-6" />

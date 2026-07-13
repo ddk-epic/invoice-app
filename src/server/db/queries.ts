@@ -229,11 +229,14 @@ export const QUERIES = {
     return row.id;
   },
 
-  async updateDraftById(id: number, inv: Invoice): Promise<void> {
-    await db
+  // Draft-shaped writes must never touch a finalized row, whatever the client does.
+  async updateDraftById(id: number, inv: Invoice): Promise<boolean> {
+    const rows = await db
       .update(invoiceTable)
       .set(invoiceDataToRow(inv))
-      .where(eq(invoiceTable.id, id));
+      .where(and(eq(invoiceTable.id, id), eq(invoiceTable.status, "draft")))
+      .returning({ id: invoiceTable.id });
+    return rows.length > 0;
   },
 
   // Assign the next sequential number, freeze the sender, flip to open, atomically.
