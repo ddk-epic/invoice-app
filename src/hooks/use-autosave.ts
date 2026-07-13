@@ -57,7 +57,6 @@ export function useAutosave(data: DraftInvoice): Autosave {
         setFailed(false);
       }
     } finally {
-      runningRef.current = null;
       setSaving(false);
     }
     return ok;
@@ -67,7 +66,11 @@ export function useAutosave(data: DraftInvoice): Autosave {
     if (!draftId || discardingRef.current) return Promise.resolve(false);
     // Single write in flight; concurrent callers join the running drain.
     if (runningRef.current) return runningRef.current;
-    const p = drain();
+    // Clear via microtask so it always runs after the assignment below, even
+    // when drain resolves synchronously (nothing dirty).
+    const p = drain().finally(() => {
+      runningRef.current = null;
+    });
     runningRef.current = p;
     return p;
   }, [draftId, drain]);
