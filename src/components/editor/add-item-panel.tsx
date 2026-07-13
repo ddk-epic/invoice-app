@@ -11,7 +11,6 @@ import {
 import { Check, Plus, Search } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { toEuro } from "@/lib/utils";
 import {
   formatBasePrice,
@@ -140,10 +139,10 @@ interface AddItemPanelProps {
 function ItemPicker({ products, addItem }: AddItemPanelProps) {
   const { query, setQuery, visible, total, noMatches, loadMoreRef } =
     useSearchableList(products, productMatches);
-  const [added, setAdded] = useState<Product[]>([]);
+  const [chosen, setChosen] = useState<Set<Product["id"]>>(new Set());
   const onAdd = (p: Product) => {
     addItem(p);
-    setAdded((prev) => [p, ...prev.filter((x) => x.id !== p.id)].slice(0, 6));
+    setChosen((prev) => new Set(prev).add(p.id));
   };
 
   return (
@@ -160,17 +159,6 @@ function ItemPicker({ products, addItem }: AddItemPanelProps) {
         <span className="text-xs text-gray-400">{total}</span>
       </div>
 
-      {added.length > 0 && (
-        <div className="flex flex-wrap gap-1.5 border-b px-3 py-2">
-          {added.map((p) => (
-            <Badge key={p.id} variant="secondary" className="gap-1">
-              <Check className="size-3" />
-              {p.name}
-            </Badge>
-          ))}
-        </div>
-      )}
-
       <div className="flex-1 overflow-y-auto pb-1">
         {!noMatches ? (
           [...groupByCategory(visible).entries()].map(([category, items]) => (
@@ -181,11 +169,14 @@ function ItemPicker({ products, addItem }: AddItemPanelProps) {
               {items.map((item) => {
                 const weight = weightLabel(item);
                 const basePrice = formatBasePrice(item);
+                const isChosen = chosen.has(item.id);
                 return (
                   <button
                     key={item.id}
                     onClick={() => onAdd(item)}
-                    className="group flex w-full items-center px-3 py-1.5 text-left hover:bg-gray-200"
+                    className={`group flex w-full items-center px-3 py-1.5 text-left hover:bg-gray-200 ${
+                      isChosen ? "text-gray-400" : ""
+                    }`}
                   >
                     <span className="flex min-w-0 flex-1 items-baseline gap-2">
                       <span className="truncate text-sm font-medium">
@@ -203,7 +194,11 @@ function ItemPicker({ products, addItem }: AddItemPanelProps) {
                     <span className="w-14 shrink-0 text-right text-sm text-gray-600 tabular-nums">
                       {toEuro(item.price)}
                     </span>
-                    <Plus className="ml-3 size-4 shrink-0 text-gray-300 group-hover:text-gray-700" />
+                    {isChosen ? (
+                      <Check className="ml-3 size-4 shrink-0 text-gray-400" />
+                    ) : (
+                      <Plus className="ml-3 size-4 shrink-0 text-gray-300 group-hover:text-gray-700" />
+                    )}
                   </button>
                 );
               })}
