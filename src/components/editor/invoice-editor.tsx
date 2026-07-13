@@ -1,18 +1,10 @@
 "use client";
 
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Check } from "lucide-react";
 
 import { Card } from "@/components/ui/card";
-import { Spinner } from "@/components/ui/spinner";
-import { log } from "@/diagnostics/log";
+import { useAutosave } from "@/hooks/use-autosave";
 import Total from "./total";
 import Table from "./table";
 import Optionsbar from "./optionsbar";
@@ -27,40 +19,11 @@ import {
   Profile,
 } from "@/constants/types";
 import { Contact } from "@/lib/contacts";
-import {
-  discardDraftAction,
-  updateDraftAction,
-} from "@/app/actions/server-actions";
+import { discardDraftAction } from "@/app/actions/server-actions";
 import { type Product } from "@/lib/products";
 import { computeTotal, resolveItem } from "@/lib/invoice";
 import { addProduct, removeProduct, setQuantity } from "@/lib/invoice-items";
 import { addDays } from "@/lib/utils";
-
-type SaveState = "idle" | "saving" | "saved" | "error";
-
-function SaveStatus({ state }: { state: Exclude<SaveState, "idle"> }) {
-  if (state === "saving") {
-    return (
-      <span className="flex items-center gap-2 rounded-full bg-white px-3 py-1.5 text-sm text-slate-500 shadow">
-        <Spinner size="small" className="text-purple-600" />
-        Speichern…
-      </span>
-    );
-  }
-  if (state === "saved") {
-    return (
-      <span className="flex items-center gap-1.5 rounded-full bg-white px-3 py-1.5 text-sm text-slate-500 shadow">
-        <Check className="size-4 text-emerald-600" />
-        Gespeichert
-      </span>
-    );
-  }
-  return (
-    <span className="rounded-full bg-white px-3 py-1.5 text-sm font-medium text-rose-600 shadow">
-      Speichern fehlgeschlagen
-    </span>
-  );
-}
 
 interface InvoiceEditorProps {
   privateContact: Profile;
@@ -79,7 +42,6 @@ export default function InvoiceEditor(props: InvoiceEditorProps) {
 
   const [isSendToModalOpen, setIsSendToModalOpen] = useState(false);
   const [isInvoiceToModalOpen, setIsInvoiceToModalOpen] = useState(false);
-  const [saveState, setSaveState] = useState<SaveState>("idle");
 
   const productById = useMemo(
     () => new Map(productList.map((p) => [p.id, p])),
@@ -108,56 +70,7 @@ export default function InvoiceEditor(props: InvoiceEditorProps) {
   const router = useRouter();
   const draftId = invoiceData.id;
 
-  // Always-fresh state for timers/listeners.
-  const latestRef = useRef(invoiceData);
-  useEffect(() => {
-    latestRef.current = invoiceData;
-  });
-
-  // Snapshot of what's persisted; a differing snapshot means the draft is dirty.
-  const lastSavedRef = useRef(JSON.stringify(initialWithComputedTotal));
-
-  const saveDraft = useCallback(
-    async (showSpinner: boolean) => {
-      if (!draftId) return;
-      const current = latestRef.current;
-      const snapshot = JSON.stringify(current);
-      if (snapshot === lastSavedRef.current) return; // not dirty
-      if (showSpinner) setSaveState("saving");
-      const res = await updateDraftAction(draftId, current);
-      if (res.ok) {
-        lastSavedRef.current = snapshot;
-        setSaveState("saved");
-      } else {
-        setSaveState("error");
-        log("error", "autosave_failed", { draftId });
-      }
-    },
-    [draftId]
-  );
-
-  // Periodic autosave.
-  useEffect(() => {
-    if (!draftId) return;
-    const interval = setInterval(() => saveDraft(true), 10000);
-    return () => clearInterval(interval);
-  }, [draftId, saveDraft]);
-
-  // Safety clean-up
-  useEffect(() => {
-    if (!draftId) return;
-    const flush = () => saveDraft(false);
-    const onVisibility = () => {
-      if (document.visibilityState === "hidden") flush();
-    };
-    document.addEventListener("visibilitychange", onVisibility);
-    window.addEventListener("pagehide", flush);
-    return () => {
-      document.removeEventListener("visibilitychange", onVisibility);
-      window.removeEventListener("pagehide", flush);
-      flush();
-    };
-  }, [draftId, saveDraft]);
+  const { status, saving, saveNow, beginDiscard } = useAutosave(invoiceData);
 
   const setItems = (items: DraftItem[]) => {
     setInvoiceData((prev) => ({
@@ -199,6 +112,7 @@ export default function InvoiceEditor(props: InvoiceEditorProps) {
   };
 
   const discardData = async () => {
+    beginDiscard();
     if (draftId) await discardDraftAction(draftId);
     router.push("/dashboard");
   };
@@ -209,12 +123,10 @@ export default function InvoiceEditor(props: InvoiceEditorProps) {
         privateContact={privateContact}
         invoiceData={invoiceData}
         discardData={discardData}
+        saveNow={saveNow}
+        status={status}
+        saving={saving}
       />
-      {saveState !== "idle" && (
-        <div className="fixed right-6 bottom-6">
-          <SaveStatus state={saveState} />
-        </div>
-      )}
       <div className="mx-auto max-w-4xl py-4">
         <Card className="wrapper min-h-[1086px] min-w-2xl bg-white shadow-lg md:min-h-[1584px]">
           <div className="flex h-full flex-col px-12 py-6 text-sm">

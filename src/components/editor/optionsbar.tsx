@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 
-import { Settings, BookCheck, Trash2 } from "lucide-react";
+import { Settings, BookCheck, Trash2, Save, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Sheet,
@@ -14,18 +14,44 @@ import {
 import { Separator } from "@/components/ui/separator";
 
 import { DraftInvoice, FinalizeResult, Profile } from "@/constants/types";
-import {
-  finalizeDraftAction,
-  updateDraftAction,
-} from "@/app/actions/server-actions";
+import { finalizeDraftAction } from "@/app/actions/server-actions";
 import { canFinalize } from "@/lib/invoice";
 import { redirect } from "next/navigation";
-import { notifyError } from "@/diagnostics/notify";
+import { notifyError, notifySuccess } from "@/diagnostics/notify";
+import { type SaveStatus } from "@/hooks/use-autosave";
+
+function SaveBadge({ status }: { status: SaveStatus }) {
+  if (status === "error") {
+    return (
+      <span className="flex items-center gap-1.5 rounded-full bg-white px-3 py-1.5 text-sm font-medium text-rose-600 shadow">
+        <span className="size-2 rounded-full bg-rose-500" />
+        Speichern fehlgeschlagen
+      </span>
+    );
+  }
+  if (status === "unsaved") {
+    return (
+      <span className="flex items-center gap-1.5 rounded-full bg-white px-3 py-1.5 text-sm text-amber-600 shadow">
+        <span className="size-2 rounded-full bg-amber-500" />
+        Nicht gespeichert
+      </span>
+    );
+  }
+  return (
+    <span className="flex items-center gap-1.5 rounded-full bg-white px-3 py-1.5 text-sm text-slate-500 shadow">
+      <Check className="size-4 text-emerald-600" />
+      Gespeichert
+    </span>
+  );
+}
 
 interface OptionsbarProps {
   privateContact: Profile;
   invoiceData: DraftInvoice;
   discardData: () => void;
+  saveNow: () => Promise<boolean>;
+  status: SaveStatus;
+  saving: boolean;
 }
 
 type FinalizeError = Extract<FinalizeResult, { ok: false }>["reason"];
@@ -43,27 +69,21 @@ function finalizeError(reason: FinalizeError): string {
 }
 
 function Optionsbar(props: OptionsbarProps) {
-  const { privateContact, invoiceData, discardData } = props;
+  const { privateContact, invoiceData, discardData, saveNow, status, saving } =
+    props;
   const [isLoading, setIsLoading] = useState(false);
 
   const finalizable = canFinalize(invoiceData);
 
-  const saveDraft = async () => {
-    if (!invoiceData.id) return false;
-    const res = await updateDraftAction(invoiceData.id, invoiceData);
-    if (!res.ok) {
-      notifyError(
-        res.error === "validation"
-          ? "Bitte füllen Sie alle erforderlichen Felder aus."
-          : "Entwurf konnte nicht gespeichert werden."
-      );
-    }
-    return res.ok;
+  const handleSave = async () => {
+    const ok = await saveNow();
+    if (ok) notifySuccess("Gespeichert");
+    else notifyError("Speichern fehlgeschlagen");
   };
 
   const handleFinalize = async () => {
     if (!invoiceData.id) return;
-    const saved = await saveDraft();
+    const saved = await saveNow();
     if (!saved) return;
     const result = await finalizeDraftAction(invoiceData.id);
     if (!result.ok) {
@@ -78,7 +98,7 @@ function Optionsbar(props: OptionsbarProps) {
   };
 
   return (
-    <div className="fixed right-0 z-50 p-8">
+    <div className="fixed right-0 z-50 flex flex-col items-end gap-3 p-8">
       <Sheet>
         {/* Actions Menu Header */}
         <SheetTrigger asChild>
@@ -144,6 +164,22 @@ function Optionsbar(props: OptionsbarProps) {
           </div>
         </SheetContent>
       </Sheet>
+
+      <div className="flex items-center gap-2">
+        <SaveBadge status={status} />
+        <Button
+          onClick={handleSave}
+          aria-label="Entwurf speichern"
+          className="h-12 w-12 rounded-full shadow-lg"
+          disabled={saving}
+        >
+          {status === "saved" ? (
+            <Check className="size-6" />
+          ) : (
+            <Save className="size-6" />
+          )}
+        </Button>
+      </div>
     </div>
   );
 }
