@@ -204,7 +204,7 @@ const ItemPicker = memo(function ItemPicker({
         </span>
       </div>
 
-      <div className="flex-1 overflow-y-auto pb-1">
+      <div className="flex-1 overflow-y-scroll pb-1">
         {!noMatches ? (
           groups.map(([category, items]) => (
             <div key={category}>

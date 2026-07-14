@@ -31,18 +31,13 @@ function ContactsModal({ contacts }: { contacts: Contact[] }) {
       newLabel="Neuer Kontakt"
       items={contacts}
       matches={contactMatches}
-      renderRow={(contact) => (
-        <>
-          <div>
-            <h4 className="font-medium">{contact.name}</h4>
-            <p className="text-sm text-gray-500">{contact.type}</p>
-          </div>
-          <div className="mr-2 text-right">
-            <p className="font-medium">{contact.address.street}</p>
-            <p className="text-sm text-gray-500">{`${contact.address.zip} ${contact.address.city}`}</p>
-          </div>
-        </>
-      )}
+      groupKey={(contact) => contact.type}
+      toRow={(contact) => ({
+        title: contact.name,
+        subtitle: contact.owner ?? contact.type,
+        valueMain: contact.address.street,
+        valueSub: `${contact.address.zip} ${contact.address.city}`,
+      })}
       renderSheet={({ mode, item, close }) => (
         <ContactForm mode={mode} contact={item} onDone={close} />
       )}
@@ -58,23 +53,15 @@ function ProductsModal({ products }: { products: Product[] }) {
       newLabel="Neuer Artikel"
       items={products}
       matches={productMatches}
-      renderRow={(item) => (
-        <>
-          <div>
-            <h4 className="font-medium">{item.name}</h4>
-            <p className="text-sm text-gray-500">
-              {item.category.toUpperCase()}
-            </p>
-          </div>
-          <div className="mr-2 text-right">
-            <p className="font-medium">{toEuro(item.price)}</p>
-            <p className="text-sm text-gray-500">
-              {weightLabel(item)}
-              {formatBasePrice(item) && ` · ${formatBasePrice(item)}`}
-            </p>
-          </div>
-        </>
-      )}
+      groupKey={(item) => item.category}
+      toRow={(item) => ({
+        title: item.name,
+        subtitle: item.category.toUpperCase(),
+        valueMain: toEuro(item.price),
+        valueSub: [weightLabel(item), formatBasePrice(item)]
+          .filter(Boolean)
+          .join(" · "),
+      })}
       renderSheet={({ mode, item, close }) => (
         <ProductForm mode={mode} product={item} onDone={close} />
       )}
