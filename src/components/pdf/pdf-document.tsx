@@ -14,6 +14,49 @@ interface PdfDocumentProps {
   privateData: Profile;
 }
 
+const indent = 3;
+
+const s = StyleSheet.create({
+  page: {
+    flexDirection: "column",
+    fontSize: 10,
+    lineHeight: 1.4,
+
+    padding: 32,
+    paddingTop: 36,
+    paddingRight: 36,
+  },
+  ml: {
+    marginLeft: indent,
+  },
+  bold: {
+    fontWeight: 600,
+  },
+  inline: {
+    flexDirection: "row",
+  },
+  header: {
+    flexDirection: "column",
+    lineHeight: 0.7,
+  },
+  logo: {
+    paddingBottom: 18,
+  },
+  contacts: {
+    flexDirection: "column",
+    width: 210,
+    //borderWidth: 1,
+  },
+  boxRight: {
+    textAlign: "right",
+    paddingRight: indent + 2,
+  },
+  tableHeader: {
+    flexDirection: "row",
+    width: 526,
+  },
+});
+
 function PdfDocument(props: PdfDocumentProps) {
   const { data: invoice, privateData } = props;
 
@@ -21,49 +64,6 @@ function PdfDocument(props: PdfDocumentProps) {
   const tax = invoice.taxRate / 100;
   const subtotal = total / (1 + tax);
   const taxAmount = total - subtotal;
-
-  const indent = 3;
-
-  const s = StyleSheet.create({
-    page: {
-      flexDirection: "column",
-      fontSize: 10,
-      lineHeight: 1.4,
-
-      padding: 32,
-      paddingTop: 36,
-      paddingRight: 36,
-    },
-    ml: {
-      marginLeft: indent,
-    },
-    bold: {
-      fontWeight: 600,
-    },
-    inline: {
-      flexDirection: "row",
-    },
-    header: {
-      flexDirection: "column",
-      lineHeight: 0.7,
-    },
-    logo: {
-      paddingBottom: 18,
-    },
-    contacts: {
-      flexDirection: "column",
-      width: 210,
-      //borderWidth: 1,
-    },
-    boxRight: {
-      textAlign: "right",
-      paddingRight: indent + 2,
-    },
-    tableHeader: {
-      flexDirection: "row",
-      width: 526,
-    },
-  });
 
   return (
     <Document title={idPrefix(invoice.invoiceId)} language="german">
