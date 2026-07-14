@@ -9,6 +9,31 @@ export function idPrefix(id: string) {
   return "INV-" + id.toString().padStart(5, "0");
 }
 
+const UMLAUTS: Record<string, string> = {
+  ä: "ae",
+  ö: "oe",
+  ü: "ue",
+  Ä: "Ae",
+  Ö: "Oe",
+  Ü: "Ue",
+  ß: "ss",
+};
+
+function slugForFilename(name: string) {
+  return name
+    .replace(/[äöüÄÖÜß]/g, (c) => UMLAUTS[c])
+    .replace(/\s+/g, "-")
+    .replace(/[^A-Za-z0-9-]/g, "")
+    .replace(/-+/g, "-")
+    .replace(/^-|-$/g, "")
+    .slice(0, 40)
+    .replace(/-$/, "");
+}
+
+export function invoiceFileName(invoiceId: string, client: string) {
+  return `Rechnung-${invoiceId.padStart(3, "0")}-${slugForFilename(client)}.pdf`;
+}
+
 export function toEuro(number: number) {
   return number.toLocaleString("de-DE", {
     currency: "EUR",
