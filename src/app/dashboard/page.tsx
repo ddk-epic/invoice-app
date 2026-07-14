@@ -24,10 +24,14 @@ export default async function Dashboard() {
       <div className="mx-auto max-w-4xl px-4 py-8">
         {/* Header */}
         <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
-          <div className="flex items-baseline gap-3">
+          <div className="flex items-center gap-3">
             <h1 className="text-xl font-semibold tracking-tight text-slate-900">
               Offene Vorgänge
             </h1>
+            <div className="flex items-center gap-1">
+              <ContactsModal contacts={contactList} />
+              <ProductsModal products={productList} />
+            </div>
           </div>
           <div className="flex items-center gap-1">
             <Link
@@ -36,8 +40,6 @@ export default async function Dashboard() {
             >
               Alle Rechnungen
             </Link>
-            <ContactsModal contacts={contactList} />
-            <ProductsModal products={productList} />
             <CreateInvoiceModal contacts={contactList} />
           </div>
         </div>
