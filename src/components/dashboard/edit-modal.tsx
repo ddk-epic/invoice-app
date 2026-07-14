@@ -56,7 +56,7 @@ function ProductsModal({ products }: { products: Product[] }) {
       groupKey={(item) => item.category}
       toRow={(item) => ({
         title: item.name,
-        subtitle: item.category.toUpperCase(),
+        subtitle: item.brand?.toUpperCase() ?? "",
         valueMain: toEuro(item.price),
         valueSub: [weightLabel(item), formatBasePrice(item)]
           .filter(Boolean)
