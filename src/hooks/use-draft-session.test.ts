@@ -43,7 +43,7 @@ const contact: Contact = {
     street: "Weg 1",
     city: "Berlin",
     state: "BE",
-    zip: 10115,
+    zip: "10115",
     country: "DE",
   },
 };

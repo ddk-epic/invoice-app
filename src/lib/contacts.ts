@@ -20,7 +20,7 @@ export function emptyContact(): BaseContact {
       street: "",
       city: "",
       state: "-",
-      zip: 0,
+      zip: "",
       country: "Deutschland",
     },
   };

@@ -8,7 +8,7 @@ const AddressSchema: z.ZodType<Address> = z.object({
   street: z.string(),
   city: z.string(),
   state: z.string(),
-  zip: z.number(),
+  zip: z.string(),
   country: z.string(),
 });
 

@@ -6,7 +6,7 @@ const address: Address = {
   street: "Hauptstraße 1",
   city: "Köln",
   state: "NRW",
-  zip: 50667,
+  zip: "50667",
   country: "Deutschland",
 };
 

@@ -40,6 +40,7 @@ function ContactForm({ mode, contact, onDone }: ContactFormProps) {
   const isContactValid =
     contactData.name !== "" &&
     contactData.address.street !== "" &&
+    contactData.address.zip !== "" &&
     contactData.address.city !== "";
 
   const updateContactData = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -50,10 +51,7 @@ function ContactForm({ mode, contact, onDone }: ContactFormProps) {
     const { name, value } = e.target;
     setContactData((prev) => ({
       ...prev,
-      address: {
-        ...prev.address,
-        [name]: name === "zip" ? Number(value) || 0 : value,
-      },
+      address: { ...prev.address, [name]: value },
     }));
   };
 
@@ -130,7 +128,7 @@ function ContactForm({ mode, contact, onDone }: ContactFormProps) {
                 name="zip"
                 inputMode="numeric"
                 placeholder="72764"
-                value={contactData.address.zip || ""}
+                value={contactData.address.zip}
                 onChange={updateAddressData}
                 className="w-16 min-w-0 bg-transparent px-3 text-sm outline-none placeholder:text-gray-400"
               />
