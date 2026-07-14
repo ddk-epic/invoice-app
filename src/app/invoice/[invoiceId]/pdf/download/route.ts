@@ -10,8 +10,10 @@ export async function GET(
   { params }: { params: Promise<{ invoiceId: string }> }
 ) {
   const { invoiceId } = await params;
-  const privateData = (await getPrivateData())[0];
-  const invoice = await getInvoiceData(invoiceId);
+  const [privateData, invoice] = await Promise.all([
+    getPrivateData().then((rows) => rows[0]),
+    getInvoiceData(invoiceId),
+  ]);
 
   if (!invoice || invoice.status === "draft") {
     return new Response("Not found", { status: 404 });
