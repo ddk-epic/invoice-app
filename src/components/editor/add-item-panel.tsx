@@ -188,19 +188,27 @@ const ItemPicker = memo(function ItemPicker({
           onChange={(e) => setQuery(e.target.value)}
           className="flex-1 bg-transparent text-sm outline-none placeholder:text-gray-400"
         />
-        <button
-          type="button"
-          onClick={clearQuery}
-          aria-label="Suche löschen"
-          tabIndex={query ? 0 : -1}
-          className={`shrink-0 rounded border border-transparent p-0.5 text-gray-400 hover:border-gray-300 hover:text-gray-700 ${
-            query ? "" : "invisible"
+        <span className="shrink-0 text-xs text-gray-400 tabular-nums">
+          {total}
+        </span>
+        <span
+          className={`flex shrink-0 items-center overflow-hidden transition-[width,opacity] ${
+            query
+              ? "w-5 opacity-100"
+              : "pointer-events-none -ml-2 w-0 opacity-0"
           }`}
         >
-          <X className="size-4" />
-        </button>
-        <span className="w-[4ch] shrink-0 text-right text-xs text-gray-400 tabular-nums">
-          {total}
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            onClick={clearQuery}
+            aria-label="Suche löschen"
+            tabIndex={query ? 0 : -1}
+            className="size-5 rounded-sm text-gray-400 hover:text-gray-700"
+          >
+            <X className="size-4" />
+          </Button>
         </span>
       </div>
 

@@ -116,7 +116,7 @@ export function CatalogModal<T extends { id: number }>({
         </DialogHeader>
 
         <div className="flex items-center gap-3 px-4">
-          <div className="flex flex-1 items-center gap-2 rounded-md border px-2.5 py-1.5">
+          <div className="flex flex-1 items-center gap-2 rounded-md border py-1.5 pr-2 pl-2.5">
             <Search className="size-4 shrink-0 text-gray-400" />
             <input
               autoFocus
@@ -125,20 +125,28 @@ export function CatalogModal<T extends { id: number }>({
               onChange={(e) => setQuery(e.target.value)}
               className="w-full bg-transparent text-sm outline-none placeholder:text-gray-400"
             />
-            <button
-              type="button"
-              onClick={() => setQuery("")}
-              aria-label="Suche löschen"
-              tabIndex={query ? 0 : -1}
+            <span className="shrink-0 text-xs text-gray-400 tabular-nums">
+              {total}
+            </span>
+            <span
               className={cn(
-                "shrink-0 text-gray-400 hover:text-gray-700",
-                !query && "invisible"
+                "flex shrink-0 items-center overflow-hidden transition-[width,opacity]",
+                query
+                  ? "w-5 opacity-100"
+                  : "pointer-events-none -ml-2 w-0 opacity-0"
               )}
             >
-              <X className="size-4" />
-            </button>
-            <span className="w-[4ch] shrink-0 text-right text-xs text-gray-400 tabular-nums">
-              {total}
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon"
+                onClick={() => setQuery("")}
+                aria-label="Suche löschen"
+                tabIndex={query ? 0 : -1}
+                className="size-5 rounded-sm text-gray-400 hover:text-gray-700"
+              >
+                <X className="size-4" />
+              </Button>
             </span>
           </div>
           {!sheetOpen && (
