@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { currentUser } from "@clerk/nextjs/server";
 
 import { getInvoicesContactsProducts } from "../actions/server-actions";
 import { buildWorkItems, buildRecentlyPaid } from "@/lib/work-items";
@@ -13,8 +12,8 @@ import { OpenWork } from "@/components/dashboard/open-work";
 import { ServerWarnings } from "@/diagnostics/server-warnings";
 
 export default async function Dashboard() {
-  const [user, { invoiceList, contactList, productList, droppedProducts }] =
-    await Promise.all([currentUser(), getInvoicesContactsProducts()]);
+  const { invoiceList, contactList, productList, droppedProducts } =
+    await getInvoicesContactsProducts();
 
   const items = buildWorkItems(invoiceList);
   const recentlyPaid = buildRecentlyPaid(invoiceList);
@@ -29,9 +28,6 @@ export default async function Dashboard() {
             <h1 className="text-xl font-semibold tracking-tight text-slate-900">
               Offene Vorgänge
             </h1>
-            <span className="text-sm text-slate-400">
-              Hallo {user?.firstName ?? "Benutzer"}
-            </span>
           </div>
           <div className="flex items-center gap-1">
             <Link
