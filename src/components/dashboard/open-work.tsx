@@ -3,7 +3,7 @@
 import { useState, useTransition } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Check, Pencil, Trash2 } from "lucide-react";
+import { Check, Download, Pencil, Trash2 } from "lucide-react";
 
 import { notifyError, notifySuccess } from "@/diagnostics/notify";
 
@@ -37,6 +37,19 @@ function PdfLink({ invoiceId }: { invoiceId: string }) {
     >
       PDF
     </Link>
+  );
+}
+
+function DownloadLink({ invoiceId }: { invoiceId: string }) {
+  return (
+    <a
+      href={`/invoice/${invoiceId}/pdf/download`}
+      download
+      aria-label="PDF herunterladen"
+      className="grid size-8 place-items-center rounded-md text-slate-500 hover:bg-slate-100 hover:text-slate-700"
+    >
+      <Download className="size-3.5" />
+    </a>
   );
 }
 
@@ -119,9 +132,10 @@ function Row({ item }: { item: WorkItem }) {
         {toEuro(item.amount)}
       </div>
 
-      <div className="flex w-40 justify-end gap-1.5">
+      <div className="flex w-50 justify-end gap-1.5">
         {isPaid ? (
           <>
+            <DownloadLink invoiceId={item.invoiceId} />
             <PdfLink invoiceId={item.invoiceId} />
             <PaidBadge />
           </>
@@ -145,6 +159,7 @@ function Row({ item }: { item: WorkItem }) {
           </>
         ) : (
           <>
+            <DownloadLink invoiceId={item.invoiceId} />
             <PdfLink invoiceId={item.invoiceId} />
             {settled ? (
               <PaidBadge />
@@ -152,7 +167,7 @@ function Row({ item }: { item: WorkItem }) {
               <button
                 onClick={onMarkPaid}
                 disabled={pending}
-                className="rounded-md border border-slate-200 px-2.5 py-1.5 text-sm font-medium text-slate-600 hover:bg-slate-100 disabled:opacity-50"
+                className="shrink-0 rounded-md border border-slate-200 px-2.5 py-1.5 text-sm font-medium whitespace-nowrap text-slate-600 hover:bg-slate-100 disabled:opacity-50"
               >
                 Zu Bezahlen
               </button>
