@@ -21,10 +21,7 @@ function toFormData(contact: Contact | null): BaseContact {
     type: contact.type,
     name: contact.name,
     owner: contact.owner ?? "",
-    address: {
-      ...contact.address,
-      city: `${contact.address.zip} ${contact.address.city}`.trim(),
-    },
+    address: { ...contact.address },
   };
 }
 
@@ -53,25 +50,18 @@ function ContactForm({ mode, contact, onDone }: ContactFormProps) {
     const { name, value } = e.target;
     setContactData((prev) => ({
       ...prev,
-      address: { ...prev.address, [name]: value },
+      address: {
+        ...prev.address,
+        [name]: name === "zip" ? Number(value) || 0 : value,
+      },
     }));
   };
 
   const handleSubmit = async () => {
-    const [code, ...cityParts] = contactData.address.city.split(" ");
-    const next = {
-      ...contactData,
-      address: {
-        ...contactData.address,
-        zip: Number(code),
-        city: cityParts.join(),
-      },
-    };
-
     const res =
       mode === "edit" && contact
-        ? await updateContactAction(contact.id, next)
-        : await insertContactAction(next);
+        ? await updateContactAction(contact.id, contactData)
+        : await insertContactAction(contactData);
 
     notifyWrite(res, {
       success: "Gespeichert",
@@ -84,7 +74,7 @@ function ContactForm({ mode, contact, onDone }: ContactFormProps) {
 
   return (
     <>
-      <div className="flex items-center justify-between px-8 pt-4">
+      <div className="flex items-center justify-between px-6 pt-3">
         <h3 className="font-medium text-gray-700">
           {mode === "new" ? "Neuer Kontakt" : `Bearbeiten: ${contactData.name}`}
         </h3>
@@ -92,70 +82,77 @@ function ContactForm({ mode, contact, onDone }: ContactFormProps) {
           <X className="size-4" />
         </Button>
       </div>
-      <div className="px-8 pt-2 pb-6 text-sm">
-        <div className="space-y-2">
-          <div className="flex space-x-6">
-            <div className="flex-grow">
-              <Label className="pb-1">Client</Label>
-              <Input
-                id="name"
-                name="name"
-                type="text"
-                placeholder="Client"
-                value={contactData.name}
-                onChange={updateContactData}
-              />
-            </div>
-            <div className="w-40">
-              <Label className="pb-1">Besitzer</Label>
-              <Input
-                id="owner"
-                name="owner"
-                type="text"
-                placeholder="Besitzer"
-                value={contactData.owner}
-                onChange={updateContactData}
-                className="text-right"
-              />
-            </div>
+
+      <div className="flex gap-6 px-6 pt-2 pb-6 text-sm">
+        {/* Identity */}
+        <div className="min-w-0 flex-1 space-y-3">
+          <p className="pt-4 pb-1 text-xs font-semibold tracking-wide text-gray-400 uppercase">
+            Identität
+          </p>
+          <div>
+            <Label className="pb-1">Client</Label>
+            <Input
+              name="name"
+              placeholder="z.B. Müller GmbH"
+              value={contactData.name}
+              onChange={updateContactData}
+            />
           </div>
-          <div className="flex space-x-6">
-            <div className="flex-grow">
-              <Label className="pb-1">Straße</Label>
-              <Input
-                id="street"
-                name="street"
-                type="text"
-                placeholder="Straße"
-                value={contactData.address.street}
+          <div>
+            <Label className="pb-1 text-gray-500">Besitzer</Label>
+            <Input
+              name="owner"
+              placeholder="z.B. Anna Müller"
+              value={contactData.owner}
+              onChange={updateContactData}
+            />
+          </div>
+        </div>
+
+        {/* Address */}
+        <div className="flex min-w-0 flex-1 flex-col gap-3">
+          <p className="pt-4 pb-1 text-xs font-semibold tracking-wide text-gray-400 uppercase">
+            Adresse
+          </p>
+          <div>
+            <Label className="pb-1">Straße</Label>
+            <Input
+              name="street"
+              placeholder="z.B. Hauptstraße 12"
+              value={contactData.address.street}
+              onChange={updateAddressData}
+            />
+          </div>
+          <div>
+            <Label className="pb-1">PLZ / Ort</Label>
+            <div className="focus-within:border-ring focus-within:ring-ring/50 flex h-9 min-w-0 items-stretch overflow-hidden rounded-md border shadow-xs focus-within:ring-[3px]">
+              <input
+                name="zip"
+                inputMode="numeric"
+                placeholder="72764"
+                value={contactData.address.zip || ""}
                 onChange={updateAddressData}
+                className="w-16 min-w-0 bg-transparent px-3 text-sm outline-none placeholder:text-gray-400"
               />
-            </div>
-            <div className="w-40">
-              <Label className="pb-1">ZIP City</Label>
-              <Input
-                id="city"
+              <input
                 name="city"
-                type="text"
-                placeholder="72764 Reutlingen"
+                placeholder="z.B. Reutlingen"
                 value={contactData.address.city}
                 onChange={updateAddressData}
-                className="text-right"
+                className="min-w-0 flex-1 border-l bg-transparent px-3 text-sm outline-none placeholder:text-gray-400"
               />
             </div>
           </div>
-          <div className="flex space-x-6">
-            <div className="flex-grow"></div>
-            <div className="flex w-32 items-end pt-4.5">
-              <Button
-                variant="brand"
-                onClick={handleSubmit}
-                disabled={!isContactValid}
-                className="w-32 text-base"
-              >
-                {mode === "new" ? "Anlegen" : "Aktualisieren"}
-              </Button>
-            </div>
+          <div>
+            <Label className="invisible pb-1">.</Label>
+            <Button
+              variant="brand"
+              onClick={handleSubmit}
+              disabled={!isContactValid}
+              className="w-full text-base"
+            >
+              {mode === "new" ? "Anlegen" : "Aktualisieren"}
+            </Button>
           </div>
         </div>
       </div>
