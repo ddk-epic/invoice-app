@@ -6,6 +6,11 @@ import { useRouter } from "next/navigation";
 import { ChevronDown, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import {
+  SharedInputBar,
+  BarInput,
+  BarAddon,
+} from "@/components/ui/shared-input-bar";
 import { Label } from "@/components/ui/label";
 
 import {
@@ -123,30 +128,28 @@ function ProductForm({ mode, product, onDone }: ProductFormProps) {
           <div className="flex gap-3">
             <div className="w-23">
               <Label className="pb-1">Preis</Label>
-              <div className="focus-within:border-ring focus-within:ring-ring/50 flex h-9 items-stretch overflow-hidden rounded-md border shadow-xs focus-within:ring-[3px]">
-                <input
+              <SharedInputBar>
+                <BarInput
                   name="price"
                   type="number"
                   placeholder="0,00"
                   value={productData.price || ""}
                   onChange={updateNumber}
-                  className={`min-w-0 flex-1 bg-transparent px-3 text-right text-sm outline-none placeholder:text-gray-400 ${NO_SPIN}`}
+                  className={`flex-1 text-right ${NO_SPIN}`}
                 />
-                <span className="flex items-center border-l bg-gray-50 px-2 text-sm text-gray-500">
-                  €
-                </span>
-              </div>
+                <BarAddon>€</BarAddon>
+              </SharedInputBar>
             </div>
             <div className="min-w-0 flex-1">
               <Label className="pb-1">Inhalt</Label>
-              <div className="focus-within:border-ring focus-within:ring-ring/50 flex h-9 min-w-0 items-stretch overflow-hidden rounded-md border shadow-xs focus-within:ring-[3px]">
-                <input
+              <SharedInputBar>
+                <BarInput
                   name="netContent"
                   type="number"
                   placeholder="0"
                   value={productData.netContent || ""}
                   onChange={updateNumber}
-                  className={`min-w-0 flex-1 bg-transparent px-3 text-right text-sm outline-none placeholder:text-gray-400 ${NO_SPIN}`}
+                  className={`flex-1 text-right ${NO_SPIN}`}
                 />
                 <div className="relative flex items-center border-l bg-gray-50">
                   <select
@@ -163,7 +166,7 @@ function ProductForm({ mode, product, onDone }: ProductFormProps) {
                   </select>
                   <ChevronDown className="pointer-events-none absolute right-1 size-3.5 text-gray-400" />
                 </div>
-              </div>
+              </SharedInputBar>
             </div>
           </div>
           <div>

@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { SharedInputBar, BarInput } from "@/components/ui/shared-input-bar";
 import { Label } from "@/components/ui/label";
 
 import { emptyContact, type BaseContact, type Contact } from "@/lib/contacts";
@@ -123,23 +124,23 @@ function ContactForm({ mode, contact, onDone }: ContactFormProps) {
           </div>
           <div>
             <Label className="pb-1">PLZ / Ort</Label>
-            <div className="focus-within:border-ring focus-within:ring-ring/50 flex h-9 min-w-0 items-stretch overflow-hidden rounded-md border shadow-xs focus-within:ring-[3px]">
-              <input
+            <SharedInputBar>
+              <BarInput
                 name="zip"
                 inputMode="numeric"
                 placeholder="72764"
                 value={contactData.address.zip}
                 onChange={updateAddressData}
-                className="w-16 min-w-0 bg-transparent px-3 text-sm outline-none placeholder:text-gray-400"
+                className="w-16"
               />
-              <input
+              <BarInput
                 name="city"
                 placeholder="z.B. Reutlingen"
                 value={contactData.address.city}
                 onChange={updateAddressData}
-                className="min-w-0 flex-1 border-l bg-transparent px-3 text-sm outline-none placeholder:text-gray-400"
+                className="flex-1 border-l"
               />
-            </div>
+            </SharedInputBar>
           </div>
           <div>
             <Label className="invisible pb-1">.</Label>
