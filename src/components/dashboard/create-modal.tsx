@@ -46,8 +46,8 @@ export const CreateInvoiceModal = (props: CreatInvoiceModalProps) => {
     setIsLoading(true);
 
     const draftId = await createDraftAction({ contactId: contactField!.id });
-    setIsLoading(false);
     if (draftId == null) {
+      setIsLoading(false);
       notifyError("Rechnung konnte nicht erstellt werden.");
       return;
     }
@@ -160,7 +160,7 @@ export const CreateInvoiceModal = (props: CreatInvoiceModalProps) => {
               type="submit"
               variant="brand"
               className="flex w-38 items-center justify-center"
-              disabled={isLoading}
+              disabled={isLoading || contactField == null}
             >
               {isLoading ? <Spinner size="small" /> : "Rechnung erstellen"}
             </Button>
