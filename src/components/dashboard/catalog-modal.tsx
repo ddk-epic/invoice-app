@@ -161,7 +161,7 @@ export function CatalogModal<T extends { id: number }>({
           )}
         </div>
 
-        <div className="flex-1 overflow-y-scroll">
+        <div className="flex-1 overflow-y-scroll border-t">
           {noMatches ? (
             <div className="py-8 text-center text-sm text-gray-500">
               Keine passenden Einträge zu &quot;{query}&quot; gefunden.
@@ -169,7 +169,7 @@ export function CatalogModal<T extends { id: number }>({
           ) : (
             groupBy(visible, groupKey).map(([category, rows]) => (
               <div key={category}>
-                <div className="sticky top-0 z-10 flex items-center justify-between bg-gray-100/95 px-3 py-1 backdrop-blur">
+                <div className="sticky -top-px z-10 flex items-center justify-between bg-gray-100/95 px-3 py-1 backdrop-blur">
                   <span className="text-xs font-semibold tracking-wide text-gray-500 uppercase">
                     {category}
                   </span>
