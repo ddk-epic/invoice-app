@@ -28,6 +28,7 @@ import { Contact } from "@/lib/contacts";
 import { redirect, RedirectType } from "next/navigation";
 import { notifyError } from "@/diagnostics/notify";
 import { createDraftAction } from "@/app/actions/server-actions";
+import { encodeDraftHandle } from "@/lib/draft-handle";
 import { Spinner } from "../ui/spinner";
 
 interface CreatInvoiceModalProps {
@@ -52,7 +53,7 @@ export const CreateInvoiceModal = (props: CreatInvoiceModalProps) => {
       return;
     }
 
-    redirect(`/editor/${draftId}`, RedirectType.push);
+    redirect(`/editor/${encodeDraftHandle(draftId)}`, RedirectType.push);
   };
 
   const selectContactById = (contactId: string) => {

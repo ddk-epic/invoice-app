@@ -5,15 +5,16 @@ import InvoiceEditor from "@/components/editor/invoice-editor";
 import { getContactsAndProducts } from "@/app/actions/server-actions";
 import { QUERIES } from "@/server/db/queries";
 import { ServerWarnings } from "@/diagnostics/server-warnings";
+import { decodeDraftHandle } from "@/lib/draft-handle";
 
 interface EditorPageProps {
-  params: Promise<{ id: string }>;
+  params: Promise<{ handle: string }>;
 }
 
 async function DraftEditorPage({ params }: EditorPageProps) {
-  const { id } = await params;
-  const draftId = Number(id);
-  if (!Number.isInteger(draftId)) notFound();
+  const { handle } = await params;
+  const draftId = decodeDraftHandle(handle);
+  if (draftId == null) notFound();
 
   const [draft, { privateContact, contactList, productList, droppedProducts }] =
     await Promise.all([

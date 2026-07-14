@@ -8,6 +8,7 @@ import { Check, Download, Pencil, Trash2 } from "lucide-react";
 import { notifyError, notifySuccess } from "@/diagnostics/notify";
 
 import { toEuro, deShortDate } from "@/lib/utils";
+import { encodeDraftHandle } from "@/lib/draft-handle";
 import { Derived, WorkItem, toSections, sumAmount } from "@/lib/work-items";
 import { statusLabel } from "@/lib/invoice";
 import {
@@ -142,7 +143,7 @@ function Row({ item }: { item: WorkItem }) {
         ) : item.derived === "draft" ? (
           <>
             <Link
-              href={`/editor/${item.id}`}
+              href={`/editor/${encodeDraftHandle(item.id)}`}
               aria-label="Bearbeiten"
               className="grid size-8 place-items-center rounded-md text-slate-500 hover:bg-slate-100 hover:text-slate-700"
             >
